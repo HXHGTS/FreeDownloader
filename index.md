@@ -2,7 +2,7 @@
 
 ### 一、安装方法
 
-1.[下载压缩包](https://www.lanzous.com/i9uz7qh)并解压
+1.下载压缩包[Windows64位](https://lanzous.com/iczgw6b)[Windows32位]()并解压
 
 2.在chrome浏览器[国内离线安装包](https://www.lanzous.com/i9r1beh)[Chrome扩展商店](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN)中安装EditThisCookie插件与油猴脚本(本地安装方法：[下载插件](https://www.lanzous.com/i9mqftg)并解压，打开chrome浏览器更多工具-扩展程序，打开开发者模式后加载已解压的扩展程序）（ps:火狐与Opera浏览器也可以安装，但需要自己百度下载插件)
 
