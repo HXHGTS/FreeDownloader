@@ -4,7 +4,7 @@
 
 1.[下载压缩包](https://www.lanzous.com/i9uz7qh)并解压
 
-2.在chrome浏览器[国内离线安装包](https://www.lanzous.com/i9r1beh)中安装EditThisCookie插件与油猴脚本(本地安装方法：[下载插件](https://www.lanzous.com/i9mqftg)并解压，打开chrome浏览器更多工具-扩展程序，打开开发者模式后加载已解压的扩展程序）（ps:火狐与Opera浏览器也可以安装，但需要自己百度下载插件)
+2.在chrome浏览器[国内离线安装包](https://www.lanzous.com/i9r1beh)[Chrome扩展商店](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN)中安装EditThisCookie插件与油猴脚本(本地安装方法：[下载插件](https://www.lanzous.com/i9mqftg)并解压，打开chrome浏览器更多工具-扩展程序，打开开发者模式后加载已解压的扩展程序）（ps:火狐与Opera浏览器也可以安装，但需要自己百度下载插件)
 
 3.[安装网盘助手](https://greasyfork.org/scripts/378301-%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/code/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B.user.js)(务必先安装油猴脚本再安装这个！！！)
 
@@ -26,7 +26,7 @@
 
 2.如果需要下载会员专享高清或独播视频，需要导入会员账号Cookies信息，可在浏览器中先用会员账号登录，再导出当前页面所有Cookies信息
 
-注意：以后仅更新程序关键文件，下载后直接覆盖即可！(由于下载引擎不兼容32位Windows，本版本不兼容32位Windows系统，一般Win7以上的电脑都可以运行)
+注意：以后仅更新程序关键文件，下载后直接覆盖即可！
 
 ### 四、导入下载功能
 支持外部插件导入生成的aria2下载命令
@@ -38,4 +38,4 @@
 由于网络波动因素的存在，有时候下载下来的文件（尤其是百度网盘）可能会存在文件错误，此功能通过计算文件校验和（MD5与SHAXXX等）帮助用户判断文件完整性
 
 ### 七、第三方软件
-本软件使用了aria2官方版（稳定性更好，但限制16线程）、youtube-dl、ffmpeg等开源工具作为下载或解码工具
+本软件使用了[aria2官方版（稳定性更好，但限制16线程）](https://aria2.github.io/)、[youtube-dl](https://github.com/ytdl-org/youtube-dl)、[ffmpeg](https://ffmpeg.org/)等开源工具作为下载或解码工具
