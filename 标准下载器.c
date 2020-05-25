@@ -1,18 +1,28 @@
 ﻿#include<stdio.h>
 #include<stdlib.h>
+#include<io.h>
 int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum,Auto_ChangeUA;
 char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], cmd[1450], Downloader_Use[15];
 char reference[216], head[300], head_show[30];
 char location[200],split[7],torrent_loca[200],play_list[15];
 int mark,proxymode, download_result2,  shutdown, filecheck,use_list;
-FILE* log_gen,* conf,*save,*power_ini,*space;
+FILE* log_gen,* conf,*save,*power_ini,*space,*dic;
 
+int CreateFolder() {
+	if (!access("Downloads", 0)) {
 
+	}
+	else {
+		system("mkdir Downloads");
+	}
+		return 0;
+}
 int main() {
 	download_result2 = 0;
 	filecheck = 0;
 	anti_shutdown = shutdown = 0;
 	system("title 标准下载器");
+	CreateFolder();
 p_3:printf("------------------------------------------------\n");
 	printf("-------------------标准下载器-------------------\n");
 	printf("------------------------------------------------\n");
@@ -322,7 +332,7 @@ int threader() {
 		}
 		else {
 			sprintf(Downloader_Use, "%s", "annie.exe");
-			config_thread = 16;
+			config_thread = 32;
 		}
 	}
 	else if (downloadmode == 6) {
@@ -651,7 +661,7 @@ int downloadengine() {
 			sprintf(cmd, "%s %s -c --cookies ytb_Cookies.txt -f bestvideo+bestaudio %s --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 1M\"", Downloader_Use, head,play_list, config_proxy, config_dir, config_url);
 		}
 		else if (config_media == 2) {
-			sprintf(cmd, "%s -c Bilibili_Cookies.txt %s %s %s", Downloader_Use, play_list, config_dir, config_url);
+			sprintf(cmd, "%s -c Bilibili_Cookies.txt -n 32 %s %s %s", Downloader_Use, play_list, config_dir, config_url);
 		}
 		else if (config_media == 3) {
 			sprintf(cmd, "%s %s -c %s %s --cookies Media_Cookies.txt %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 1M\"", Downloader_Use, head, play_list, config_proxy, config_dir, config_url);
