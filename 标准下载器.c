@@ -5,7 +5,7 @@ char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], cmd[1
 char reference[216], head[300], head_show[30];
 char location[200],split[7],torrent_loca[200],play_list[15];
 int mark,proxymode, download_result2,  shutdown, filecheck,use_list;
-FILE* log_gen,* conf,*save,*power_ini;
+FILE* log_gen,* conf,*save,*power_ini,*space;
 
 
 int main() {
@@ -50,9 +50,9 @@ p_3:printf("------------------------------------------------\n");
 		MagnetDownloader();
 	}
 	else if (downloadmode == 7) {
-		if ((save = fopen("startdownload.bat", "r")) != NULL) {
+		if ((save = fopen("command.run", "r")) != NULL) {
 			printf("正在进行上一次的下载. . .\n");
-			system("startdownload.bat");
+			system("command.run");
 			system("pause");
 			system("cls");
 			goto p_3;
@@ -210,16 +210,40 @@ int url() {
 		sprintf(config_url, "%s", "-i netdisk.download");
 	}
 	else if (downloadmode == 3) {
-		if ((url = fopen("media.download", "r")) == NULL) {
-			url = fopen("media.download", "w");
-			fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
-			fclose(url);
+		if (config_media == 1) {
+			if ((url = fopen("Youtube.download", "r")) == NULL) {
+				url = fopen("Youtube.download", "w");
+				fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
+				fclose(url);
+			}
+			printf("\n请在弹出页输入下载地址，输入完成后");
+			system("notepad.exe Youtube.download");
+			system("pause");
+			sprintf(config_url, "%s", "-a Youtube.download");
 		}
-		printf("\n请在弹出页输入下载地址，输入完成后");
-		system("notepad.exe media.download");
-		system("pause");
-		sprintf(config_url, "%s", "-a media.download");
-	}
+		else if (config_media == 2) {
+			if ((url = fopen("Bilibili.download", "r")) == NULL) {
+				url = fopen("Bilibili.download", "w");
+				fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
+				fclose(url);
+			}
+			printf("\n请在弹出页输入下载地址，输入完成后");
+			system("notepad.exe Bilibili.download");
+			system("pause");
+			sprintf(config_url, "%s", "-a Bilibili.download");
+		}
+		else {
+			if ((url = fopen("Media.download", "r")) == NULL) {
+				url = fopen("Media.download", "w");
+				fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
+				fclose(url);
+			}
+			printf("\n请在弹出页输入下载地址，输入完成后");
+			system("notepad.exe Media.download");
+			system("pause");
+			sprintf(config_url, "%s", "-a Media.download");
+		}
+		}
 	else if (downloadmode == 4) {
 		if ((url = fopen("advance.download", "r")) == NULL) {
 			url = fopen("advance.download", "w");
@@ -232,13 +256,13 @@ int url() {
 		sprintf(config_url, "%s", "-i advance.download");
 	}
 	else if (downloadmode == 5) {
-		if ((url = fopen("startdownload.bat", "r")) == NULL) {
-			url = fopen("startdownload.bat", "w");
+		if ((url = fopen("command.run", "r")) == NULL) {
+			url = fopen("command.run", "w");
 			fprintf(url, "%s", "\n%请在本行文字删除，并将下载地址粘贴在这里%\n");
 			fclose(url);
 		}
 		printf("\n请在弹出页输入下载地址，输入完成后");
-		system("notepad.exe startdownload.bat");
+		system("notepad.exe command.run");
 		system("pause");
 	}
 	else if (downloadmode == 6) {
@@ -290,7 +314,7 @@ int threader() {
 	else if (downloadmode == 6) {
 		Download_Task = 1;//同时下载任务数
 		sprintf(Downloader_Use, "%s", "aria2c.exe");
-		config_thread = 128;
+		config_thread = 16;
 		if (magnet_mode == 2)sprintf(split, "1M");
 	}
 
@@ -436,6 +460,9 @@ int AdvanceDownloader() {
 		printf("\n请在弹出窗口中导入Cookies信息，");
 		system("notepad Cookies.txt");
 		system("pause");
+		space = fopen("Cookies.txt", "a");
+		fprintf(space, "\n\n");
+		fclose(space);
 	}
 	else {
 		printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
@@ -474,6 +501,9 @@ int Netdisk() {
 		system("type tmp.txt | find \"BDUSS\">Netdisk_Cookies.txt");
 		system("type tmp.txt | find \"pcsett\">>Netdisk_Cookies.txt");
 		system("del tmp.txt");
+		space = fopen("Netdisk_Cookies.txt", "a");
+		fprintf(space, "\n\n");
+		fclose(space);
 	}
 	else {
 		printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
@@ -524,8 +554,8 @@ int AutoShutdown(int mode) {
 }
 
 int MediaDownloader() {
-	FILE* Media_Cookies,*ytb_Cookies;
-	printf("\n下载视频来源(1.Youtube 2.B站（暂不支持番剧下载）)：");
+	FILE* Bilibili_Cookies,*ytb_Cookies,* Media_Cookies;
+	printf("\n下载视频来源：\n\n1.Youtube\n\n2.B站（暂不支持番剧下载）\n\n3.其他网站（可能不支持）\n\n请输入：");
 	scanf("%d", &config_media);
 	printf("\n是否下载整个列表内所有视频（是=1，否=0）：");
 	scanf("%d", &use_list);
@@ -544,8 +574,18 @@ int MediaDownloader() {
 		printf("\n请在弹出窗口中导入视频站的Cookies信息以便获取高清视频，同一账号可以反复使用，保存完成后");
 		system("notepad ytb_Cookies.txt");
 		system("pause");
-		url();
-		threader();
+		space = fopen("ytb_Cookies.txt", "a");
+	}
+	else if (config_media == 2) {
+		if ((Bilibili_Cookies = fopen("Bilibili_Cookies.txt", "r")) == NULL) {
+			Bilibili_Cookies = fopen("Bilibili_Cookies.txt", "w");
+			fprintf(Bilibili_Cookies, "##请将当前视频页面的Cookie导出粘贴到下面##\n\n");
+			fclose(Bilibili_Cookies);
+		}
+		printf("\n请在弹出窗口中导入视频站的Cookies信息以便获取高清视频，同一账号可以反复使用，保存完成后");
+		system("notepad Bilibili_Cookies.txt");
+		system("pause");
+		space = fopen("Bilibili_Cookies.txt", "a");
 	}
 	else {
 		if ((Media_Cookies = fopen("Media_Cookies.txt", "r")) == NULL) {
@@ -556,9 +596,12 @@ int MediaDownloader() {
 		printf("\n请在弹出窗口中导入视频站的Cookies信息以便获取高清视频，同一账号可以反复使用，保存完成后");
 		system("notepad Media_Cookies.txt");
 		system("pause");
-		url();
-		threader();
+		space = fopen("Media_Cookies.txt", "a");
 	}
+	fprintf(space, "\n\n");
+	fclose(space);
+	url();
+	threader();
 	dir();
 	BroswerMark();
 	return 0;
@@ -576,15 +619,15 @@ int downloadengine() {
 		if (config_media == 1) {
 			sprintf(cmd, "%s %s -c --cookies ytb_Cookies.txt -f bestvideo+bestaudio %s --write-sub --all-subs %s %s %s", Downloader_Use, head,play_list, config_proxy, config_dir, config_url);
 		}
-		else {
-			sprintf(cmd, "%s %s -c %s %s --cookies Media_Cookies.txt %s %s", Downloader_Use, head,play_list, config_proxy, config_dir, config_url);
+		else if (config_media == 2) {
+			sprintf(cmd, "%s %s -c %s %s --cookies Bilibili_Cookies.txt %s %s", Downloader_Use, head,play_list, config_proxy, config_dir, config_url);
 		}
 	}
 	else if (downloadmode == 4) {
 		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s %s %s", Downloader_Use, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 5) {
-		sprintf(cmd, "%s","startdownload.bat");
+		sprintf(cmd, "%s","command.run");
 	}
 	else if (downloadmode == 6) {
 		if (magnet_mode == 2) {
@@ -608,7 +651,7 @@ int downloadengine() {
 	fprintf(log_gen,"用户执行了如下命令：\n%s\n", cmd);
 	fclose(log_gen);
 	if (downloadmode != 5) {
-		save = fopen("startdownload.bat", "w");
+		save = fopen("command.run", "w");
 		fprintf(save, "%s", cmd);
 		fclose(save);
 	}
