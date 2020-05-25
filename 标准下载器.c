@@ -52,7 +52,9 @@ p_3:printf("------------------------------------------------\n");
 	else if (downloadmode == 7) {
 		if ((save = fopen("command.run", "r")) != NULL) {
 			printf("正在进行上一次的下载. . .\n");
-			system("command.run");
+			system("copy /y command.run run.bat");
+			system("run.bat");
+			system("del run.bat");
 			system("pause");
 			system("cls");
 			goto p_3;
@@ -227,10 +229,16 @@ int url() {
 				fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
 				fclose(url);
 			}
-			printf("\n请在弹出页输入下载地址，输入完成后");
-			system("notepad.exe Bilibili.download");
+			printf("\n请在弹出页输入下载地址\n");
+			system("notepad Bilibili.download");
 			system("pause");
-			sprintf(config_url, "%s", "-a Bilibili.download");
+			url = fopen("space.download", "w");
+			fprintf(url, "%s", " \n");
+			fclose(url);
+			system("type Bilibili.download>>space.download");
+			system("type space.download>Bilibili.download");
+			system("del space.download");
+			sprintf(config_url,"-F Bilibili.download");
 		}
 		else {
 			if ((url = fopen("Media.download", "r")) == NULL) {
@@ -308,8 +316,14 @@ int threader() {
 	}
 	else if (downloadmode == 3) {
 		Download_Task = 1;//同时下载任务数
-		sprintf(Downloader_Use, "%s", "youtube-dl.exe");
-		config_thread = 1;
+		if (config_media != 2) {
+			sprintf(Downloader_Use, "%s", "youtube-dl.exe");
+			config_thread = 1;
+		}
+		else {
+			sprintf(Downloader_Use, "%s", "annie.exe");
+			config_thread = 16;
+		}
 	}
 	else if (downloadmode == 6) {
 		Download_Task = 1;//同时下载任务数
@@ -322,10 +336,16 @@ int threader() {
 
 int dir() {
 	if (downloadmode == 3) {
-		sprintf(config_dir, "%s", "-o \"/Downloads/\%(title)s.\%(ext)s\"");
+		if (config_media != 2) {
+			sprintf(config_dir, "%s", "-o \"/Downloads/\%(title)s.\%(ext)s\"");
+		}
+		else {
+			sprintf(config_dir, "%s", "-o Downloads");
+		}
 	}
 	else {
 		if (downloadmode == 6 && magnet_mode == 1) {
+
 		}
 		else sprintf(config_dir, "%s", "--dir=\"Downloads\"");
 	}
@@ -555,16 +575,27 @@ int AutoShutdown(int mode) {
 
 int MediaDownloader() {
 	FILE* Bilibili_Cookies,*ytb_Cookies,* Media_Cookies;
-	printf("\n下载视频来源：\n\n1.Youtube\n\n2.B站（暂不支持番剧下载）\n\n3.其他网站（可能不支持）\n\n请输入：");
+	printf("\n下载视频来源：\n\n1.Youtube\n\n2.B站（兼容番剧下载）\n\n3.其它下载模式1（适用音画合并的文件）\n\n4.其它下载模式2（适用音画分离的文件）\n\n请输入：");
 	scanf("%d", &config_media);
 	printf("\n是否下载整个列表内所有视频（是=1，否=0）：");
 	scanf("%d", &use_list);
-	if (use_list == 0) {
-		sprintf(play_list, "--no-playlist");
+	if (config_media != 2) {
+		if (use_list == 0) {
+			sprintf(play_list, "--no-playlist");
+		}
+		else {
+			sprintf(play_list, "");
+		}
 	}
 	else {
-		sprintf(play_list, "");
+		if (use_list == 0) {
+			sprintf(play_list, "");
+		}
+		else {
+			sprintf(play_list, "-p");
+		}
 	}
+	
 	if (config_media == 1) {
 		if ((ytb_Cookies = fopen("ytb_Cookies.txt", "r")) == NULL) {
 			ytb_Cookies = fopen("ytb_Cookies.txt", "w");
@@ -617,10 +648,16 @@ int downloadengine() {
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
-			sprintf(cmd, "%s %s -c --cookies ytb_Cookies.txt -f bestvideo+bestaudio %s --write-sub --all-subs %s %s %s", Downloader_Use, head,play_list, config_proxy, config_dir, config_url);
+			sprintf(cmd, "%s %s -c --cookies ytb_Cookies.txt -f bestvideo+bestaudio %s --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 1M\"", Downloader_Use, head,play_list, config_proxy, config_dir, config_url);
 		}
 		else if (config_media == 2) {
-			sprintf(cmd, "%s %s -c %s %s --cookies Bilibili_Cookies.txt %s %s", Downloader_Use, head,play_list, config_proxy, config_dir, config_url);
+			sprintf(cmd, "%s -c Bilibili_Cookies.txt %s %s %s", Downloader_Use, play_list, config_dir, config_url);
+		}
+		else if (config_media == 3) {
+			sprintf(cmd, "%s %s -c %s %s --cookies Media_Cookies.txt %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 1M\"", Downloader_Use, head, play_list, config_proxy, config_dir, config_url);
+		}
+		else {
+			sprintf(cmd, "%s %s -c --cookies Media_Cookies.txt -f bestvideo+bestaudio %s --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 1M\"", Downloader_Use, head, play_list, config_proxy, config_dir, config_url);
 		}
 	}
 	else if (downloadmode == 4) {
