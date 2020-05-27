@@ -6,7 +6,7 @@ char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], cmd[1
 char reference[216], head[300], head_show[30];
 char location[200],split[7],torrent_loca[200],play_list[15];
 int mark,proxymode, download_result2,  shutdown, filecheck,use_list;
-FILE* log_gen,* conf,*save,*power_ini,*space,*dic;
+FILE* log_gen,* conf,*save,*power_ini,*space,*dic,*Bilibili_conf;
 
 int CreateFolder() {
 	if (!access("Downloads", 0)) {
@@ -15,16 +15,28 @@ int CreateFolder() {
 	else {
 		system("mkdir Downloads");
 	}
+		Bilibili_conf = fopen("Bilibili.conf", "w");
+		fprintf(Bilibili_conf, "dir=Downloads\n");
+		fprintf(Bilibili_conf, "continue=true\n");
+		fprintf(Bilibili_conf, "max-concurrent-downloads=1\n");
+		fprintf(Bilibili_conf, "max-connection-per-server=16\n");
+		fprintf(Bilibili_conf, "min-split-size=2M\n");
+		fprintf(Bilibili_conf, "split=16\n");
+		fprintf(Bilibili_conf, "enable-rpc=true\n");
+		fprintf(Bilibili_conf, "rpc-allow-origin-all=true\n");
+		fprintf(Bilibili_conf, "rpc-listen-all=true\n");
+		fprintf(Bilibili_conf, "rpc-listen-port=6800\n\n");
+		fclose(Bilibili_conf);
 		return 0;
 }
 int main() {
 	download_result2 = 0;
 	filecheck = 0;
 	anti_shutdown = shutdown = 0;
-	system("title 标准下载器");
+	system("title FreeDownloader");
 	CreateFolder();
 p_3:printf("------------------------------------------------\n");
-	printf("-------------------标准下载器-------------------\n");
+	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
 	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘下载\n3.视频下载模式\n4.高级下载模式（自定义下载）\n5.导入下载模式\n6.磁力链下载模式（实验性）\n7.继续上一次的下载\n8.文件完整性测试\n9.Github上的软件帮助\n0.打开下载文件夹\n");
 	printf("------------------------------------------------\n");
@@ -108,7 +120,6 @@ p_2:download_result2 = downloadengine();
 			printf("百度网盘下载的文件名称可能会有乱码，改为正确名称即可正常使用！\n");
 		}
 		system("explorer.exe Downloads");
-		system("pause");
 		system("cls");
 		goto p_3;
 	}
@@ -205,7 +216,7 @@ int url() {
 			fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
 			fclose(url);
 		}
-		printf("\n请在弹出页输入下载地址，输入完成后");
+		printf("\n请在弹出页输入下载地址. . .\n\n");
 		system("notepad.exe normal.download");
 		system("pause");
 		sprintf(config_url, "%s", "-i normal.download");
@@ -216,7 +227,7 @@ int url() {
 			fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
 			fclose(url);
 		}
-		printf("\n请在弹出页输入下载地址，输入完成后");
+		printf("\n请在弹出页输入下载地址. . .\n\n");
 		system("notepad.exe netdisk.download");
 		system("pause");
 		sprintf(config_url, "%s", "-i netdisk.download");
@@ -228,7 +239,7 @@ int url() {
 				fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
 				fclose(url);
 			}
-			printf("\n请在弹出页输入下载地址，输入完成后");
+			printf("\n请在弹出页输入下载地址. . .\n\n");
 			system("notepad.exe Youtube.download");
 			system("pause");
 			sprintf(config_url, "%s", "-a Youtube.download");
@@ -239,11 +250,11 @@ int url() {
 				fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
 				fclose(url);
 			}
-			printf("\n请在弹出页输入下载地址\n");
+			printf("\n请在弹出页输入下载地址. . .\n\n");
 			system("notepad Bilibili.download");
 			system("pause");
 			url = fopen("space.download", "w");
-			fprintf(url, "%s", " \n");
+			fprintf(url, "%s", "\n");
 			fclose(url);
 			system("type Bilibili.download>>space.download");
 			system("type space.download>Bilibili.download");
@@ -256,7 +267,7 @@ int url() {
 				fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
 				fclose(url);
 			}
-			printf("\n请在弹出页输入下载地址，输入完成后");
+			printf("\n请在弹出页输入下载地址. . .\n\n");
 			system("notepad.exe Media.download");
 			system("pause");
 			sprintf(config_url, "%s", "-a Media.download");
@@ -268,7 +279,7 @@ int url() {
 			fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
 			fclose(url);
 		}
-		printf("\n请在弹出页输入下载地址，输入完成后");
+		printf("\n请在弹出页输入下载地址. . .\n\n");
 		system("notepad.exe advance.download");
 		system("pause");
 		sprintf(config_url, "%s", "-i advance.download");
@@ -279,7 +290,7 @@ int url() {
 			fprintf(url, "%s", "\n%请在本行文字删除，并将下载地址粘贴在这里%\n");
 			fclose(url);
 		}
-		printf("\n请在弹出页输入下载地址，输入完成后");
+		printf("\n请在弹出页输入下载地址. . .\n\n");
 		system("notepad.exe command.run");
 		system("pause");
 	}
@@ -290,7 +301,7 @@ int url() {
 				fprintf(url, "%s", "\n##请在本行文字删除，并将磁力链粘贴在这里##\n");
 				fclose(url);
 			}
-			printf("\n请在弹出页输入下载地址，输入完成后");
+			printf("\n请在弹出页输入下载地址. . .\n\n");
 			system("notepad.exe magnet.download");
 			system("pause");
 			sprintf(config_url, "%s", "-i magnet.download");
@@ -332,7 +343,7 @@ int threader() {
 		}
 		else {
 			sprintf(Downloader_Use, "%s", "annie.exe");
-			config_thread = 32;
+			config_thread = 16;
 		}
 	}
 	else if (downloadmode == 6) {
@@ -612,8 +623,8 @@ int MediaDownloader() {
 			fprintf(ytb_Cookies, "##请将当前视频页面的Cookie导出粘贴到下面##\n\n");
 			fclose(ytb_Cookies);
 		}
-		printf("\n请在弹出窗口中导入视频站的Cookies信息以便获取高清视频，同一账号可以反复使用，保存完成后");
 		system("notepad ytb_Cookies.txt");
+		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
 		system("pause");
 		space = fopen("ytb_Cookies.txt", "a");
 	}
@@ -623,8 +634,8 @@ int MediaDownloader() {
 			fprintf(Bilibili_Cookies, "##请将当前视频页面的Cookie导出粘贴到下面##\n\n");
 			fclose(Bilibili_Cookies);
 		}
-		printf("\n请在弹出窗口中导入视频站的Cookies信息以便获取高清视频，同一账号可以反复使用，保存完成后");
 		system("notepad Bilibili_Cookies.txt");
+		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
 		system("pause");
 		space = fopen("Bilibili_Cookies.txt", "a");
 	}
@@ -634,8 +645,8 @@ int MediaDownloader() {
 			fprintf(Media_Cookies, "##请将当前视频页面的Cookie导出粘贴到下面##\n\n");
 			fclose(Media_Cookies);
 		}
-		printf("\n请在弹出窗口中导入视频站的Cookies信息以便获取高清视频，同一账号可以反复使用，保存完成后");
 		system("notepad Media_Cookies.txt");
+		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
 		system("pause");
 		space = fopen("Media_Cookies.txt", "a");
 	}
@@ -649,6 +660,7 @@ int MediaDownloader() {
 }
 
 int downloadengine() {
+	FILE* Bilibili_Download;
 	int download_result1;
 	if (downloadmode == 1) {
 		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
@@ -661,7 +673,12 @@ int downloadengine() {
 			sprintf(cmd, "%s %s -c --cookies ytb_Cookies.txt -f bestvideo+bestaudio %s --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 1M\"", Downloader_Use, head,play_list, config_proxy, config_dir, config_url);
 		}
 		else if (config_media == 2) {
-			sprintf(cmd, "%s -c Bilibili_Cookies.txt -n 32 %s %s %s", Downloader_Use, play_list, config_dir, config_url);
+			Bilibili_Download = fopen("Bilibili_Download.bat", "w");
+			fprintf(Bilibili_Download, "TIMEOUT /T 3\n");
+			fprintf(Bilibili_Download, "%s -c Bilibili_Cookies.txt  %s %s %s -aria2\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(Bilibili_Download, "exit\n");
+			fclose(Bilibili_Download);
+			
 		}
 		else if (config_media == 3) {
 			sprintf(cmd, "%s %s -c %s %s --cookies Media_Cookies.txt %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 1M\"", Downloader_Use, head, play_list, config_proxy, config_dir, config_url);
@@ -701,8 +718,19 @@ int downloadengine() {
 		save = fopen("command.run", "w");
 		fprintf(save, "%s", cmd);
 		fclose(save);
+	}if (downloadmode == 3 && config_media == 2) {
+		printf("正在弹出窗口中建立本地下载任务监听进程，请不要手动关闭. . .\n");
+		system("start "" /min Bilibili_Download.bat");
+		printf("正在新建弹出窗口并发送下载任务. . .\n");
+		system("start aria2c --conf-path=Bilibili.conf");
+		printf("由于系统限制，下载进程无法自动停止，若弹出窗口一直显示complete，或需停止下载，");
+		system("pause");
+		system("taskkill /f /im aria2c.exe");
+		download_result1 = 0;
 	}
-	download_result1 = system(cmd);
+	else {
+		download_result1 = system(cmd);
+	}
 	if (download_result1 == 0) {
 		log_gen = fopen("log.txt", "a");
 		fprintf(log_gen, "命令执行：成功\n\n");
