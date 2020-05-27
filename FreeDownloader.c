@@ -190,17 +190,23 @@ int MagnetDownloader() {
 		dir();
 	}
 	threader();
-	if ((conf = fopen("bt.conf", "r")) != NULL) {
-		fclose(conf);
-		system("del bt.conf");
-	}
+	system("del bt.conf");
 	printf("\n正在更新traker服务器列表. . .\n");
 	p_5:tracker_update=system("aria2c -o bt.conf \"https://github.com/HXHGTS/FreeDownloader/raw/master/bt.conf\"");
 	if (tracker_update != 0) {
-		printf("\n列表更新失败，正在重试. . .\n");
-		goto p_5;
+		printf("\n列表更新失败，正在本地重建BT配置文件. . .\n");
+		conf = fopen("bt.conf", "w");
+		fprintf(conf, "continue=true\n");
+		fprintf(conf, "max-concurrent-downloads=1\n");
+		fprintf(conf, "max-connection-per-server=16\n");
+		fprintf(conf, "min-split-size=2M\n");
+		fprintf(conf, "split=16\n");;
+		fprintf(conf, "dir=Downloads/\n");
+		fclose(conf);
 	}
-	printf("\ntraker服务器列表更新成功！\n");
+	else {
+		printf("\ntraker服务器列表更新成功！\n");
+	}
 	printf("\n请在弹出窗口中修改BT配置文件,");
 	system("notepad bt.conf");
 	system("pause");
