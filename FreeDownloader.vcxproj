@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{49AA929A-F394-4327-9E96-5F22B6326990}</ProjectGuid>
-    <RootNamespace>标准下载器</RootNamespace>
+    <RootNamespace>FreeDownloader</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -125,13 +125,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="标准下载器.c" />
+    <ClCompile Include="FreeDownloader.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="标准下载器.rc" />
+    <ResourceCompile Include="FreeDownloader.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico" />
