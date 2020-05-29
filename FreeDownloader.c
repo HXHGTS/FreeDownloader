@@ -6,7 +6,7 @@ char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], cmd[1
 char reference[216], head[300], head_show[30];
 char location[200],split[7],torrent_loca[200],play_list[15];
 int mark,proxymode, download_result2,  shutdown, filecheck,use_list;
-FILE* log_gen,* conf,*save,*power_ini,*space,*dic,*Bilibili_conf;
+FILE* log_gen,* conf,*save,*power_ini,*space,*dic,*Media_conf;
 
 int CreateFolder() {
 	if (!access("Downloads", 0)) {
@@ -15,18 +15,18 @@ int CreateFolder() {
 	else {
 		system("mkdir Downloads");
 	}
-		Bilibili_conf = fopen("Bilibili.conf", "w");
-		fprintf(Bilibili_conf, "dir=Downloads\n");
-		fprintf(Bilibili_conf, "continue=true\n");
-		fprintf(Bilibili_conf, "max-concurrent-downloads=1\n");
-		fprintf(Bilibili_conf, "max-connection-per-server=16\n");
-		fprintf(Bilibili_conf, "min-split-size=2M\n");
-		fprintf(Bilibili_conf, "split=16\n");
-		fprintf(Bilibili_conf, "enable-rpc=true\n");
-		fprintf(Bilibili_conf, "rpc-allow-origin-all=true\n");
-		fprintf(Bilibili_conf, "rpc-listen-all=true\n");
-		fprintf(Bilibili_conf, "rpc-listen-port=6800\n\n");
-		fclose(Bilibili_conf);
+		Media_conf = fopen("Media.conf", "w");
+		fprintf(Media_conf, "dir=Downloads\n");
+		fprintf(Media_conf, "continue=true\n");
+		fprintf(Media_conf, "max-concurrent-downloads=1\n");
+		fprintf(Media_conf, "max-connection-per-server=16\n");
+		fprintf(Media_conf, "min-split-size=2M\n");
+		fprintf(Media_conf, "split=16\n");
+		fprintf(Media_conf, "enable-rpc=true\n");
+		fprintf(Media_conf, "rpc-allow-origin-all=true\n");
+		fprintf(Media_conf, "rpc-listen-all=true\n");
+		fprintf(Media_conf, "rpc-listen-port=6800\n\n");
+		fclose(Media_conf);
 		return 0;
 }
 int main() {
@@ -111,7 +111,7 @@ p_3:printf("------------------------------------------------\n");
 	}
 p_2:download_result2 = downloadengine();
 	if (download_result2 == 0) {
-		printf("-----------------------------------------------------\n");
+		printf("\n-----------------------------------------------------\n");
 		printf("----------------------下载成功!----------------------\n");
 		printf("-----------------------------------------------------\n");
 		AutoShutdown(shutdown);
@@ -124,7 +124,7 @@ p_2:download_result2 = downloadengine();
 		goto p_3;
 	}
 	else {
-		printf("-----------------------------------------------------\n");
+		printf("\n-----------------------------------------------------\n");
 		printf("----------------------下载失败!----------------------\n");
 		printf("-----------------------------------------------------\n");
 		system("Timeout /T 3");
@@ -239,45 +239,8 @@ int url() {
 		sprintf(config_url, "%s", "-i netdisk.download");
 	}
 	else if (downloadmode == 3) {
-		if (config_media == 1) {
-			if ((url = fopen("Youtube.download", "r")) == NULL) {
-				url = fopen("Youtube.download", "w");
-				fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
-				fclose(url);
-			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
-			system("notepad.exe Youtube.download");
-			system("pause");
-			sprintf(config_url, "%s", "-a Youtube.download");
-		}
-		else if (config_media == 2) {
-			if ((url = fopen("Bilibili.download", "r")) == NULL) {
-				url = fopen("Bilibili.download", "w");
-				fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
-				fclose(url);
-			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
-			system("notepad Bilibili.download");
-			system("pause");
-			url = fopen("space.download", "w");
-			fprintf(url, "%s", "\n");
-			fclose(url);
-			system("type Bilibili.download>>space.download");
-			system("type space.download>Bilibili.download");
-			system("del space.download");
-			sprintf(config_url,"-F Bilibili.download");
-		}
-		else {
-			if ((url = fopen("Media.download", "r")) == NULL) {
-				url = fopen("Media.download", "w");
-				fprintf(url, "%s", "\n##请在本行文字删除，并将下载地址粘贴在这里##\n");
-				fclose(url);
-			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
-			system("notepad.exe Media.download");
-			system("pause");
-			sprintf(config_url, "%s", "-a Media.download");
-		}
+			printf("\n请输入视频所在网页地址：");
+			scanf("%s", config_url);
 		}
 	else if (downloadmode == 4) {
 		if ((url = fopen("advance.download", "r")) == NULL) {
@@ -343,14 +306,13 @@ int threader() {
 	}
 	else if (downloadmode == 3) {
 		Download_Task = 1;//同时下载任务数
-		if (config_media != 2) {
-			sprintf(Downloader_Use, "%s", "youtube-dl.exe");
-			config_thread = 1;
+		if (config_media != 1) {
+			sprintf(Downloader_Use, "%s", "annie.exe");
 		}
 		else {
-			sprintf(Downloader_Use, "%s", "annie.exe");
-			config_thread = 16;
+			sprintf(Downloader_Use, "%s", "youtube-dl.exe");
 		}
+		config_thread = 16;
 	}
 	else if (downloadmode == 6) {
 		Download_Task = 1;//同时下载任务数
@@ -363,11 +325,11 @@ int threader() {
 
 int dir() {
 	if (downloadmode == 3) {
-		if (config_media != 2) {
-			sprintf(config_dir, "%s", "-o \"/Downloads/\%(title)s.\%(ext)s\"");
+		if (config_media != 1) {
+			sprintf(config_dir, "%s", "-o Downloads");
 		}
 		else {
-			sprintf(config_dir, "%s", "-o Downloads");
+			sprintf(config_dir, "%s", "-o \"/Downloads/\%%(title)s.\%%(ext)s\"");
 		}
 	}
 	else {
@@ -601,17 +563,17 @@ int AutoShutdown(int mode) {
 }
 
 int MediaDownloader() {
-	FILE* Bilibili_Cookies,*ytb_Cookies,* Media_Cookies;
-	printf("\n下载视频来源：\n\n1.Youtube\n\n2.B站（兼容番剧下载）\n\n3.其它下载模式1（适用音画合并的文件）\n\n4.其它下载模式2（适用音画分离的文件）\n\n请输入：");
+	FILE* Bilibili_Cookies,*ytb_Cookies,* QQVideo_Cookies,*iqiyi_Cookies,*Pornhub_Cookies;
+	printf("\n下载视频来源：\n\n1.Youtube\n\n2.B站（兼容番剧下载）\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.Pornhub\n\n请输入：");
 	scanf("%d", &config_media);
 	printf("\n是否下载整个列表内所有视频（是=1，否=0）：");
 	scanf("%d", &use_list);
-	if (config_media != 2) {
+	if (config_media == 1) {
 		if (use_list == 0) {
 			sprintf(play_list, "--no-playlist");
 		}
 		else {
-			sprintf(play_list, "");
+			sprintf(play_list, "--yes-playlist");
 		}
 	}
 	else {
@@ -622,7 +584,6 @@ int MediaDownloader() {
 			sprintf(play_list, "-p");
 		}
 	}
-	
 	if (config_media == 1) {
 		if ((ytb_Cookies = fopen("ytb_Cookies.txt", "r")) == NULL) {
 			ytb_Cookies = fopen("ytb_Cookies.txt", "w");
@@ -645,16 +606,38 @@ int MediaDownloader() {
 		system("pause");
 		space = fopen("Bilibili_Cookies.txt", "a");
 	}
-	else {
-		if ((Media_Cookies = fopen("Media_Cookies.txt", "r")) == NULL) {
-			Media_Cookies = fopen("Media_Cookies.txt", "w");
-			fprintf(Media_Cookies, "##请将当前视频页面的Cookie导出粘贴到下面##\n\n");
-			fclose(Media_Cookies);
+	else if (config_media == 3) {
+		if ((QQVideo_Cookies = fopen("QQVideo_Cookies.txt", "r")) == NULL) {
+			QQVideo_Cookies = fopen("QQVideo_Cookies.txt", "w");
+			fprintf(QQVideo_Cookies, "##请将当前视频页面的Cookie导出粘贴到下面##\n\n");
+			fclose(QQVideo_Cookies);
 		}
-		system("notepad Media_Cookies.txt");
+		system("notepad QQVideo_Cookies.txt");
 		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
 		system("pause");
-		space = fopen("Media_Cookies.txt", "a");
+		space = fopen("QQVideo_Cookies.txt", "a");
+	}
+	else if (config_media == 4) {
+		if ((iqiyi_Cookies = fopen("iqiyi_Cookies.txt", "r")) == NULL) {
+			iqiyi_Cookies = fopen("iqiyi_Cookies.txt", "w");
+			fprintf(iqiyi_Cookies, "##请将当前视频页面的Cookie导出粘贴到下面##\n\n");
+			fclose(iqiyi_Cookies);
+		}
+		system("notepad iqiyi_Cookies.txt");
+		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
+		system("pause");
+		space = fopen("iqiyi_Cookies.txt", "a");
+	}
+	else{
+		if ((Pornhub_Cookies = fopen("Pornhub_Cookies.txt", "r")) == NULL) {
+			Pornhub_Cookies = fopen("Pornhub_Cookies.txt", "w");
+			fprintf(Pornhub_Cookies, "##请将当前视频页面的Cookie导出粘贴到下面##\n\n");
+			fclose(Pornhub_Cookies);
+		}
+		system("notepad Pornhub_Cookies.txt");
+		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
+		system("pause");
+		space = fopen("Pornhub_Cookies.txt", "a");
 	}
 	fprintf(space, "\n\n");
 	fclose(space);
@@ -666,7 +649,7 @@ int MediaDownloader() {
 }
 
 int downloadengine() {
-	FILE* Bilibili_Download;
+	FILE* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Pornhub_Download;
 	int download_result1;
 	if (downloadmode == 1) {
 		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
@@ -676,21 +659,42 @@ int downloadengine() {
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
-			sprintf(cmd, "%s %s -c --cookies ytb_Cookies.txt -f bestvideo+bestaudio %s --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 1M\"", Downloader_Use, head,play_list, config_proxy, config_dir, config_url);
+			ytb_Download = fopen("ytb_Download.bat", "w");
+			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs --cookies ytb_Cookies.txt %s %s \"%s\" --external-downloader aria2c --external-downloader-args \"-x 16 -k 2M\"\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(ytb_Download, "exit\n");
+			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
 			Bilibili_Download = fopen("Bilibili_Download.bat", "w");
-			fprintf(Bilibili_Download, "TIMEOUT /T 3\n");
-			fprintf(Bilibili_Download, "%s -c Bilibili_Cookies.txt  %s %s %s -aria2\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(Bilibili_Download, "TIMEOUT /T 5\n");
+			fprintf(Bilibili_Download, "%s -c Bilibili_Cookies.txt %s %s -aria2 \"%s\"\n", Downloader_Use, play_list, config_dir, config_url);
 			fprintf(Bilibili_Download, "exit\n");
 			fclose(Bilibili_Download);
 			
 		}
 		else if (config_media == 3) {
-			sprintf(cmd, "%s %s -c %s %s --cookies Media_Cookies.txt %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 1M\"", Downloader_Use, head, play_list, config_proxy, config_dir, config_url);
+			QQVideo_Download = fopen("QQVideo_Download.bat", "w");
+			fprintf(QQVideo_Download, "TIMEOUT /T 5\n");
+			fprintf(QQVideo_Download, "%s -c QQVideo_Cookies.txt %s %s -aria2 \"%s\"\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(QQVideo_Download, "exit\n");
+			fclose(QQVideo_Download);
+
+		}
+		else if (config_media == 4) {
+			iqiyi_Download = fopen("iqiyi_Download.bat", "w");
+			fprintf(iqiyi_Download, "TIMEOUT /T 5\n");
+			fprintf(iqiyi_Download, "%s -c iqiyi_Cookies.txt %s %s -aria2 \"%s\"\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(iqiyi_Download, "exit\n");
+			fclose(iqiyi_Download);
+
 		}
 		else {
-			sprintf(cmd, "%s %s -c --cookies Media_Cookies.txt -f bestvideo+bestaudio %s --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 1M\"", Downloader_Use, head, play_list, config_proxy, config_dir, config_url);
+			Pornhub_Download = fopen("Pornhub_Download.bat", "w");
+			fprintf(Pornhub_Download, "TIMEOUT /T 5\n");
+			fprintf(Pornhub_Download, "%s -c Pornhub_Cookies.txt %s %s -aria2 \"%s\"\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(Pornhub_Download, "exit\n");
+			fclose(Pornhub_Download);
+
 		}
 	}
 	else if (downloadmode == 4) {
@@ -724,14 +728,50 @@ int downloadengine() {
 		save = fopen("command.run", "w");
 		fprintf(save, "%s", cmd);
 		fclose(save);
-	}if (downloadmode == 3 && config_media == 2) {
-		printf("正在弹出窗口中建立本地下载任务监听进程，请不要手动关闭. . .\n");
-		system("start "" /min Bilibili_Download.bat");
-		printf("正在新建弹出窗口并发送下载任务. . .\n");
-		system("start aria2c --conf-path=Bilibili.conf");
-		printf("由于系统限制，下载进程无法自动停止，若弹出窗口一直显示complete，或需停止下载，");
-		system("pause");
-		system("taskkill /f /im aria2c.exe");
+	}
+	if (downloadmode == 3) {
+		if (config_media != 1) {
+			printf("正在弹出窗口中建立本地下载任务监听进程，请不要手动关闭. . .\n");
+		}
+		else {
+			printf("正在执行下载任务. . .\n\n");
+		}
+		if (config_media == 1) {
+			system("ytb_Download.bat");
+		}
+		else if (config_media == 2) {
+			system("start "" /min Bilibili_Download.bat");
+		}
+		else if (config_media == 3) {
+			system("start "" /min QQVideo_Download.bat");
+		}
+		else if (config_media == 4) {
+			system("start "" /min iqiyi_Download.bat");
+		}
+		else {
+			system("start "" /min Pornhub_Download.bat");
+		}
+		if (config_media != 1) {
+			printf("\n正在新建弹出窗口并发送下载任务. . .\n");
+			system("start aria2c --conf-path=Media.conf");
+			printf("\n由于系统限制，下载进程无法自动停止，若弹出窗口一直显示complete，或需停止下载，");
+			system("pause");
+			printf("\n\n");
+			system("taskkill /f /im aria2c.exe");
+			if (config_media == 2) {
+				system("del Bilibili_Download.bat");
+			}
+			else if (config_media == 3) {
+				system("del QQVideo_Download.bat");
+			}
+			else if (config_media == 4) {
+				system("del iqiyi_Download.bat");
+			}
+			else {
+				system("del Pornhub_Download.bat");
+			}
+		}
+		
 		download_result1 = 0;
 	}
 	else {
