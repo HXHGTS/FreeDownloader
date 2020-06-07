@@ -38,7 +38,7 @@ int main() {
 p_3:printf("------------------------------------------------\n");
 	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
-	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘下载\n3.视频下载模式\n4.高级下载模式（自定义下载）\n5.导入下载模式\n6.磁力链下载模式（实验性）\n7.继续上一次的下载\n8.文件完整性测试\n9.Github上的软件帮助\n0.打开下载文件夹\n");
+	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘下载\n3.视频下载模式\n4.高级下载模式\n5.导入下载模式\n6.磁力链下载模式（实验性）\n7.文件完整性测试\n8.Github上的软件帮助\n9.打开下载文件夹\n0.退出\n");
 	printf("------------------------------------------------\n");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
@@ -72,35 +72,18 @@ p_3:printf("------------------------------------------------\n");
 		MagnetDownloader();
 	}
 	else if (downloadmode == 7) {
-		if ((save = fopen("command.run", "r")) != NULL) {
-			printf("正在进行上一次的下载. . .\n");
-			system("copy /y command.run run.bat");
-			system("run.bat");
-			system("del run.bat");
-			system("pause");
-			system("cls");
-			goto p_3;
-		}
-		{
-			printf("找不到上一次的下载. . .\n");
-			system("pause");
-			system("cls");
-			goto p_3;
-		}
-	}
-	else if (downloadmode == 8) {
 		IsCheckSum = 1;
 		CheckSum(IsCheckSum);
 		system("cls");
 		goto p_3;
 	}
-	else if (downloadmode == 9) {
+	else if (downloadmode == 8) {
 		printf("正在打开帮助界面. . .\n");
 		system("explorer.exe \"https://hxhgts.github.io/FreeDownloader/\"");
 		system("cls");
 		goto p_3;
 	}
-	else if (downloadmode == 0) {
+	else if (downloadmode == 9) {
 		system("explorer.exe Downloads");
 		system("cls");
 		goto p_3;
@@ -298,13 +281,13 @@ int url() {
 		sprintf(config_url, "%s", "-i advance.download");
 	}
 	else if (downloadmode == 5) {
-		if ((url = fopen("command.run", "r")) == NULL) {
-			url = fopen("command.run", "w");
-			fprintf(url, "%s", "\n%请将下载地址粘贴在本行下方%\n");
+		if ((url = fopen("Export.bat", "r")) == NULL) {
+			url = fopen("Export.bat", "w");
+			fprintf(url, "%s", "%Input command below,only support aria2c%\n");
 			fclose(url);
 		}
 		printf("\n请在弹出页输入下载地址. . .\n\n");
-		system("notepad.exe command.run");
+		system("notepad.exe Export.bat");
 	}
 	else if (downloadmode == 6) {
 		if (magnet_mode == 2) {
@@ -731,7 +714,7 @@ int downloadengine() {
 		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s %s %s", Downloader_Use, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 5) {
-		sprintf(cmd, "%s","command.run");
+		sprintf(cmd, "%s","Export.bat");
 	}
 	else if (downloadmode == 6) {
 		if (magnet_mode == 2) {
@@ -754,11 +737,6 @@ int downloadengine() {
 	log_gen = fopen("log.txt","a");
 	fprintf(log_gen,"用户执行了如下命令：\n%s\n", cmd);
 	fclose(log_gen);
-	if (downloadmode != 5) {
-		save = fopen("command.run", "w");
-		fprintf(save, "%s", cmd);
-		fclose(save);
-	}
 	if (downloadmode == 3) {
 		if (config_media != 1) {
 			printf("正在弹出窗口中建立本地下载任务监听进程，请不要手动关闭. . .\n");
