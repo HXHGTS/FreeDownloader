@@ -201,7 +201,7 @@ int url() {
 	if (downloadmode == 1) {
 		if ((url = fopen("normal.download", "r"))==NULL) {
 			url = fopen("normal.download", "w");
-			fprintf(url, "%s", "## Input URL below##\n");
+			fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 			fclose(url);
 		}
 		printf("\n请在弹出页输入下载地址. . .\n\n");
@@ -211,7 +211,7 @@ int url() {
 	else if (downloadmode == 2) {
 		if ((url = fopen("netdisk.download", "r")) == NULL) {
 			url = fopen("netdisk.download", "w");
-			fprintf(url, "%s", "## Input URL below##\n");
+			fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 			fclose(url);
 		}
 		printf("\n请在弹出页输入下载地址. . .\n\n");
@@ -222,7 +222,7 @@ int url() {
 		if (config_media == 1) {
 			if ((url = fopen("ytb.download", "r")) == NULL) {
 				url = fopen("ytb.download", "w");
-				fprintf(url, "%s", "## Input URL below##\n");
+				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
 			printf("\n请在弹出页输入下载地址. . .\n\n");
@@ -232,7 +232,7 @@ int url() {
 		else if (config_media == 2) {
 			if ((url = fopen("Bilibili.download", "r")) == NULL) {
 				url = fopen("Bilibili.download", "w");
-				fprintf(url, "%s", "## Input URL below##\n");
+				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
 			printf("\n请在弹出页输入下载地址. . .\n\n");
@@ -242,7 +242,7 @@ int url() {
 		else if (config_media == 3) {
 			if ((url = fopen("QQVideo.download", "r")) == NULL) {
 				url = fopen("QQVideo.download", "w");
-				fprintf(url, "%s", "## Input URL below##\n");
+				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
 			printf("\n请在弹出页输入下载地址. . .\n\n");
@@ -252,7 +252,7 @@ int url() {
 		else if (config_media == 4) {
 			if ((url = fopen("iqiyi.download", "r")) == NULL) {
 				url = fopen("iqiyi.download", "w");
-				fprintf(url, "%s", "## Input URL below##\n");
+				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
 			printf("\n请在弹出页输入下载地址. . .\n\n");
@@ -262,7 +262,7 @@ int url() {
 		else {
 			if ((url = fopen("Pornhub.download", "r")) == NULL) {
 				url = fopen("Pornhub.download", "w");
-				fprintf(url, "%s", "## Input URL below##\n");
+				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
 			printf("\n请在弹出页输入下载地址. . .\n\n");
@@ -273,7 +273,7 @@ int url() {
 	else if (downloadmode == 4) {
 		if ((url = fopen("advance.download", "r")) == NULL) {
 			url = fopen("advance.download", "w");
-			fprintf(url, "%s", "## Input URL below##\n");
+			fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 			fclose(url);
 		}
 		printf("\n请在弹出页输入下载地址. . .\n\n");
@@ -293,7 +293,7 @@ int url() {
 		if (magnet_mode == 2) {
 			if ((url = fopen("magnet.download", "r")) == NULL) {
 				url = fopen("magnet.download", "w");
-				fprintf(url, "%s", "## Input URL below##\n");
+				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
 			printf("\n请在弹出页输入下载地址. . .\n\n");
@@ -589,11 +589,12 @@ int AutoShutdown(int mode) {
 
 int MediaDownloader() {
 	FILE* Bilibili_Cookies,*ytb_Cookies,* QQVideo_Cookies,*iqiyi_Cookies,*Pornhub_Cookies;
+	int StartAt,EndAt;
 	printf("\n下载视频来源：\n\n1.Youtube\n\n2.B站（兼容番剧下载）\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.Pornhub\n\n请输入：");
 	scanf("%d", &config_media);
-	printf("\n是否下载整个列表内所有视频（是=1，否=0）：");
-	scanf("%d", &use_list);
 	if (config_media == 1) {
+		printf("\n是否下载整个列表内所有视频（是=1，否=0）：");
+		scanf("%d", &use_list);
 		if (use_list == 0) {
 			sprintf(play_list, "--no-playlist");
 		}
@@ -602,11 +603,18 @@ int MediaDownloader() {
 		}
 	}
 	else {
+		printf("\n是否下载整个列表内所有视频（是=1，只下载当前视频=0，选择集数=3）：");
+		scanf("%d", &use_list);
 		if (use_list == 0) {
 			sprintf(play_list, "");
 		}
-		else {
+		else if (use_list == 1) {
 			sprintf(play_list, "-p");
+		}
+		else {
+			printf("\n请按照开始集数-结束集数的格式输入下载范围，如1-5：");
+			scanf("%d-%d", &StartAt,&EndAt);
+			sprintf(play_list, "-p -items %d-%d",StartAt,EndAt);
 		}
 	}
 	if (config_media == 1) {
