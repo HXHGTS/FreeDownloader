@@ -673,7 +673,6 @@ int downloadengine() {
 		}
 		else if (config_media == 2) {
 			Bilibili_Download = fopen("Bilibili_Download.bat", "w");
-			fprintf(Bilibili_Download, "TIMEOUT /T 3\n");
 			fprintf(Bilibili_Download, "%s -c Bilibili_Cookies.txt %s %s -aria2 %s\n", Downloader_Use, play_list, config_dir, config_url);
 			fprintf(Bilibili_Download, "exit\n");
 			fclose(Bilibili_Download);
@@ -681,7 +680,6 @@ int downloadengine() {
 		}
 		else if (config_media == 3) {
 			QQVideo_Download = fopen("QQVideo_Download.bat", "w");
-			fprintf(QQVideo_Download, "TIMEOUT /T 3\n");
 			fprintf(QQVideo_Download, "%s -c QQVideo_Cookies.txt %s %s -aria2 %s\n", Downloader_Use, play_list, config_dir, config_url);
 			fprintf(QQVideo_Download, "exit\n");
 			fclose(QQVideo_Download);
@@ -689,7 +687,6 @@ int downloadengine() {
 		}
 		else if (config_media == 4) {
 			iqiyi_Download = fopen("iqiyi_Download.bat", "w");
-			fprintf(iqiyi_Download, "TIMEOUT /T 3\n");
 			fprintf(iqiyi_Download, "%s -c iqiyi_Cookies.txt %s %s -aria2 %s\n", Downloader_Use, play_list, config_dir, config_url);
 			fprintf(iqiyi_Download, "exit\n");
 			fclose(iqiyi_Download);
@@ -697,7 +694,6 @@ int downloadengine() {
 		}
 		else {
 			Pornhub_Download = fopen("Pornhub_Download.bat", "w");
-			fprintf(Pornhub_Download, "TIMEOUT /T 3\n");
 			fprintf(Pornhub_Download, "%s -c Pornhub_Cookies.txt %s %s -aria2 %s\n", Downloader_Use, play_list, config_dir, config_url);
 			fprintf(Pornhub_Download, "exit\n");
 			fclose(Pornhub_Download);
@@ -738,7 +734,10 @@ int downloadengine() {
 		if (config_media == 1) {
 			system("ytb_Download.bat");
 		}
-		else if (config_media == 2) {
+		if (config_media != 1) {
+			printf("\n正在新建弹出窗口并发送下载任务. . .\n");
+			system("start aria2c --conf-path=Media.conf");
+		if (config_media == 2) {
 			system("start "" /min Bilibili_Download.bat");
 		}
 		else if (config_media == 3) {
@@ -750,9 +749,6 @@ int downloadengine() {
 		else {
 			system("start "" /min Pornhub_Download.bat");
 		}
-		if (config_media != 1) {
-			printf("\n正在新建弹出窗口并发送下载任务. . .\n");
-			system("start aria2c --conf-path=Media.conf");
 			printf("\n由于系统限制，下载进程无法自动停止，若弹出窗口一直显示complete，或需停止下载，");
 			system("pause");
 			printf("\n\n");
