@@ -6,7 +6,7 @@ char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], cmd[1
 char reference[216], head[300], head_show[30];
 char location[200],split[7],torrent_loca[200],play_list[15];
 int mark,proxymode, download_result2,  shutdown, filecheck,use_list;
-FILE* log_gen,* conf,*save,*power_ini,*space,*dic,*Media_conf;
+FILE* * conf,*save,*power_ini,*space,*dic,*Media_conf;
 
 int CreateFolder() {
 	if (!access("Downloads", 0)) {
@@ -111,18 +111,12 @@ p_2:download_result2 = downloadengine();
 		printf("-----------------------------------------------------\n");
 		system("Timeout /T 3");
 		if (downloadmode == 1 || downloadmode == 3 || downloadmode == 4 || downloadmode == 5 || downloadmode == 6) {
-			log_gen = fopen("log.txt", "a");
-			fprintf(log_gen, "由于下载失败，软件默认自动重试\n");
-			fclose(log_gen);
 			system("cls");
 			goto p_2;
 		}
 		else {
 			if (mark != 3 && Auto_ChangeUA != 0) {
 				sprintf(reference, "%s", "--referer=\"http://pan.baidu.com/disk/home\"");
-				log_gen = fopen("log.txt", "a");
-				fprintf(log_gen, "由于下载失败，软件默认采用了更换UserAgent的操作，并自动重试\n");
-				fclose(log_gen);
 				mark = 3;
 				sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.8.9.1;PC;PC-Windows;10.0.18363;WindowsBaiduYunGuanJia");//百度网盘
 				sprintf(head_show, "%s", "百度网盘（兼容模式）");
@@ -133,9 +127,6 @@ p_2:download_result2 = downloadengine();
 				goto p_2;
 			}
 			else {
-				log_gen = fopen("log.txt", "a");
-				fprintf(log_gen, "由于下载失败，软件默认自动重试\n");
-				fclose(log_gen);
 				if (mark != 3)config_thread = 5;
 				else config_thread = 3;
 				if (mark != 3)sprintf(split, "1M");
@@ -742,9 +733,6 @@ int downloadengine() {
 	printf("-----------------------------------------------------\n");
 	printf("下载正在执行，希望中断下载建议按Ctrl+C以正常退出. . .\n");
 	printf("-----------------------------------------------------\n");
-	log_gen = fopen("log.txt","a");
-	fprintf(log_gen,"用户执行了如下命令：\n%s\n", cmd);
-	fclose(log_gen);
 	if (downloadmode == 3) {
 		if (config_media != 1) {
 			printf("正在弹出窗口中建立本地下载任务监听进程，请不要手动关闭. . .\n");
@@ -774,18 +762,7 @@ int downloadengine() {
 			system("pause");
 			printf("\n\n");
 			system("taskkill /f /im aria2c.exe");
-			if (config_media == 2) {
-				system("del Bilibili_Download.bat");
-			}
-			else if (config_media == 3) {
-				system("del QQVideo_Download.bat");
-			}
-			else if (config_media == 4) {
-				system("del iqiyi_Download.bat");
-			}
-			else {
-				system("del Pornhub_Download.bat");
-			}
+			system("del /f /s /q *.bat");
 		}
 		
 		download_result1 = 0;
@@ -794,15 +771,9 @@ int downloadengine() {
 		download_result1 = system(cmd);
 	}
 	if (download_result1 == 0) {
-		log_gen = fopen("log.txt", "a");
-		fprintf(log_gen, "命令执行：成功\n\n");
-		fclose(log_gen);
 		return 0;
 	}
 	else {
-		log_gen = fopen("log.txt", "a");
-		fprintf(log_gen, "命令执行：失败\n");
-		fclose(log_gen);
 		return 1;
 	}
 }
