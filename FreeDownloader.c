@@ -140,17 +140,54 @@ int ExportDownloader() {
 
 int MagnetDownloader() {
 	int tracker_update;
-	tracker_update = 0;
-	printf("\n请选择下载模式：\n1.种子文件导入\n2.输入磁力链\n请输入：");
+	printf("请选择下载模式：\n\n1.种子文件导入\n\n2.输入磁力链\n\n请输入：");
 	scanf("%d", &magnet_mode);
 	if (magnet_mode == 2) {
 		dir();
 	}
 	threader();
-	printf("\n正在更新tracker服务器. . .\n\n");
-	system("del best_aria2.txt");
-	if (system("aria2c -x16 https://trackerslist.com/best_aria2.txt") != 0) {
-		printf("\n更新失败，正在本地建立BT配置文件. . .\n");
+	printf("\n是否联网更新tracker：\n\n1.是\n\n0.否\n\n请输入：");
+	scanf("%d", &tracker_update);
+	if (tracker_update == 1) {
+		printf("\n正在更新tracker服务器. . .\n\n");
+		system("del all_aria2.txt");
+		if (system("aria2c -x16 https://trackerslist.com/all_aria2.txt") != 0) {
+			printf("\n更新失败，正在本地建立BT配置文件. . .\n");
+			if ((conf = fopen("bt.conf", "r")) == NULL) {
+				conf = fopen("bt.conf", "w");
+				fprintf(conf, "##bt-tracker=server1,server2,server3\n");
+				fprintf(conf, "continue=true\n");
+				fprintf(conf, "max-concurrent-downloads=1\n");
+				fprintf(conf, "max-connection-per-server=16\n");
+				fprintf(conf, "min-split-size=2M\n");
+				fprintf(conf, "split=16\n");;
+				fprintf(conf, "dir=Downloads/\n");
+				fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
+				fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
+				fclose(conf);
+			}
+		}
+		else {
+			printf("\n更新成功，正在本地建立BT配置文件. . .\n");
+			conf = fopen("bt.conf", "w");
+			fprintf(conf, "bt-tracker=");
+			fclose(conf);
+			system("type all_aria2.txt>>bt.conf");
+			system("del all_aria2.txt");
+			conf = fopen("bt.conf", "a");
+			fprintf(conf, "\ncontinue=true\n");
+			fprintf(conf, "max-concurrent-downloads=1\n");
+			fprintf(conf, "max-connection-per-server=16\n");
+			fprintf(conf, "min-split-size=2M\n");
+			fprintf(conf, "split=16\n");;
+			fprintf(conf, "dir=Downloads/\n");
+			fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
+			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
+			fclose(conf);
+		}
+	}
+	else {
+		printf("\n正在本地建立BT配置文件. . .\n");
 		if ((conf = fopen("bt.conf", "r")) == NULL) {
 			conf = fopen("bt.conf", "w");
 			fprintf(conf, "##bt-tracker=server1,server2,server3\n");
@@ -164,24 +201,6 @@ int MagnetDownloader() {
 			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
 			fclose(conf);
 		}
-	}
-	else {
-		printf("\n更新成功，正在本地建立BT配置文件. . .\n");
-			conf = fopen("bt.conf", "w");
-			fprintf(conf, "bt-tracker=");
-			fclose(conf);
-			system("type best_aria2.txt>>bt.conf");
-			system("del best_aria2.txt");
-			conf = fopen("bt.conf", "a");
-			fprintf(conf, "\ncontinue=true\n");
-			fprintf(conf, "max-concurrent-downloads=1\n");
-			fprintf(conf, "max-connection-per-server=16\n");
-			fprintf(conf, "min-split-size=2M\n");
-			fprintf(conf, "split=16\n");;
-			fprintf(conf, "dir=Downloads/\n");
-			fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
-			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
-			fclose(conf);
 	}
 	printf("\n请在弹出窗口中修改BT配置文件,");
 	system("notepad bt.conf");
