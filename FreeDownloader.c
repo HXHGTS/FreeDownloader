@@ -443,28 +443,28 @@ int BroswerMark() {
 	}
 	else if(downloadmode==2){
 		printf("\n应用id请尝试250528或778750，下载失败请切换UA或应用id！\n");
-		printf("\n请选择浏览器标识：\n1.爱奇艺（速度最快，有的文件会报错）\n2.百度网盘客户端（兼容模式，速度慢）\n请输入：");
+		printf("\n请选择浏览器标识：\n1.爱奇艺\n2.百度网盘客户端\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 5.0; SM-N9100 Build/LRX21V) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/37.0.0.0 Mobile Safari/537.36 NetType/WIFI Amoeba/1.0");//爱奇艺
-			sprintf(head_show, "%s", "爱奇艺（急速模式）");
+			sprintf(head_show, "%s", "爱奇艺");
 		}
 		else if (mark == 2) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.9.7.4;PC;PC-Windows;10.0.18363;WindowsBaiduYunGuanJia");//百度网盘
-			sprintf(head_show, "%s", "百度网盘（兼容模式）");
+			sprintf(head_show, "%s", "百度网盘客户端");
 		}
 		else {
 			mark = 2;
 			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.9.7.4;PC;PC-Windows;10.0.18363;WindowsBaiduYunGuanJia");//百度网盘
-			sprintf(head_show, "%s", "百度网盘（兼容模式）");
+			sprintf(head_show, "%s", "百度网盘客户端");
 		}
 	}
 	else if(downloadmode==1){
-		printf("\n请选择浏览器标识：\n1.IE浏览器（增强模式）\n2.Windows版Chrome\n3.IE浏览器（兼容模式）\n4.自定义UserAgent\n请输入：");
+		printf("\n请选择浏览器标识：\n1.IE浏览器（新版）\n2.Windows版Chrome\n3.IE浏览器（旧版）\n4.自定义UserAgent\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");//IE浏览器（增强模式）
-			sprintf(head_show, "IE浏览器（增强模式）");
+			sprintf(head_show, "IE浏览器（新版）");
 		}
 		else if (mark == 2) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");//Windows版Chrome
@@ -472,7 +472,7 @@ int BroswerMark() {
 		}
 		else if (mark == 3) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729)");//IE浏览器（兼容模式）
-			sprintf(head_show, "IE浏览器（兼容模式）");
+			sprintf(head_show, "IE浏览器（旧版）");
 		}
 		else if (mark == 4) {
 			printf("\n请输入UserAgent的值：\n");
@@ -487,11 +487,11 @@ int BroswerMark() {
 		}
 	}
 	else if (downloadmode == 4) {
-		printf("\n请选择浏览器标识：\n1.IE浏览器（增强模式）\n2.Windows版Chrome\n3.IE浏览器（兼容模式）\n4.自定义UserAgent\n请输入：");
+		printf("\n请选择浏览器标识：\n1.IE浏览器（新版）\n2.Windows版Chrome\n3.IE浏览器（旧版）\n4.自定义UserAgent\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");//IE浏览器（增强模式）
-			sprintf(head_show, "IE浏览器（增强模式）");
+			sprintf(head_show, "IE浏览器（新版）");
 		}
 		else if (mark == 2) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");//Windows版Chrome
@@ -499,7 +499,7 @@ int BroswerMark() {
 		}
 		else if (mark == 3) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729)");//IE浏览器（兼容模式）
-			sprintf(head_show, "IE浏览器（兼容模式）");
+			sprintf(head_show, "IE浏览器（旧版）");
 		}
 		else if (mark == 4) {
 			printf("\n请输入UserAgent的值：\n");
@@ -622,7 +622,7 @@ int MediaDownloader() {
 	printf("\n下载音视频来源：\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.斗鱼\n\n6.音悦台\n\n7.网易云音乐\n\n请输入：");
 	scanf("%d", &config_media);
 	if (config_media == 1) {
-		printf("\n是否下载整个列表内所有音视频（是=1，否=0）：");
+		printf("\n下载整个列表内所有音视频？\n\n1.是\n\n0.否\n\n请输入：");
 		scanf("%d", &use_list);
 		if (use_list == 0) {
 			sprintf(play_list, "--no-playlist");
@@ -632,9 +632,9 @@ int MediaDownloader() {
 		}
 	}
 	else {
-		printf("\n是否下载整个列表内所有音视频（是=1，只下载当前视频=0，选择集数=3）：");
+		printf("\n下载整个列表内所有音视频（仅对部分网站有效）？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
 		scanf("%d", &use_list);
-		if (use_list == 0) {
+		if (use_list == 2) {
 			sprintf(play_list, "");
 		}
 		else if (use_list == 1) {
