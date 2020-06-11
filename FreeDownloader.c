@@ -150,8 +150,8 @@ int MagnetDownloader() {
 	scanf("%d", &tracker_update);
 	if (tracker_update == 1) {
 		printf("\n正在更新tracker服务器. . .\n\n");
-		system("del all_aria2.txt");
-		if (system("aria2c -x16 https://trackerslist.com/all_aria2.txt") != 0) {
+		system("del best_aria2.txt");
+		if (system("aria2c -x16 https://trackerslist.com/best_aria2.txt") != 0) {
 			printf("\n更新失败，正在本地建立BT配置文件. . .\n");
 			if ((conf = fopen("bt.conf", "r")) == NULL) {
 				conf = fopen("bt.conf", "w");
@@ -172,8 +172,8 @@ int MagnetDownloader() {
 			conf = fopen("bt.conf", "w");
 			fprintf(conf, "bt-tracker=");
 			fclose(conf);
-			system("type all_aria2.txt>>bt.conf");
-			system("del all_aria2.txt");
+			system("type best_aria2.txt>>bt.conf");
+			system("del best_aria2.txt");
 			conf = fopen("bt.conf", "a");
 			fprintf(conf, "\ncontinue=true\n");
 			fprintf(conf, "max-concurrent-downloads=1\n");
