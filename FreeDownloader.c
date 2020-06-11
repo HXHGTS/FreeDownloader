@@ -354,14 +354,8 @@ int threader() {
 	else if (downloadmode == 2) {
 		Download_Task = 1;//同时下载任务数
 		sprintf(Downloader_Use, "%s", "aria2c.exe");
-		if (mark == 2) {
 			config_thread = 1;
 			sprintf(split, "1M");
-		}
-		else {
-			config_thread = 16;
-			sprintf(split, "2M");
-		}
 	}
 	else if (downloadmode == 3) {
 		Download_Task = 1;//同时下载任务数
