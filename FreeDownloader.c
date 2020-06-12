@@ -6,14 +6,15 @@ char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], cmd[1
 char reference[216], head[300], head_show[30];
 char location[200],split[7],torrent_loca[200],play_list[15];
 int mark,proxymode, download_result2,  shutdown, filecheck,use_list;
-FILE* * conf,*save,*power_ini,*dic,*Media_conf;
+FILE* * conf,*save,*power_ini,*dic,*Media_conf,*dir_mark;
 
 int CreateFolder() {
-	if (!access("Downloads", 0)) {
-
-	}
-	else {
+	if ((dir_mark = fopen("Downloads\\dir.md", "r")) == NULL){
 		system("mkdir Downloads");
+		dir_mark = fopen("Downloads\\dir.md", "w");
+		fprintf(dir_mark, "##本文件由FreeDownloader自动创建，请不要删除或移动本文件##");
+		fclose(dir_mark);
+		system("cls");
 	}
 		Media_conf = fopen("Media.conf", "w");
 		fprintf(Media_conf, "dir=Downloads\n");
@@ -44,9 +45,8 @@ p_3:printf("------------------------------------------------\n");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
 	system("cls");
-	proxyswitcher();
 	if ((power_ini = fopen("power.ini", "r")) == NULL) {
-		if (downloadmode != 8 && downloadmode != 9 && downloadmode != 0) {
+		if (downloadmode != 7 && downloadmode != 8 && downloadmode != 9 && downloadmode != 0) {
 			printf("\n是否设置下载完成自动关机（是=1，否=0）：");
 			scanf("%d", &shutdown);
 		}
@@ -98,11 +98,9 @@ p_2:download_result2 = downloadengine();
 		printf("----------------------下载成功!----------------------\n");
 		printf("-----------------------------------------------------\n");
 		AutoShutdown(shutdown);
-		printf("\n正在打开下载文件夹. . .\n");
 		if (downloadmode == 2) {
 			printf("百度网盘下载的文件名称可能会有乱码，改为正确名称即可正常使用！\n");
 		}
-		system("explorer.exe Downloads");
 		system("cls");
 		goto p_3;
 	}
@@ -126,6 +124,7 @@ int NormalDownloader() {
 	url();
 	dir();
 	threader();
+	proxyswitcher();
 	BroswerMark();
 }
 
@@ -134,6 +133,7 @@ int ExportDownloader() {
 	config_thread = 1;
 	sprintf(Downloader_Use, "%s", "aria2c.exe");
 	sprintf(head_show, "%s", "用户自定义");
+	proxyswitcher();
 	downloadengine();
 	return 0;
 }
@@ -181,8 +181,8 @@ int MagnetDownloader() {
 			fprintf(conf, "min-split-size=2M\n");
 			fprintf(conf, "split=16\n");;
 			fprintf(conf, "dir=Downloads/\n");
-			fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
-			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
+			fprintf(conf, "user-agent=BitComet v1.67\n");
+			fprintf(conf, "peer-agent=BitComet v1.67\n");
 			fclose(conf);
 		}
 	}
@@ -197,8 +197,8 @@ int MagnetDownloader() {
 			fprintf(conf, "min-split-size=2M\n");
 			fprintf(conf, "split=16\n");;
 			fprintf(conf, "dir=Downloads/\n");
-			fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
-			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
+			fprintf(conf, "user-agent=BitComet v1.67\n");
+			fprintf(conf, "peer-agent=BitComet v1.67\n");
 			fclose(conf);
 		}
 	}
@@ -206,6 +206,7 @@ int MagnetDownloader() {
 	system("notepad bt.conf");
 	system("pause");
 	BroswerMark();
+	proxyswitcher();
 	url();
 	return 0;
 }
@@ -398,7 +399,7 @@ int proxyswitcher() {
 	char proxy[50];
 	FILE* proxy_ini;
 	if ((fopen("proxy.ini", "r")) != NULL) {
-		sprintf(config_proxy, "%s", " ");
+		sprintf(config_proxy, "%s", "");
 	}
 	else {
 		if (downloadmode == 1 || downloadmode == 2 || downloadmode == 3 || downloadmode == 4 || downloadmode == 6) {
@@ -407,7 +408,7 @@ int proxyswitcher() {
 		}
 		if (downloadmode != 3) {
 			if (proxymode == 0) {
-				sprintf(config_proxy, "%s", " ");
+				sprintf(config_proxy, "%s", "");
 			}
 			else {
 				printf("\n请输入代理参数，如http://127.0.0.1:1080：");
@@ -417,12 +418,17 @@ int proxyswitcher() {
 		}
 		else {
 			if (proxymode == 0) {
-				sprintf(config_proxy, "%s", " ");
+				sprintf(config_proxy, "%s", "");
 			}
 			else {
 				printf("\n请输入代理参数，如http://127.0.0.1:1080：");
 				scanf("%s", proxy);
-				sprintf(config_proxy, "--proxy %s", proxy);
+				if (config_media == 1) {
+					sprintf(config_proxy, "--proxy %s", proxy);
+				}
+				else {
+					sprintf(config_proxy, "set HTTP_PROXY=\"%s/\" &", proxy);
+				}
 			}
 		}
 	}
@@ -539,6 +545,7 @@ int AdvanceDownloader() {
 	sprintf(config_cookie, "--load-cookies=\"Cookies.txt\"");
 	url();
 	dir();
+	proxyswitcher();
 	threader();
 	return 0;
 }
@@ -572,6 +579,7 @@ int Netdisk() {
 	sprintf(config_cookie, "--load-cookies=\"Netdisk_Cookies.txt\"");
 	url();
 	dir();
+	proxyswitcher();
 	threader();
 	return 0;
 }
@@ -706,6 +714,7 @@ int MediaDownloader() {
 	url();
 	threader();
 	dir();
+	proxyswitcher();
 	BroswerMark();
 	return 0;
 }
@@ -728,40 +737,40 @@ int downloadengine() {
 		}
 		else if (config_media == 2) {
 			Bilibili_Download = fopen("Bilibili_Download.bat", "w");
-			fprintf(Bilibili_Download, "%s -c Bilibili_Cookies.txt %s %s -aria2 %s\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(Bilibili_Download, "%s %s -c Bilibili_Cookies.txt %s %s -aria2 %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
 			fprintf(Bilibili_Download, "exit\n");
 			fclose(Bilibili_Download);
 			
 		}
 		else if (config_media == 3) {
 			QQVideo_Download = fopen("QQVideo_Download.bat", "w");
-			fprintf(QQVideo_Download, "%s -c QQVideo_Cookies.txt %s %s -aria2 %s\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(QQVideo_Download, "%s %s -c QQVideo_Cookies.txt %s %s -aria2 %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
 			fprintf(QQVideo_Download, "exit\n");
 			fclose(QQVideo_Download);
 
 		}
 		else if (config_media == 4) {
 			iqiyi_Download = fopen("iqiyi_Download.bat", "w");
-			fprintf(iqiyi_Download, "%s -c iqiyi_Cookies.txt %s %s -aria2 %s\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(iqiyi_Download, "%s %s -c iqiyi_Cookies.txt %s %s -aria2 %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
 			fprintf(iqiyi_Download, "exit\n");
 			fclose(iqiyi_Download);
 
 		}
 		else if (config_media == 5) {
 			Douyu_Download = fopen("Douyu_Download.bat", "w");
-			fprintf(Douyu_Download, "%s -c Douyu_Cookies.txt %s %s -aria2 %s\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(Douyu_Download, "%s %s -c Douyu_Cookies.txt %s %s -aria2 %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
 			fprintf(Douyu_Download, "exit\n");
 			fclose(Douyu_Download);
 		}
 		else if (config_media == 6) {
 			Yinyuetai_Download = fopen("Yinyuetai_Download.bat", "w");
-			fprintf(Yinyuetai_Download, "%s -c Yinyuetai_Cookies.txt %s %s -aria2 %s\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(Yinyuetai_Download, "%s %s -c Yinyuetai_Cookies.txt %s %s -aria2 %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
 			fprintf(Yinyuetai_Download, "exit\n");
 			fclose(Yinyuetai_Download);
 		}
 		else {
 			NeteaseMusic_Download = fopen("NeteaseMusic_Download.bat", "w");
-			fprintf(NeteaseMusic_Download, "%s -c NeteaseMusic_Cookies.txt %s %s -aria2 %s\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(NeteaseMusic_Download, "%s %s -c NeteaseMusic_Cookies.txt %s %s -aria2 %s\n",config_proxy, Downloader_Use, play_list, config_dir, config_url);
 			fprintf(NeteaseMusic_Download, "exit\n");
 			fclose(NeteaseMusic_Download);
 		}
