@@ -1,6 +1,6 @@
 ﻿#include<stdio.h>
 #include<stdlib.h>
-#include<io.h>
+
 int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
 char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], cmd[1450], Downloader_Use[15];
 char reference[216], head[300], head_show[30];
