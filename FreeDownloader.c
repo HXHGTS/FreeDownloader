@@ -1,15 +1,18 @@
 ﻿#include<stdio.h>
 #include<stdlib.h>
 
+int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(),dir(),downloadengine(),ExportDownloader();
+int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
 int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
 char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], cmd[1450], Downloader_Use[15];
 char reference[216], head[300], head_show[30];
 char location[200],split[7],torrent_loca[200],play_list[15];
-int mark,proxymode, download_result2,  shutdown, filecheck,use_list;
+char rpctoken[21] = "UpxBsuNq2rHVKxdJh9Tp";
+int mark,proxymode, redownload_result,  shutdown, filecheck,use_list;
 FILE* * conf,*save,*power_ini,*dic,*Media_conf,*dir_mark;
 
 int CreateFolder() {
-	if ((dir_mark = fopen("Downloads\\dir.md", "r")) == NULL){
+	if (fopen("Downloads\\dir.md", "r") == NULL){
 		system("mkdir Downloads");
 		dir_mark = fopen("Downloads\\dir.md", "w");
 		fprintf(dir_mark, "##本文件由FreeDownloader自动创建，请不要删除或移动本文件##");
@@ -25,6 +28,7 @@ int CreateFolder() {
 		fprintf(Media_conf, "min-split-size=2M\n");
 		fprintf(Media_conf, "split=16\n");
 		fprintf(Media_conf, "enable-rpc=true\n");
+		fprintf(Media_conf, "rpc-secret=%s\n",rpctoken);
 		fprintf(Media_conf, "rpc-allow-origin-all=true\n");
 		fprintf(Media_conf, "rpc-listen-all=true\n");
 		fprintf(Media_conf, "rpc-listen-port=6800\n\n");
@@ -32,7 +36,7 @@ int CreateFolder() {
 		return 0;
 }
 int main() {
-	download_result2 = 0;
+	redownload_result = 0;
 	filecheck = 0;
 	anti_shutdown = shutdown = 0;
 	system("title FreeDownloader");
@@ -45,7 +49,7 @@ p_3:printf("------------------------------------------------\n");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
 	system("cls");
-	if ((power_ini = fopen("power.ini", "r")) == NULL) {
+	if (fopen("power.ini", "r") == NULL) {
 		if (downloadmode != 7 && downloadmode != 8 && downloadmode != 9 && downloadmode != 0) {
 			printf("\n是否设置下载完成自动关机（是=1，否=0）：");
 			scanf("%d", &shutdown);
@@ -92,8 +96,8 @@ p_3:printf("------------------------------------------------\n");
 	else {
 		exit(0);
 	}
-p_2:download_result2 = downloadengine();
-	if (download_result2 == 0) {
+p_2:redownload_result = downloadengine();
+	if (redownload_result == 0) {
 		printf("\n-----------------------------------------------------\n");
 		printf("----------------------下载成功!----------------------\n");
 		printf("-----------------------------------------------------\n");
@@ -153,7 +157,7 @@ int MagnetDownloader() {
 		system("del best_aria2.txt");
 		if (system("aria2c -x16 https://trackerslist.com/best_aria2.txt") != 0) {
 			printf("\n更新失败，正在本地建立BT配置文件. . .\n");
-			if ((conf = fopen("bt.conf", "r")) == NULL) {
+			if (fopen("bt.conf", "r") == NULL) {
 				conf = fopen("bt.conf", "w");
 				fprintf(conf, "##bt-tracker=server1,server2,server3\n");
 				fprintf(conf, "continue=true\n");
@@ -181,14 +185,14 @@ int MagnetDownloader() {
 			fprintf(conf, "min-split-size=2M\n");
 			fprintf(conf, "split=16\n");;
 			fprintf(conf, "dir=Downloads/\n");
-			fprintf(conf, "user-agent=BitComet v1.67\n");
-			fprintf(conf, "peer-agent=BitComet v1.67\n");
+			fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
+			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
 			fclose(conf);
 		}
 	}
 	else {
 		printf("\n正在本地建立BT配置文件. . .\n");
-		if ((conf = fopen("bt.conf", "r")) == NULL) {
+		if (fopen("bt.conf", "r") == NULL) {
 			conf = fopen("bt.conf", "w");
 			fprintf(conf, "##bt-tracker=server1,server2,server3\n");
 			fprintf(conf, "continue=true\n");
@@ -197,8 +201,8 @@ int MagnetDownloader() {
 			fprintf(conf, "min-split-size=2M\n");
 			fprintf(conf, "split=16\n");;
 			fprintf(conf, "dir=Downloads/\n");
-			fprintf(conf, "user-agent=BitComet v1.67\n");
-			fprintf(conf, "peer-agent=BitComet v1.67\n");
+			fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
+			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
 			fclose(conf);
 		}
 	}
@@ -214,7 +218,7 @@ int MagnetDownloader() {
 int url() {
 	FILE* url;
 	if (downloadmode == 1) {
-		if ((url = fopen("normal.download", "r"))==NULL) {
+		if (fopen("normal.download", "r")==NULL) {
 			url = fopen("normal.download", "w");
 			fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 			fclose(url);
@@ -224,7 +228,7 @@ int url() {
 		sprintf(config_url, "%s", "-i normal.download");
 	}
 	else if (downloadmode == 2) {
-		if ((url = fopen("netdisk.download", "r")) == NULL) {
+		if (fopen("netdisk.download", "r") == NULL) {
 			url = fopen("netdisk.download", "w");
 			fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 			fclose(url);
@@ -235,7 +239,7 @@ int url() {
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
-			if ((url = fopen("ytb.download", "r")) == NULL) {
+			if (fopen("ytb.download", "r") == NULL) {
 				url = fopen("ytb.download", "w");
 				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
@@ -245,7 +249,7 @@ int url() {
 			sprintf(config_url, "%s", "-a ytb.download");
 		}
 		else if (config_media == 2) {
-			if ((url = fopen("Bilibili.download", "r")) == NULL) {
+			if (fopen("Bilibili.download", "r") == NULL) {
 				url = fopen("Bilibili.download", "w");
 				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
@@ -255,7 +259,7 @@ int url() {
 			sprintf(config_url, "%s", "-F Bilibili.download");
 		}
 		else if (config_media == 3) {
-			if ((url = fopen("QQVideo.download", "r")) == NULL) {
+			if (fopen("QQVideo.download", "r") == NULL) {
 				url = fopen("QQVideo.download", "w");
 				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
@@ -265,7 +269,7 @@ int url() {
 			sprintf(config_url, "%s", "-F QQVideo.download");
 		}
 		else if (config_media == 4) {
-			if ((url = fopen("iqiyi.download", "r")) == NULL) {
+			if (fopen("iqiyi.download", "r") == NULL) {
 				url = fopen("iqiyi.download", "w");
 				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
@@ -274,39 +278,19 @@ int url() {
 			system("notepad.exe iqiyi.download");
 			sprintf(config_url, "%s", "-F iqiyi.download");
 		}
-		else if (config_media == 5) {
-			if ((url = fopen("Douyu.download", "r")) == NULL) {
-				url = fopen("Douyu.download", "w");
-				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
-				fclose(url);
-			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
-			system("notepad.exe Douyu.download");
-			sprintf(config_url, "%s", "-F Douyu.download");
-		}
-		else if (config_media == 6) {
-			if ((url = fopen("Yinyuetai.download", "r")) == NULL) {
-				url = fopen("Yinyuetai.download", "w");
-				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
-				fclose(url);
-			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
-			system("notepad.exe Yinyuetai.download");
-			sprintf(config_url, "%s", "-F Yinyuetai.download");
-		}
 		else {
-			if ((url = fopen("NeteaseMusic.download", "r")) == NULL) {
-				url = fopen("NeteaseMusic.download", "w");
+			if (fopen("Youku.download", "r") == NULL) {
+				url = fopen("Youku.download", "w");
 				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
 			printf("\n请在弹出页输入下载地址. . .\n\n");
-			system("notepad.exe NeteaseMusic.download");
-			sprintf(config_url, "%s", "-F NeteaseMusic.download");
+			system("notepad.exe Youku.download");
+			sprintf(config_url, "%s", "-F Youku.download");
 		}
 		}
 	else if (downloadmode == 4) {
-		if ((url = fopen("advance.download", "r")) == NULL) {
+		if (fopen("advance.download", "r") == NULL) {
 			url = fopen("advance.download", "w");
 			fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 			fclose(url);
@@ -316,7 +300,7 @@ int url() {
 		sprintf(config_url, "%s", "-i advance.download");
 	}
 	else if (downloadmode == 5) {
-		if ((url = fopen("Export.bat", "r")) == NULL) {
+		if (fopen("Export.bat", "r") == NULL) {
 			url = fopen("Export.bat", "w");
 			fprintf(url, "%s", "%Input command below,only support aria2c%\n");
 			fclose(url);
@@ -326,7 +310,7 @@ int url() {
 	}
 	else if (downloadmode == 6) {
 		if (magnet_mode == 2) {
-			if ((url = fopen("magnet.download", "r")) == NULL) {
+			if (fopen("magnet.download", "r") == NULL) {
 				url = fopen("magnet.download", "w");
 				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
@@ -345,7 +329,6 @@ int url() {
 }//网址输入插件
 
 int threader() {
-	int threader_fix;
 	if (downloadmode == 1 || downloadmode == 4) {
 		Download_Task = 1;//同时下载任务数
 		config_thread = 16;
@@ -355,8 +338,8 @@ int threader() {
 	else if (downloadmode == 2) {
 		Download_Task = 1;//同时下载任务数
 		sprintf(Downloader_Use, "%s", "aria2c.exe");
-			config_thread = 1;
-			sprintf(split, "1M");
+		config_thread = 1;
+		sprintf(split, "1M");
 	}
 	else if (downloadmode == 3) {
 		Download_Task = 1;//同时下载任务数
@@ -374,7 +357,7 @@ int threader() {
 		config_thread = 16;
 		if (magnet_mode == 2)sprintf(split, "1M");
 	}
-
+	return 0;
 }//线程数修改与引擎选择        
 
 int dir() {
@@ -397,7 +380,6 @@ int dir() {
 
 int proxyswitcher() {
 	char proxy[50];
-	FILE* proxy_ini;
 	if ((fopen("proxy.ini", "r")) != NULL) {
 		sprintf(config_proxy, "%s", "");
 	}
@@ -527,7 +509,7 @@ int AdvanceDownloader() {
 	printf("\n请输入下载引用页地址：\n");
 	scanf("%s", reference_input);
 	sprintf(reference, "--referer=\"%s\"", reference_input);
-	if ((cookie = fopen("Cookies.txt", "r")) == NULL) {
+	if (fopen("Cookies.txt", "r") == NULL) {
 	p_4:cookie = fopen("Cookies.txt", "w");
 		fprintf(cookie, "# Input Cookie below#\n");
 		fclose(cookie);
@@ -558,7 +540,7 @@ int Netdisk() {
 	else {
 		sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
 	}
-	if ((cookie = fopen("Netdisk_Cookies.txt", "r")) == NULL) {
+	if (fopen("Netdisk_Cookies.txt", "r") == NULL) {
 	p_4:cookie = fopen("tmp.txt", "w");
 		fprintf(cookie, "# Input Cookie below#\n");
 		fclose(cookie);
@@ -568,6 +550,9 @@ int Netdisk() {
 		system("type tmp.txt | find \"BDUSS\">Netdisk_Cookies.txt");
 		system("type tmp.txt | find \"pcsett\">>Netdisk_Cookies.txt");
 		system("del tmp.txt");
+		cookie = fopen("Netdisk_Cookies.txt", "a");
+		fprintf(cookie, "\n");
+		fclose(cookie);
 	}
 	else {
 		printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
@@ -610,7 +595,7 @@ int AutoShutdown(int mode) {
 	if (mode == 1) {
 		system("shutdown -s -t 60");
 		printf("是否阻止系统关机(是=1)：");
-		scanf("%d", anti_shutdown);
+		scanf("%d", &anti_shutdown);
 		if (anti_shutdown == 1) {
 			system("shutdown -a");
 		}
@@ -619,9 +604,9 @@ int AutoShutdown(int mode) {
 }
 
 int MediaDownloader() {
-	FILE* Bilibili_Cookies,*ytb_Cookies,* QQVideo_Cookies,*iqiyi_Cookies,*Douyu_Cookies,*NeteaseMusic_Cookies,*Yinyuetai_Cookies;
+	FILE* Bilibili_Cookies,*ytb_Cookies,* QQVideo_Cookies,*iqiyi_Cookies,*Youku_Cookies;
 	int StartAt,EndAt;
-	printf("\n下载音视频来源：\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.斗鱼\n\n6.音悦台\n\n7.网易云音乐\n\n请输入：");
+	printf("\n下载音视频来源：\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n请输入：");
 	scanf("%d", &config_media);
 	if (config_media == 1) {
 		printf("\n下载整个列表内所有音视频？\n\n1.是\n\n0.否\n\n请输入：");
@@ -649,67 +634,64 @@ int MediaDownloader() {
 		}
 	}
 	if (config_media == 1) {
-		if ((ytb_Cookies = fopen("ytb_Cookies.txt", "r")) == NULL) {
+		if (fopen("ytb_Cookies.txt", "r") == NULL) {
 			ytb_Cookies = fopen("ytb_Cookies.txt", "w");
 			fprintf(ytb_Cookies, "# Input Cookie below#\n");
 			fclose(ytb_Cookies);
 		}
 		system("notepad ytb_Cookies.txt");
 		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
+		ytb_Cookies = fopen("ytb_Cookies.txt", "a");
+		fprintf(ytb_Cookies, "\n");
+		fclose(ytb_Cookies);
 	}
 	else if (config_media == 2) {
-		if ((Bilibili_Cookies = fopen("Bilibili_Cookies.txt", "r")) == NULL) {
+		if (fopen("Bilibili_Cookies.txt", "r") == NULL) {
 			Bilibili_Cookies = fopen("Bilibili_Cookies.txt", "w");
 			fprintf(Bilibili_Cookies, "# Input Cookie below#\n");
 			fclose(Bilibili_Cookies);
 		}
 		system("notepad Bilibili_Cookies.txt");
 		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
+		Bilibili_Cookies = fopen("Bilibili_Cookies.txt", "a");
+		fprintf(Bilibili_Cookies, "\n");
+		fclose(Bilibili_Cookies);
 	}
 	else if (config_media == 3) {
-		if ((QQVideo_Cookies = fopen("QQVideo_Cookies.txt", "r")) == NULL) {
+		if (fopen("QQVideo_Cookies.txt", "r") == NULL) {
 			QQVideo_Cookies = fopen("QQVideo_Cookies.txt", "w");
 			fprintf(QQVideo_Cookies, "# Input Cookie below#\n");
 			fclose(QQVideo_Cookies);
 		}
 		system("notepad QQVideo_Cookies.txt");
 		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
+		QQVideo_Cookies = fopen("QQVideo_Cookies.txt", "a");
+		fprintf(QQVideo_Cookies, "\n");
+		fclose(QQVideo_Cookies);
 	}
 	else if (config_media == 4) {
-		if ((iqiyi_Cookies = fopen("iqiyi_Cookies.txt", "r")) == NULL) {
+		if (fopen("iqiyi_Cookies.txt", "r") == NULL) {
 			iqiyi_Cookies = fopen("iqiyi_Cookies.txt", "w");
 			fprintf(iqiyi_Cookies, "# Input Cookie below#\n");
 			fclose(iqiyi_Cookies);
 		}
 		system("notepad iqiyi_Cookies.txt");
 		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
-	}
-	else if (config_media == 5) {
-		if ((Douyu_Cookies = fopen("Douyu_Cookies.txt", "r")) == NULL) {
-			Douyu_Cookies = fopen("Douyu_Cookies.txt", "w");
-			fprintf(Douyu_Cookies, "# Input Cookie below#\n");
-			fclose(Douyu_Cookies);
-		}
-		system("notepad Douyu_Cookies.txt");
-		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
-	}
-	else if (config_media == 6) {
-		if ((Yinyuetai_Cookies = fopen("Yinyuetai_Cookies.txt", "r")) == NULL) {
-			Yinyuetai_Cookies = fopen("Yinyuetai_Cookies.txt", "w");
-			fprintf(Yinyuetai_Cookies, "# Input Cookie below#\n");
-			fclose(Yinyuetai_Cookies);
-		}
-		system("notepad Yinyuetai_Cookies.txt");
-		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
+		iqiyi_Cookies = fopen("iqiyi_Cookies.txt", "a");
+		fprintf(iqiyi_Cookies, "\n");
+		fclose(iqiyi_Cookies);
 	}
 	else {
-		if ((NeteaseMusic_Cookies = fopen("NeteaseMusic_Cookies.txt", "r")) == NULL) {
-			NeteaseMusic_Cookies = fopen("NeteaseMusic_Cookies.txt", "w");
-			fprintf(NeteaseMusic_Cookies, "# Input Cookie below#\n");
-			fclose(NeteaseMusic_Cookies);
+		if (fopen("Youku_Cookies.txt", "r") == NULL) {
+			Youku_Cookies = fopen("Youku_Cookies.txt", "w");
+			fprintf(Youku_Cookies, "# Input Cookie below#\n");
+			fclose(Youku_Cookies);
 		}
-		system("notepad NeteaseMusic_Cookies.txt");
+		system("notepad Youku_Cookies.txt");
 		printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
+		Youku_Cookies = fopen("Youku_Cookies.txt", "a");
+		fprintf(Youku_Cookies, "\n");
+		fclose(Youku_Cookies);
 	}
 	url();
 	threader();
@@ -720,8 +702,8 @@ int MediaDownloader() {
 }
 
 int downloadengine() {
-	FILE* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Douyu_Download,*Yinyuetai_Download,*NeteaseMusic_Download;
-	int download_result1;
+	FILE* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download;
+	int download_result;
 	if (downloadmode == 1) {
 		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 	}
@@ -731,48 +713,41 @@ int downloadengine() {
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
 			ytb_Download = fopen("ytb_Download.bat", "w");
+			fprintf(ytb_Download, "@echo off\n");
 			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs --cookies ytb_Cookies.txt %s %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 2M\"\n", Downloader_Use, play_list, config_dir,config_url);
 			fprintf(ytb_Download, "exit\n");
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
 			Bilibili_Download = fopen("Bilibili_Download.bat", "w");
-			fprintf(Bilibili_Download, "%s %s -c Bilibili_Cookies.txt %s %s -aria2 %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
+			fprintf(Bilibili_Download, "@echo off\n");
+			fprintf(Bilibili_Download, "%s %s -c Bilibili_Cookies.txt %s %s -aria2 %s -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url,rpctoken);
 			fprintf(Bilibili_Download, "exit\n");
 			fclose(Bilibili_Download);
 			
 		}
 		else if (config_media == 3) {
 			QQVideo_Download = fopen("QQVideo_Download.bat", "w");
-			fprintf(QQVideo_Download, "%s %s -c QQVideo_Cookies.txt %s %s -aria2 %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
+			fprintf(QQVideo_Download, "@echo off\n");
+			fprintf(QQVideo_Download, "%s %s -c QQVideo_Cookies.txt %s %s -aria2 %s -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
 			fprintf(QQVideo_Download, "exit\n");
 			fclose(QQVideo_Download);
 
 		}
 		else if (config_media == 4) {
 			iqiyi_Download = fopen("iqiyi_Download.bat", "w");
-			fprintf(iqiyi_Download, "%s %s -c iqiyi_Cookies.txt %s %s -aria2 %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
+			fprintf(iqiyi_Download, "@echo off\n");
+			fprintf(iqiyi_Download, "%s %s -c iqiyi_Cookies.txt %s %s -aria2 %s -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
 			fprintf(iqiyi_Download, "exit\n");
 			fclose(iqiyi_Download);
 
 		}
-		else if (config_media == 5) {
-			Douyu_Download = fopen("Douyu_Download.bat", "w");
-			fprintf(Douyu_Download, "%s %s -c Douyu_Cookies.txt %s %s -aria2 %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
-			fprintf(Douyu_Download, "exit\n");
-			fclose(Douyu_Download);
-		}
-		else if (config_media == 6) {
-			Yinyuetai_Download = fopen("Yinyuetai_Download.bat", "w");
-			fprintf(Yinyuetai_Download, "%s %s -c Yinyuetai_Cookies.txt %s %s -aria2 %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
-			fprintf(Yinyuetai_Download, "exit\n");
-			fclose(Yinyuetai_Download);
-		}
 		else {
-			NeteaseMusic_Download = fopen("NeteaseMusic_Download.bat", "w");
-			fprintf(NeteaseMusic_Download, "%s %s -c NeteaseMusic_Cookies.txt %s %s -aria2 %s\n",config_proxy, Downloader_Use, play_list, config_dir, config_url);
-			fprintf(NeteaseMusic_Download, "exit\n");
-			fclose(NeteaseMusic_Download);
+			Youku_Download = fopen("Youku_Download.bat", "w");
+			fprintf(Youku_Download, "@echo off\n");
+			fprintf(Youku_Download, "%s %s -c Youku_Cookies.txt %s %s -aria2 %s -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
+			fprintf(Youku_Download, "exit\n");
+			fclose(Youku_Download);
 		}
 	}
 	else if (downloadmode == 4) {
@@ -821,14 +796,8 @@ int downloadengine() {
 		else if (config_media == 4) {
 			system("start "" /min iqiyi_Download.bat");
 		}
-		else if (config_media == 5) {
-			system("start "" /min Douyu_Download.bat");
-		}
-		else if (config_media == 6) {
-			system("start "" /min Yinyuetai_Download.bat");
-		}
 		else {
-			system("start "" /min NeteaseMusic_Download.bat");
+			system("start "" /min Youku_Download.bat");
 		}
 			printf("\n由于系统限制，下载进程无法自动停止，若弹出窗口一直显示complete，或需停止下载，");
 			system("pause");
@@ -836,13 +805,12 @@ int downloadengine() {
 			system("taskkill /f /im aria2c.exe");
 			system("del /f /s /q *.bat");
 		}
-		
-		download_result1 = 0;
+		download_result = 0;
 	}
 	else {
-		download_result1 = system(cmd);
+		download_result = system(cmd);
 	}
-	if (download_result1 == 0) {
+	if (download_result == 0) {
 		return 0;
 	}
 	else {
