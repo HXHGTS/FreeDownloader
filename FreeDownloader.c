@@ -155,14 +155,16 @@ int MagnetDownloader() {
 	if (tracker_update == 1) {
 		printf("\n正在更新tracker服务器. . .\n\n");
 		system("del best_aria2.txt");
-		if (system("aria2c -x16 https://trackerslist.com/best_aria2.txt") != 0) {
-			printf("\n更新失败，正在本地建立BT配置文件. . .\n");
+		if (system("ping trackerslist.com") != 0) {
+			printf("\n无法连接至trackerslist.com，请尝试更换网络或修改hosts或dns！\n");
+			printf("\n正在本地建立BT配置文件. . .\n");
 			if (fopen("bt.conf", "r") == NULL) {
 				conf = fopen("bt.conf", "w");
 				fprintf(conf, "##bt-tracker=server1,server2,server3\n");
 				fprintf(conf, "continue=true\n");
 				fprintf(conf, "max-concurrent-downloads=1\n");
 				fprintf(conf, "max-connection-per-server=16\n");
+				fprintf(conf, "max-upload-limit=1K\n");
 				fprintf(conf, "min-split-size=2M\n");
 				fprintf(conf, "split=16\n");;
 				fprintf(conf, "dir=Downloads/\n");
@@ -174,34 +176,58 @@ int MagnetDownloader() {
 			}
 		}
 		else {
-			printf("\n更新成功，正在本地建立BT配置文件. . .\n");
-			conf = fopen("bt.conf", "w");
-			fprintf(conf, "bt-tracker=");
-			fclose(conf);
-			system("type best_aria2.txt>>bt.conf");
-			system("del best_aria2.txt");
-			conf = fopen("bt.conf", "a");
-			fprintf(conf, "\ncontinue=true\n");
-			fprintf(conf, "max-concurrent-downloads=1\n");
-			fprintf(conf, "max-connection-per-server=16\n");
-			fprintf(conf, "min-split-size=2M\n");
-			fprintf(conf, "split=16\n");;
-			fprintf(conf, "dir=Downloads/\n");
-			fprintf(conf, "bt-detach-seed-only=true\n");
-			fprintf(conf, "seed-time=1\n");
-			fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
-			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
-			fclose(conf);
+			printf("\n成功连接至trackerslist.com，正在获取tracker服务器列表. . .\n");
+			if (system("aria2c -x16 https://trackerslist.com/best_aria2.txt") != 0) {
+				printf("\n更新失败，正在本地建立BT配置文件. . .\n");
+				if (fopen("bt.conf", "r") == NULL) {
+					conf = fopen("bt.conf", "w");
+					fprintf(conf, "##bt-tracker=server1,server2,server3\n");
+					fprintf(conf, "continue=true\n");
+					fprintf(conf, "max-concurrent-downloads=1\n");
+					fprintf(conf, "max-connection-per-server=16\n");
+					fprintf(conf, "max-upload-limit=1K\n");
+					fprintf(conf, "min-split-size=2M\n");
+					fprintf(conf, "split=16\n");;
+					fprintf(conf, "dir=Downloads/\n");
+					fprintf(conf, "bt-detach-seed-only=true\n");
+					fprintf(conf, "seed-time=1\n");
+					fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
+					fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
+					fclose(conf);
+				}
+			}
+			else {
+				printf("\n更新成功，正在本地建立BT配置文件. . .\n");
+				conf = fopen("bt.conf", "w");
+				fprintf(conf, "bt-tracker=");
+				fclose(conf);
+				system("type best_aria2.txt>>bt.conf");
+				system("del best_aria2.txt");
+				conf = fopen("bt.conf", "a");
+				fprintf(conf, "\ncontinue=true\n");
+				fprintf(conf, "max-concurrent-downloads=1\n");
+				fprintf(conf, "max-connection-per-server=16\n");
+				fprintf(conf, "max-upload-limit=1K\n");
+				fprintf(conf, "min-split-size=2M\n");
+				fprintf(conf, "split=16\n");;
+				fprintf(conf, "dir=Downloads/\n");
+				fprintf(conf, "bt-detach-seed-only=true\n");
+				fprintf(conf, "seed-time=1\n");
+				fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
+				fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
+				fclose(conf);
+			}
 		}
 	}
 	else {
-		printf("\n正在本地建立BT配置文件. . .\n");
+		printf("\n正在本地建立BT配置文件，建议手动导入tracker服务器列表以加快BT下载速度. . .\n");
 		if (fopen("bt.conf", "r") == NULL) {
 			conf = fopen("bt.conf", "w");
 			fprintf(conf, "##bt-tracker=server1,server2,server3\n");
 			fprintf(conf, "continue=true\n");
 			fprintf(conf, "max-concurrent-downloads=1\n");
 			fprintf(conf, "max-connection-per-server=16\n");
+			fprintf(conf, "max-upload-limit=1K\n");
 			fprintf(conf, "min-split-size=2M\n");
 			fprintf(conf, "split=16\n");;
 			fprintf(conf, "dir=Downloads/\n");
@@ -212,9 +238,8 @@ int MagnetDownloader() {
 			fclose(conf);
 		}
 	}
-	printf("\n请在弹出窗口中修改BT配置文件,");
+	printf("\n请在弹出窗口中修改BT配置文件. . .\n");
 	system("notepad bt.conf");
-	system("pause");
 	BroswerMark();
 	proxyswitcher();
 	url();
@@ -326,7 +351,8 @@ int url() {
 			sprintf(config_url, "%s", "-i magnet.download");
 		}
 		else {
-			printf("\n请将种子文件以拖拽至本窗口中：");
+			printf("\n若种子文件名过长建议重命名成简单字母或数字再拖入窗口，否则可能报错！\n\n");
+			printf("请将种子文件以拖拽至本窗口中：");
 			scanf("%s", torrent_loca);
 			sprintf(config_url, "\"%s\"",torrent_loca);
 		}
