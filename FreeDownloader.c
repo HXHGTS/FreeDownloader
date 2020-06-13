@@ -166,6 +166,8 @@ int MagnetDownloader() {
 				fprintf(conf, "min-split-size=2M\n");
 				fprintf(conf, "split=16\n");;
 				fprintf(conf, "dir=Downloads/\n");
+				fprintf(conf, "bt-detach-seed-only=true\n");
+				fprintf(conf, "seed-time=1\n");
 				fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
 				fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
 				fclose(conf);
@@ -185,6 +187,8 @@ int MagnetDownloader() {
 			fprintf(conf, "min-split-size=2M\n");
 			fprintf(conf, "split=16\n");;
 			fprintf(conf, "dir=Downloads/\n");
+			fprintf(conf, "bt-detach-seed-only=true\n");
+			fprintf(conf, "seed-time=1\n");
 			fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
 			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
 			fclose(conf);
@@ -201,6 +205,8 @@ int MagnetDownloader() {
 			fprintf(conf, "min-split-size=2M\n");
 			fprintf(conf, "split=16\n");;
 			fprintf(conf, "dir=Downloads/\n");
+			fprintf(conf, "bt-detach-seed-only=true\n");
+			fprintf(conf, "seed-time=1\n");
 			fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
 			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
 			fclose(conf);
