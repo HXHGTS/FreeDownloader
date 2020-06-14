@@ -6,7 +6,7 @@ int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitc
 int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
 char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], cmd[1450], Downloader_Use[15];
 char reference[216], head[300], head_show[30];
-char location[200],split[7],torrent_loca[200],play_list[15];
+char location[200],split[7],torrent_loca[200],play_list[30];
 char rpctoken[21] = "UpxBsuNq2rHVKxdJh9Tp";
 int mark,proxymode, redownload_result,  shutdown, filecheck,use_list;
 FILE* * conf,*save,*power_ini,*dic,*Media_conf,*dir_mark;
@@ -641,7 +641,7 @@ int AutoShutdown(int mode) {
 
 int MediaDownloader() {
 	FILE* Bilibili_Cookies,*ytb_Cookies,* QQVideo_Cookies,*iqiyi_Cookies,*Youku_Cookies;
-	int StartAt,EndAt;
+	char chapter[14];
 	printf("\n下载音视频来源：\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n请输入：");
 	scanf("%d", &config_media);
 	if (config_media == 1) {
@@ -655,8 +655,11 @@ int MediaDownloader() {
 		}
 	}
 	else {
-		printf("\n下载整个列表内所有音视频（仅对部分网站有效）？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
+		printf("\n下载整个列表内所有音视频（哔哩哔哩仅支持选项1）？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
 		scanf("%d", &use_list);
+		if (config_media == 2) {
+			use_list = 1;
+		}
 		if (use_list == 2) {
 			sprintf(play_list, "");
 		}
@@ -664,9 +667,9 @@ int MediaDownloader() {
 			sprintf(play_list, "-p");
 		}
 		else {
-			printf("\n请按照开始集数-结束集数的格式输入下载范围，如1-5：");
-			scanf("%d-%d", &StartAt,&EndAt);
-			sprintf(play_list, "-p -items %d-%d",StartAt,EndAt);
+			printf("\n请按照格式输入下载范围，如1-5,6,7,8-15：");
+			scanf("%s", chapter);
+			sprintf(play_list, "-p -items %s",chapter);
 		}
 	}
 	if (config_media == 1) {
@@ -749,40 +752,30 @@ int downloadengine() {
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
 			ytb_Download = fopen("ytb_Download.bat", "w");
-			fprintf(ytb_Download, "@echo off\n");
 			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs --cookies ytb_Cookies.txt %s %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 2M\"\n", Downloader_Use, play_list, config_dir,config_url);
-			fprintf(ytb_Download, "exit\n");
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
 			Bilibili_Download = fopen("Bilibili_Download.bat", "w");
-			fprintf(Bilibili_Download, "@echo off\n");
-			fprintf(Bilibili_Download, "%s %s -c Bilibili_Cookies.txt %s %s -aria2 %s -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url,rpctoken);
-			fprintf(Bilibili_Download, "exit\n");
+			fprintf(Bilibili_Download, "%s %s -c Bilibili_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url,rpctoken);
 			fclose(Bilibili_Download);
 			
 		}
 		else if (config_media == 3) {
 			QQVideo_Download = fopen("QQVideo_Download.bat", "w");
-			fprintf(QQVideo_Download, "@echo off\n");
-			fprintf(QQVideo_Download, "%s %s -c QQVideo_Cookies.txt %s %s -aria2 %s -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
-			fprintf(QQVideo_Download, "exit\n");
+			fprintf(QQVideo_Download, "%s %s -c QQVideo_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
 			fclose(QQVideo_Download);
 
 		}
 		else if (config_media == 4) {
 			iqiyi_Download = fopen("iqiyi_Download.bat", "w");
-			fprintf(iqiyi_Download, "@echo off\n");
-			fprintf(iqiyi_Download, "%s %s -c iqiyi_Cookies.txt %s %s -aria2 %s -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
-			fprintf(iqiyi_Download, "exit\n");
+			fprintf(iqiyi_Download, "%s %s -c iqiyi_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
 			fclose(iqiyi_Download);
 
 		}
 		else {
 			Youku_Download = fopen("Youku_Download.bat", "w");
-			fprintf(Youku_Download, "@echo off\n");
-			fprintf(Youku_Download, "%s %s -c Youku_Cookies.txt %s %s -aria2 %s -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
-			fprintf(Youku_Download, "exit\n");
+			fprintf(Youku_Download, "%s %s -c Youku_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
 			fclose(Youku_Download);
 		}
 	}
@@ -839,6 +832,7 @@ int downloadengine() {
 			system("pause");
 			printf("\n\n");
 			system("taskkill /f /im aria2c.exe");
+			system("taskkill /f /im cmd.exe");
 			system("del /f /s /q *.bat");
 		}
 		download_result = 0;
