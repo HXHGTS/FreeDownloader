@@ -483,31 +483,8 @@ int BroswerMark() {
 		}
 	}
 	else if(downloadmode==1){
-		printf("\n请选择浏览器标识：\n1.IE浏览器（新版）\n2.Windows版Chrome\n3.IE浏览器（旧版）\n4.自定义UserAgent\n请输入：");
-		scanf("%d", &mark);
-		if (mark == 1) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");//IE浏览器（增强模式）
-			sprintf(head_show, "IE浏览器（新版）");
-		}
-		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");//Windows版Chrome
-			sprintf(head_show, "Windows版Chrome");
-		}
-		else if (mark == 3) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729)");//IE浏览器（兼容模式）
-			sprintf(head_show, "IE浏览器（旧版）");
-		}
-		else if (mark == 4) {
-			printf("\n请输入UserAgent的值：\n");
-			scanf("%s", UserAgent_DIY);
-			sprintf(head, "--header=\"User-Agent:%s\"", UserAgent_DIY);//自定义
-			sprintf(head_show, "自定义");
-		}
-		else {
-			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");//IE浏览器（增强模式）
-			sprintf(head_show, "Windows版Chrome");
-		}
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");//Windows版Chrome
+		sprintf(head_show, "Windows版Chrome");
 	}
 	else if (downloadmode == 4) {
 		printf("\n请选择浏览器标识：\n1.IE浏览器（新版）\n2.Windows版Chrome\n3.IE浏览器（旧版）\n4.自定义UserAgent\n请输入：");
