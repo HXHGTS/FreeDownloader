@@ -8,7 +8,7 @@ char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], cmd[1
 char reference[216], head[300], head_show[30];
 char location[200],split[7],torrent_loca[200],play_list[30];
 char rpctoken[21] = "UpxBsuNq2rHVKxdJh9Tp";
-int mark,proxymode, redownload_result,  shutdown, filecheck,use_list;
+int mark,proxymode, redownload_result,  shutdown, filecheck,use_list,OpenDir;
 FILE* * conf,*save,*power_ini,*dic,*Media_conf,*dir_mark;
 
 int CreateFolder() {
@@ -104,6 +104,11 @@ p_2:redownload_result = downloadengine();
 		AutoShutdown(shutdown);
 		if (downloadmode == 2) {
 			printf("百度网盘下载的文件名称可能会有乱码，改为正确名称即可正常使用！\n");
+		}
+		printf("\n是否打开下载文件夹：\n\n1.是\n\n0.否\n\n请输入：");
+		scanf("%d", &OpenDir);
+		if (OpenDir != 0) {
+			system("explorer Downloads\\");
 		}
 		system("cls");
 		goto p_3;
