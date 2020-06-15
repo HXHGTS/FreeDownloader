@@ -109,7 +109,7 @@ p_2:redownload_result = downloadengine();
 		printf("\n是否打开下载文件夹：\n\n1.是\n\n0.否\n\n请输入：");
 		scanf("%d", &OpenDir);
 		if (OpenDir != 0) {
-			system("explorer Downloads\\");
+			system("explorer Downloads");
 		}
 		system("cls");
 		goto p_3;
@@ -590,7 +590,7 @@ int Netdisk() {
 
 int CheckSum(int mode) {
 	if (mode == 1) {
-		printf("\n如果需要检测文件完整性，可以将文件拖拽至本窗口内！\n");
+		printf("\n如果需要检测文件完整性，可以将文件拖拽至本窗口内！建议先将文件名称最简化并移至磁盘根目录下再检测！\n");
 		printf("\n文件名称中不允许空格！若md5不一致，则文件损坏，需重新下载！\n\n文件路径：");
 		scanf("%s", location);
 		sprintf(cmd, "CertUtil -hashfile \"%s\" MD5", location);
