@@ -26,6 +26,7 @@ int CreateFolder() {
 		fprintf(Media_conf, "max-concurrent-downloads=1\n");
 		fprintf(Media_conf, "max-connection-per-server=16\n");
 		fprintf(Media_conf, "min-split-size=2M\n");
+		fprintf(Media_conf, "disk-cache=32M\n");
 		fprintf(Media_conf, "split=16\n");
 		fprintf(Media_conf, "enable-rpc=true\n");
 		fprintf(Media_conf, "rpc-secret=%s\n",rpctoken);
@@ -171,10 +172,10 @@ int MagnetDownloader() {
 				fprintf(conf, "max-connection-per-server=16\n");
 				fprintf(conf, "bt-enable-lpd=true\n");
 				fprintf(conf, "min-split-size=2M\n");
+				fprintf(conf, "disk-cache=32M\n");
 				fprintf(conf, "split=16\n");;
 				fprintf(conf, "dir=Downloads/\n");
 				fprintf(conf, "bt-require-crypto=true\n");
-				fprintf(conf, "seed-time=1\n");
 				fprintf(conf, "seed-ratio=0.0\n");
 				fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
 				fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
@@ -193,10 +194,10 @@ int MagnetDownloader() {
 					fprintf(conf, "max-connection-per-server=16\n");
 					fprintf(conf, "bt-enable-lpd=true\n");
 					fprintf(conf, "min-split-size=2M\n");
+					fprintf(conf, "disk-cache=32M\n");
 					fprintf(conf, "split=16\n");;
 					fprintf(conf, "dir=Downloads/\n");
 					fprintf(conf, "bt-require-crypto=true\n");
-					fprintf(conf, "seed-time=1\n");
 					fprintf(conf, "seed-ratio=0.0\n");
 					fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
 					fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
@@ -216,10 +217,10 @@ int MagnetDownloader() {
 				fprintf(conf, "max-connection-per-server=16\n");
 				fprintf(conf, "bt-enable-lpd=true\n");
 				fprintf(conf, "min-split-size=2M\n");
+				fprintf(conf, "disk-cache=32M\n");
 				fprintf(conf, "split=16\n");;
 				fprintf(conf, "dir=Downloads/\n");
 				fprintf(conf, "bt-require-crypto=true\n");
-				fprintf(conf, "seed-time=1\n");
 				fprintf(conf, "seed-ratio=0.0\n");
 				fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
 				fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
@@ -237,10 +238,10 @@ int MagnetDownloader() {
 			fprintf(conf, "max-connection-per-server=16\n");
 			fprintf(conf, "bt-enable-lpd=true\n");
 			fprintf(conf, "min-split-size=2M\n");
+			fprintf(conf, "disk-cache=32M\n");
 			fprintf(conf, "split=16\n");;
 			fprintf(conf, "dir=Downloads/\n");
 			fprintf(conf, "bt-require-crypto=true\n");
-			fprintf(conf, "seed-time=1\n");
 			fprintf(conf, "seed-ratio=0.0\n");
 			fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
 			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
