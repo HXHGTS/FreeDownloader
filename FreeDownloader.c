@@ -595,17 +595,25 @@ int CheckSum(int mode) {
 		printf("\n文件名称中不允许空格！若md5不一致，则文件损坏，需重新下载！\n\n文件路径：");
 		scanf("%s", location);
 		sprintf(cmd, "CertUtil -hashfile \"%s\" MD5", location);
-		printf("正在计算MD5值. . .\n");
+		printf("\n\n正在计算MD5值. . .\n");
+		printf("---------------------------------------------\n");
 		system(cmd);
+		printf("\n\n");
 		sprintf(cmd, "CertUtil -hashfile \"%s\" SHA1", location);
 		printf("正在计算SHA1值. . .\n");
+		printf("---------------------------------------------\n");
 		system(cmd);
+		printf("\n\n");
 		sprintf(cmd, "CertUtil -hashfile \"%s\" SHA256", location);
 		printf("正在计算SHA256值. . .\n");
+		printf("---------------------------------------------\n");
 		system(cmd);
+		printf("\n\n");
 		sprintf(cmd, "CertUtil -hashfile \"%s\" SHA512", location);
 		printf("正在计算SHA512值. . .\n");
+		printf("---------------------------------------------\n");
 		system(cmd);
+		printf("\n\n");
 		system("pause");
 	}
 	return 0;
