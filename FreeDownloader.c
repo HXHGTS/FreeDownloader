@@ -1,21 +1,52 @@
 ﻿#include<stdio.h>
 #include<stdlib.h>
 
-int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(),dir(),downloadengine(),ExportDownloader();
+int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(),dir(),downloadengine(),ExportDownloader(),WindowSkin();
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
 int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
-char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], cmd[1450], Downloader_Use[15];
+char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], smallcmd[12],cmd[1500], Downloader_Use[15];
 char reference[216], head[300], head_show[30];
-char location[200],split[7],torrent_loca[200],play_list[30];
+char location[200],split[7],torrent_loca[200],play_list[30], color[2];
 char rpctoken[21] = "UpxBsuNq2rHVKxdJh9Tp";
 int mark,proxymode, redownload_result,  shutdown, filecheck,use_list,OpenDir;
-FILE* * conf,*save,*power_ini,*dic,*Media_conf,*dir_mark;
+FILE* * conf,*save,*power_ini,*dic,*Media_conf,*dir_mark, *skin;
+
+int WindowSkin() {
+	if (fopen("skin.ini", "r") == NULL) {
+		printf("重置窗体与字体颜色请直接删除软件目录下skin.ini文件！\n");
+		printf("请按照\"窗口颜色+字体颜色\"的格式设置皮肤，对应关系如下：\n");
+		printf("---------------------------------------\n");
+		printf("0=黑色   8=灰色\n");
+		printf("1=蓝色   9=淡蓝色\n");
+		printf("2=绿色   A=淡绿色\n");
+		printf("3=浅绿色 B=淡浅绿色\n");
+		printf("4=红色   C=淡红色\n");
+		printf("5=紫色   D=淡紫色\n");
+		printf("6=黄色   E=淡黄色\n");
+		printf("7=白色   F=亮白色\n");
+		printf("---------------------------------------\n");
+		printf("请输入以配置界面与字体颜色：");
+		scanf("%s", color);
+		skin = fopen("skin.ini", "w");
+		fprintf(skin,"%s",color);
+		fclose(skin);
+	}
+	else {
+		skin = fopen("skin.ini", "r");
+		fread(color, 1, 2, skin);
+		fclose(skin);
+	}
+	sprintf(smallcmd, "color %s", color);
+	system(smallcmd);
+	system("cls");
+	return 0;
+}
 
 int CreateFolder() {
 	if (fopen("Downloads\\dir.md", "r") == NULL){
 		system("mkdir Downloads");
 		dir_mark = fopen("Downloads\\dir.md", "w");
-		fprintf(dir_mark, "##本文件由FreeDownloader自动创建，请不要删除或移动本文件##");
+		fprintf(dir_mark, "##本文件由FreeDownloader自动创建，请不要删除或移动本文件##\n");
 		fclose(dir_mark);
 		system("cls");
 	}
@@ -42,7 +73,7 @@ int main() {
 	anti_shutdown = shutdown = 0;
 	system("title FreeDownloader");
 	CreateFolder();
-p_3:system("color 3e");
+p_3:WindowSkin();
 	printf("------------------------------------------------\n");
 	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
@@ -467,7 +498,7 @@ int BroswerMark() {
 		sprintf(head_show, "Windows版Chrome");
 	}
 	else if(downloadmode==2){
-		printf("\n应用id请尝试250528或778750，下载失败请切换UA或应用id！\n");
+		printf("\n应用id为778750，下载失败请切换浏览器标识！\n");
 		printf("\n请选择浏览器标识：\n1.爱奇艺\n2.百度网盘客户端\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
