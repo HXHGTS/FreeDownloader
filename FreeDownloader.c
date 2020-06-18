@@ -25,7 +25,7 @@ int WindowSkin() {
 		printf("6=黄色   E=淡黄色\n");
 		printf("7=白色   F=亮白色\n");
 		printf("---------------------------------------\n");
-		printf("请输入以配置界面与字体颜色：");
+		printf("请输入以配置界面与字体颜色，如0A：");
 		scanf("%s", color);
 		skin = fopen("skin.ini", "w");
 		fprintf(skin,"%s",color);
