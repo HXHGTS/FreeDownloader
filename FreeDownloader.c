@@ -48,7 +48,7 @@ int CreateFolder() {
 		dir_mark = fopen("Downloads\\dir.md", "w");
 		fprintf(dir_mark, "##本文件由FreeDownloader自动创建，请不要删除或移动本文件##\n");
 		fclose(dir_mark);
-		if (fopen("\\best_aria2.txt", "r") != NULL) {
+		if (fopen("best_aria2.txt", "r") != NULL) {
 			system("del best_aria2.txt");
 		}
 		system("cls");
