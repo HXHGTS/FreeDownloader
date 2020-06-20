@@ -48,6 +48,9 @@ int CreateFolder() {
 		dir_mark = fopen("Downloads\\dir.md", "w");
 		fprintf(dir_mark, "##本文件由FreeDownloader自动创建，请不要删除或移动本文件##\n");
 		fclose(dir_mark);
+		if (fopen("\\best_aria2.txt", "r") != NULL) {
+			system("del best_aria2.txt");
+		}
 		system("cls");
 	}
 		Media_conf = fopen("Media.conf", "w");
@@ -194,35 +197,32 @@ int MagnetDownloader() {
 	system("cls");
 	if (tracker_update == 1) {
 		printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
-		system("del best_aria2.txt");
 		if (system("aria2c https://trackerslist.com/best_aria2.txt") != 0) {
-				printf("\n更新失败，正在本地建立BT配置文件. . .\n");
-				if (fopen("bt.conf", "r") == NULL) {
-					conf = fopen("bt.conf", "w");
-					fprintf(conf, "##bt-tracker=server1,server2,server3\n");
-					fprintf(conf, "listen-port=25025\n");
-					fprintf(conf, "continue=true\n");
-					fprintf(conf, "max-concurrent-downloads=1\n");
-					fprintf(conf, "max-connection-per-server=16\n");
-					fprintf(conf, "bt-max-peers=999\n");
-					fprintf(conf, "min-split-size=2M\n");
-					fprintf(conf, "disk-cache=128M\n");
-					fprintf(conf, "split=16\n");;
-					fprintf(conf, "dir=Downloads/\n");
-					fprintf(conf, "enable-peer-exchange=true\n");
-					fprintf(conf, "seed-ratio=0.0\n");
-					fprintf(conf, "user-agent=Transmission/2.77\n");
-					fprintf(conf, "peer-agent=Transmission/2.77\n");
-					fprintf(conf, "peer-id-prefix=-TR2770-\n");
-					fclose(conf);
-				}
+			printf("\n更新失败，正在本地建立BT配置文件. . .\n");
+			conf = fopen("bt.conf", "w");
+			fprintf(conf, "##bt-tracker=server1,server2,server3\n");
+			fprintf(conf, "listen-port=25025\n");
+			fprintf(conf, "continue=true\n");
+			fprintf(conf, "max-concurrent-downloads=1\n");
+			fprintf(conf, "max-connection-per-server=16\n");
+			fprintf(conf, "bt-max-peers=999\n");
+			fprintf(conf, "min-split-size=2M\n");
+			fprintf(conf, "disk-cache=128M\n");
+			fprintf(conf, "split=16\n");;
+			fprintf(conf, "dir=Downloads/\n");
+			fprintf(conf, "enable-peer-exchange=true\n");
+			fprintf(conf, "seed-ratio=0.0\n");
+			fprintf(conf, "user-agent=Transmission/2.77\n");
+			fprintf(conf, "peer-agent=Transmission/2.77\n");
+			fprintf(conf, "peer-id-prefix=-TR2770-\n");
+			fclose(conf);
+		}
 			else {
 				printf("\n更新成功，正在本地建立BT配置文件. . .\n");
 				conf = fopen("bt.conf", "w");
 				fprintf(conf, "bt-tracker=");
 				fclose(conf);
 				system("type best_aria2.txt>>bt.conf");
-				system("del best_aria2.txt");
 				conf = fopen("bt.conf", "a");
 				fprintf(conf, "\nlisten-port=25025\n");
 				fprintf(conf, "continue=true\n");
@@ -241,7 +241,6 @@ int MagnetDownloader() {
 				fclose(conf);
 			}
 		}
-	}
 	else {
 		printf("正在本地建立BT配置文件，建议手动导入tracker服务器列表以加快BT下载速度. . .\n");
 		if (fopen("bt.conf", "r") == NULL) {
@@ -263,6 +262,9 @@ int MagnetDownloader() {
 			fprintf(conf, "peer-id-prefix=-TR2770-\n");
 			fclose(conf);
 		}
+	}
+	if (fopen("\\best_aria2.txt", "r") != NULL) {
+		system("del best_aria2.txt");
 	}
 	printf("\n请在弹出窗口中修改BT配置文件. . .\n");
 	system("notepad bt.conf");
