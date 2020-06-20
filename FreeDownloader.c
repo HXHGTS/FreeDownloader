@@ -4,9 +4,9 @@
 int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(),dir(),downloadengine(),ExportDownloader(),WindowSkin();
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
 int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
-char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], smallcmd[12],cmd[1500], Downloader_Use[15];
+char config_proxy[65], config_url[200], config_dir[35], config_cookie[40], smallcmd[20],cmd[1500], Downloader_Use[15];
 char reference[216], head[300], head_show[30];
-char location[200],split[7],torrent_loca[200],play_list[30], color[2];
+char location[200],split[7],torrent_loca[200],play_list[30], color[4];
 char rpctoken[21] = "UpxBsuNq2rHVKxdJh9Tp";
 int mark,proxymode, redownload_result,  shutdown, filecheck,use_list,OpenDir;
 FILE* * conf,*save,*power_ini,*dic,*Media_conf,*dir_mark, *skin;
@@ -73,7 +73,8 @@ int main() {
 	anti_shutdown = shutdown = 0;
 	system("title FreeDownloader");
 	CreateFolder();
-p_3:WindowSkin();
+	WindowSkin();
+p_3:system("cls");
 	printf("------------------------------------------------\n");
 	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
