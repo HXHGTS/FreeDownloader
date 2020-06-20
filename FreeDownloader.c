@@ -57,7 +57,7 @@ int CreateFolder() {
 		fprintf(Media_conf, "max-concurrent-downloads=1\n");
 		fprintf(Media_conf, "max-connection-per-server=16\n");
 		fprintf(Media_conf, "min-split-size=2M\n");
-		fprintf(Media_conf, "disk-cache=32M\n");
+		fprintf(Media_conf, "disk-cache=128M\n");
 		fprintf(Media_conf, "split=16\n");
 		fprintf(Media_conf, "enable-rpc=true\n");
 		fprintf(Media_conf, "rpc-secret=%s\n",rpctoken);
@@ -191,52 +191,31 @@ int MagnetDownloader() {
 	threader();
 	printf("\n是否联网更新tracker：\n\n1.是\n\n0.否\n\n请输入：");
 	scanf("%d", &tracker_update);
+	system("cls");
 	if (tracker_update == 1) {
-		printf("\n正在更新tracker服务器. . .\n\n");
+		printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
 		system("del best_aria2.txt");
-		if (system("ping trackerslist.com") != 0) {
-			printf("\n无法连接至trackerslist.com，请尝试更换网络或修改hosts或dns！\n");
-			printf("\n正在本地建立BT配置文件. . .\n");
-			if (fopen("bt.conf", "r") == NULL) {
-				conf = fopen("bt.conf", "w");
-				fprintf(conf, "##bt-tracker=server1,server2,server3\n");
-				fprintf(conf, "continue=true\n");
-				fprintf(conf, "max-concurrent-downloads=1\n");
-				fprintf(conf, "max-connection-per-server=16\n");
-				fprintf(conf, "bt-enable-lpd=true\n");
-				fprintf(conf, "min-split-size=2M\n");
-				fprintf(conf, "disk-cache=32M\n");
-				fprintf(conf, "split=16\n");;
-				fprintf(conf, "dir=Downloads/\n");
-				fprintf(conf, "bt-require-crypto=true\n");
-				fprintf(conf, "seed-ratio=0.0\n");
-				fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
-				fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
-				fclose(conf);
-			}
-		}
-		else {
-			printf("\n成功连接至trackerslist.com，正在获取tracker服务器列表. . .\n");
-			if (system("aria2c -x16 https://trackerslist.com/best_aria2.txt") != 0) {
+		if (system("aria2c https://trackerslist.com/best_aria2.txt") != 0) {
 				printf("\n更新失败，正在本地建立BT配置文件. . .\n");
 				if (fopen("bt.conf", "r") == NULL) {
 					conf = fopen("bt.conf", "w");
 					fprintf(conf, "##bt-tracker=server1,server2,server3\n");
+					fprintf(conf, "listen-port=25025\n");
 					fprintf(conf, "continue=true\n");
 					fprintf(conf, "max-concurrent-downloads=1\n");
 					fprintf(conf, "max-connection-per-server=16\n");
-					fprintf(conf, "bt-enable-lpd=true\n");
+					fprintf(conf, "bt-max-peers=999\n");
 					fprintf(conf, "min-split-size=2M\n");
-					fprintf(conf, "disk-cache=32M\n");
+					fprintf(conf, "disk-cache=128M\n");
 					fprintf(conf, "split=16\n");;
 					fprintf(conf, "dir=Downloads/\n");
-					fprintf(conf, "bt-require-crypto=true\n");
+					fprintf(conf, "enable-peer-exchange=true\n");
 					fprintf(conf, "seed-ratio=0.0\n");
-					fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
-					fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
+					fprintf(conf, "user-agent=Transmission/2.77\n");
+					fprintf(conf, "peer-agent=Transmission/2.77\n");
+					fprintf(conf, "peer-id-prefix=-TR2770-\n");
 					fclose(conf);
 				}
-			}
 			else {
 				printf("\n更新成功，正在本地建立BT配置文件. . .\n");
 				conf = fopen("bt.conf", "w");
@@ -245,39 +224,43 @@ int MagnetDownloader() {
 				system("type best_aria2.txt>>bt.conf");
 				system("del best_aria2.txt");
 				conf = fopen("bt.conf", "a");
-				fprintf(conf, "\ncontinue=true\n");
+				fprintf(conf, "\nlisten-port=25025\n");
+				fprintf(conf, "continue=true\n");
 				fprintf(conf, "max-concurrent-downloads=1\n");
 				fprintf(conf, "max-connection-per-server=16\n");
-				fprintf(conf, "bt-enable-lpd=true\n");
+				fprintf(conf, "bt-max-peers=999\n");
 				fprintf(conf, "min-split-size=2M\n");
-				fprintf(conf, "disk-cache=32M\n");
+				fprintf(conf, "disk-cache=128M\n");
 				fprintf(conf, "split=16\n");;
 				fprintf(conf, "dir=Downloads/\n");
-				fprintf(conf, "bt-require-crypto=true\n");
+				fprintf(conf, "enable-peer-exchange=true\n");
 				fprintf(conf, "seed-ratio=0.0\n");
-				fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
-				fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
+				fprintf(conf, "user-agent=Transmission/2.77\n");
+				fprintf(conf, "peer-agent=Transmission/2.77\n");
+				fprintf(conf, "peer-id-prefix=-TR2770-\n");
 				fclose(conf);
 			}
 		}
 	}
 	else {
-		printf("\n正在本地建立BT配置文件，建议手动导入tracker服务器列表以加快BT下载速度. . .\n");
+		printf("正在本地建立BT配置文件，建议手动导入tracker服务器列表以加快BT下载速度. . .\n");
 		if (fopen("bt.conf", "r") == NULL) {
 			conf = fopen("bt.conf", "w");
 			fprintf(conf, "##bt-tracker=server1,server2,server3\n");
+			fprintf(conf, "listen-port=25025\n");
 			fprintf(conf, "continue=true\n");
 			fprintf(conf, "max-concurrent-downloads=1\n");
 			fprintf(conf, "max-connection-per-server=16\n");
-			fprintf(conf, "bt-enable-lpd=true\n");
+			fprintf(conf, "bt-max-peers=999\n");
 			fprintf(conf, "min-split-size=2M\n");
-			fprintf(conf, "disk-cache=32M\n");
+			fprintf(conf, "disk-cache=128M\n");
 			fprintf(conf, "split=16\n");;
 			fprintf(conf, "dir=Downloads/\n");
-			fprintf(conf, "bt-require-crypto=true\n");
+			fprintf(conf, "enable-peer-exchange=true\n");
 			fprintf(conf, "seed-ratio=0.0\n");
-			fprintf(conf, "user-agent=qBittorrent v4.2.5\n");
-			fprintf(conf, "peer-agent=qBittorrent v4.2.5\n");
+			fprintf(conf, "user-agent=Transmission/2.77\n");
+			fprintf(conf, "peer-agent=Transmission/2.77\n");
+			fprintf(conf, "peer-id-prefix=-TR2770-\n");
 			fclose(conf);
 		}
 	}
@@ -548,7 +531,7 @@ int BroswerMark() {
 		}
 	}
 	else if (downloadmode == 6) {
-		sprintf(head_show, "qBittorrent v4.2.5");
+		sprintf(head_show, "Transmission/2.77");
 	}
 	return 0;
 }
