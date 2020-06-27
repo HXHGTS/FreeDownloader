@@ -194,6 +194,7 @@ int MagnetDownloader() {
 	threader();
 	printf("\n是否联网更新tracker：\n\n1.是\n\n0.否\n\n请输入：");
 	scanf("%d", &tracker_update);
+	system("del best_aria2.txt");
 	system("cls");
 	if (tracker_update == 1) {
 		printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
@@ -492,12 +493,12 @@ int BroswerMark() {
 			sprintf(head_show, "%s", "爱奇艺");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.9.7.4;PC;PC-Windows;10.0.18363;WindowsBaiduYunGuanJia");//百度网盘
+			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.9.10.1;PC;PC-Windows;10.0.19041;WindowsBaiduYunGuanJia");//百度网盘
 			sprintf(head_show, "%s", "百度网盘客户端");
 		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.9.7.4;PC;PC-Windows;10.0.18363;WindowsBaiduYunGuanJia");//百度网盘
+			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.9.10.1;PC;PC-Windows;10.0.19041;WindowsBaiduYunGuanJia");//百度网盘
 			sprintf(head_show, "%s", "百度网盘客户端");
 		}
 	}
