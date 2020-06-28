@@ -46,7 +46,7 @@ int CreateFolder() {
 	if (fopen("Downloads\\dir.md", "r") == NULL){
 		system("mkdir Downloads");
 		dir_mark = fopen("Downloads\\dir.md", "w");
-		fprintf(dir_mark, "##本文件由FreeDownloader自动创建，请不要删除或移动本文件##\n");
+		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
 		fclose(dir_mark);
 		if (fopen("best_aria2.txt", "r") != NULL) {
 			system("del best_aria2.txt");
@@ -56,7 +56,7 @@ int CreateFolder() {
 		Media_conf = fopen("Media.conf", "w");
 		fprintf(Media_conf, "dir=Downloads\n");
 		fprintf(Media_conf, "continue=true\n");
-		fprintf(Media_conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36\n");
+		fprintf(Media_conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36\n");
 		fprintf(Media_conf, "max-concurrent-downloads=1\n");
 		fprintf(Media_conf, "max-connection-per-server=16\n");
 		fprintf(Media_conf, "min-split-size=2M\n");
@@ -486,7 +486,7 @@ int BroswerMark() {
 	}
 	else if(downloadmode==2){
 		printf("\n应用id为778750，下载失败请切换浏览器标识！\n");
-		printf("\n请选择浏览器标识：\n1.爱奇艺\n2.百度网盘客户端\n请输入：");
+		printf("\n请选择浏览器标识：\n\n1.爱奇艺\n\n2.百度网盘客户端\n\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 5.0; SM-N9100 Build/LRX21V) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/37.0.0.0 Mobile Safari/537.36 NetType/WIFI Amoeba/1.0");//爱奇艺
@@ -503,33 +503,31 @@ int BroswerMark() {
 		}
 	}
 	else if(downloadmode==1){
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");//Windows版Chrome
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36");//Windows版Chrome
 		sprintf(head_show, "Windows版Chrome");
 	}
 	else if (downloadmode == 4) {
-		printf("\n请选择浏览器标识：\n1.IE浏览器（新版）\n2.Windows版Chrome\n3.IE浏览器（旧版）\n4.自定义UserAgent\n请输入：");
+		printf("\n请选择浏览器标识：\n\n1.IE浏览器（新版）\n\n2.Windows版Chrome\n\n3.Edge浏览器\n\n4.IE浏览器（旧版）\n\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");//IE浏览器（增强模式）
 			sprintf(head_show, "IE浏览器（新版）");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");//Windows版Chrome
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36");//Windows版Chrome
 			sprintf(head_show, "Windows版Chrome");
 		}
 		else if (mark == 3) {
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.19041");//Edge浏览器
+			sprintf(head_show, "Edge浏览器");
+		}
+		else if (mark == 4) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729)");//IE浏览器（兼容模式）
 			sprintf(head_show, "IE浏览器（旧版）");
 		}
-		else if (mark == 4) {
-			printf("\n请输入UserAgent的值：\n");
-			scanf("%s", UserAgent_DIY);
-			sprintf(head, "--header=\"User-Agent:%s\"", UserAgent_DIY);//自定义
-			sprintf(head_show, "自定义");
-		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36");//IE浏览器（增强模式）
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36");//Windows版Chrome
 			sprintf(head_show, "Windows版Chrome");
 		}
 	}
@@ -580,7 +578,7 @@ int Netdisk() {
 	}
 	if (fopen("Netdisk_Cookies.txt", "r") == NULL) {
 	p_4:cookie = fopen("tmp.txt", "w");
-		fprintf(cookie, "# Input Cookie below#\n");
+		fprintf(cookie, "# Input Cookie below(pan.baidu.com&pcs.baidu.com)#\n");
 		fclose(cookie);
 		printf("\n请在弹出窗口中导入百度网盘Cookies信息，");
 		system("notepad tmp.txt");
@@ -844,6 +842,7 @@ int downloadengine() {
 			system("taskkill /f /im aria2c.exe");
 			system("taskkill /f /im cmd.exe");
 			system("del /f /s /q *.bat");
+			system("cls");
 		}
 		download_result = 0;
 	}
