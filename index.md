@@ -1,4 +1,4 @@
-## 标准下载器(FreeDownloader)
+## FreeDownloader
 
 
 ![Image](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591516856861&di=cf4424b94f910a9a13be0e12bf77a018&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F115c59c5f292336d52e40f21e9ade30ab39ed15c72ac-tEMn6b_fw658)
@@ -8,7 +8,7 @@
 
 1.下载压缩包[Windows64位](https://lanzous.com/id1lplg)  [Windows32位](https://lanzous.com/id1m2mf)并解压
 
-2.在chrome浏览器[国内离线安装包](https://www.lanzous.com/i9r1beh)  [Chrome扩展商店](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN)中安装EditThisCookie插件与油猴脚本(本地安装方法：[下载插件](https://www.lanzous.com/i9mqftg)并解压，打开chrome浏览器更多工具-扩展程序，打开开发者模式后加载已解压的扩展程序）（ps:火狐与Opera浏览器也可以安装，但需要自己百度下载插件)
+2.在chrome浏览器[Chrome国内离线安装包](https://www.lanzous.com/i9r1beh)  [Chrome扩展商店EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN)中安装EditThisCookie插件与油猴脚本(本地安装方法：[下载插件](https://www.lanzous.com/i9mqftg)并解压，打开chrome浏览器更多工具-扩展程序，打开开发者模式后加载已解压的扩展程序）（ps:火狐与Opera浏览器也可以安装，但需要自己百度下载插件)
 
 3.[安装网盘助手](https://greasyfork.org/scripts/378301-%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/code/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B.user.js)(务必先安装油猴脚本再安装这个！！！)
 
@@ -16,35 +16,25 @@
 
 ### 二、百度网盘功能使用方法
 
-1.打开标准下载器，不用代理，按提示操作，当程序弹窗要求导入Cookies信息时，开始第2步操作（夜间挂机下载可以将自动关机功能打开）（程序默认屏蔽自动关机功能与代理服务器功能，如果需要，请在进入软件前删除power.ini与proxy.ini文件）
+1.打开FreeDownloader，不用代理，按提示操作，当程序弹窗要求导入Cookies信息时，开始第2步操作（夜间挂机下载可以将自动关机功能打开）（程序默认屏蔽自动关机功能与代理服务器功能，如果需要，请在进入软件前删除power.ini与proxy.ini文件）
 
-2.在chrome浏览器中登录百度网盘，点击右上角饼干图标（EditThisCookie插件），点击“导出Cookies”，复制粘贴填入标准下载器弹出的文本文件中
+2.在chrome浏览器中登录百度网盘，点击右上角饼干图标（EditThisCookie插件），点击“导出Cookies”，复制粘贴填入FreeDownloader弹出的文本文件中
 
-3.在插件的输入框中输入pcs.baidu.com，再点击“导出Cookies”，也复制粘贴填入标准下载器弹出的文本文件中(2、3步中数据只用导入1次，之后如果不再切换百度账号或修改密码可直接使用第一次导入的数据)
+3.在插件的输入框中输入pcs.baidu.com，再点击“导出Cookies”，也复制粘贴填入FreeDownloader弹出的文本文件中(2、3步中数据只用导入1次，之后如果不再切换百度账号或修改密码可直接使用第一次导入的数据)
 
-4.选择你要下载的一个或多个文件，单击生成链接，将生成的链接复制粘贴到标准下载器弹出的文本输入框内，多个链接间回车隔开，如果设置的应用id与软件的模式不匹配，需要Ctrl+H自己替换
+4.选择你要下载的一个或多个文件，单击生成链接，将生成的链接复制粘贴到FreeDownloader弹出的文本输入框内，多个链接间回车隔开，如果设置的应用id与软件的模式不匹配，需要Ctrl+H自己替换
 
-----------------------------------------------------------
 应用ID：
-250528
-265486
-309847
-266719
 778750
-
------------------------------------------------------------
-
 
 5.关于用户代理
 在插件的输入框（UserAgent）：不同的用户代理可以模拟不同软件的下载行为，在不稳定的情况下尽量选择百度网盘客户端的用户代理
 
 ### 三、视频下载功能使用方法（实验性功能）
 
-1.复制视频所在网址，可以下载油管、哔哩哔哩（已通过引入annie引擎支持了哔哩哔哩加密番剧下载！）、腾讯视频、爱奇艺、优酷视频
+1.复制视频所在网址，可以下载油管、哔哩哔哩（支持哔哩哔哩加密番剧下载）、腾讯视频、爱奇艺、优酷视频
 
-2.如果需要下载会员专享高清或独播视频，需要导入会员账号Cookies信息，可在浏览器中先用会员账号登录，再仿照百度网盘的Cookies导出方式导出当前页面Cookies信息
-
-注意：以后仅更新程序关键文件，下载后直接覆盖即可！
+2.下载普通视频只需登录网站并导出自己的Cookies到FreeDownloader，如果需要下载会员专享高清或独播视频，则需要导入会员账号Cookies信息，可在浏览器中先用会员账号登录，再仿照百度网盘的Cookies导出方式导出当前页面Cookies信息
 
 ### 四、导入下载功能
 
@@ -52,7 +42,7 @@
 
 ### 五、关于BT种子与磁力链下载（实验性功能）
 
-本软件支持种子与磁力链下载功能，并内置tracker服务器列表帮助加速下载，必要时可以自行导入
+本软件支持种子与磁力链下载功能，并内置tracker服务器列表帮助加速下载（感谢[trackerslist.com](https://trackerslist.com/#/zh)公开tracker列表），必要时可以自行导入
 
 ### 六、关于文件校验
 
