@@ -577,18 +577,14 @@ int Netdisk() {
 		sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
 	}
 	if (fopen("Netdisk_Cookies.txt", "r") == NULL) {
-	p_4:cookie = fopen("tmp.txt", "w");
-		fprintf(cookie, "# Input Cookie below(pan.baidu.com&pcs.baidu.com)#\n");
+	p_4:cookie = fopen("Netdisk_Cookies_tmp.txt", "w");
+		fprintf(cookie, "# Input Cookie below#\n");
 		fclose(cookie);
 		printf("\n请在弹出窗口中导入百度网盘Cookies信息，");
-		system("notepad tmp.txt");
+		system("notepad Netdisk_Cookies_tmp.txt");
 		system("pause");
-		system("type tmp.txt | find \"BDUSS\">Netdisk_Cookies.txt");
-		system("type tmp.txt | find \"pcsett\">>Netdisk_Cookies.txt");
-		system("del tmp.txt");
-		cookie = fopen("Netdisk_Cookies.txt", "a");
-		fprintf(cookie, "\n");
-		fclose(cookie);
+		system("type Netdisk_Cookies_tmp.txt | find \"BDUSS\" > Netdisk_Cookies.txt");
+		system("del Netdisk_Cookies_tmp.txt");
 	}
 	else {
 		printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
