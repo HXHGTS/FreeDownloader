@@ -67,9 +67,7 @@ int CreateFolder() {
 		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
 		fclose(dir_mark);
 	}
-	if (fopen("Downloads\\best_aria2.txt", "r") != NULL) {
 		system("del Downloads\\best_aria2.txt");
-	}
 		system("cls");
 		Media_conf = fopen("config\\Media.conf", "w");
 		fprintf(Media_conf, "dir=Downloads\n");
@@ -100,7 +98,7 @@ p_3:system("cls");
 	printf("------------------------------------------------\n");
 	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
-	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘下载\n3.视频下载模式\n4.高级下载模式\n5.导入下载模式\n6.磁力链下载模式\n7.文件完整性测试\n8.Github上的软件帮助\n9.打开下载文件夹\n0.退出\n");
+	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘下载\n3.视频下载模式\n4.高级下载模式\n5.磁力链下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.打开下载文件夹\n9.清空下载记录\n0.退出\n");
 	printf("------------------------------------------------\n");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
@@ -127,25 +125,27 @@ p_3:system("cls");
 		AdvanceDownloader();
 	}
 	else if (downloadmode == 5) {
-		ExportDownloader();
-	}
-	else if (downloadmode == 6) {
 		MagnetDownloader();
 	}
-	else if (downloadmode == 7) {
+	else if (downloadmode == 6) {
 		IsCheckSum = 1;
 		CheckSum(IsCheckSum);
 		system("cls");
 		goto p_3;
 	}
-	else if (downloadmode == 8) {
+	else if (downloadmode == 7) {
 		printf("正在打开帮助界面. . .\n");
 		system("explorer.exe \"https://hxhgts.github.io/FreeDownloader/\"");
 		system("cls");
 		goto p_3;
 	}
-	else if (downloadmode == 9) {
+	else if (downloadmode == 8) {
 		system("explorer.exe Downloads");
+		system("cls");
+		goto p_3;
+	}
+	else if (downloadmode == 9) {
+		system("del /f /s /q temp\\*");
 		system("cls");
 		goto p_3;
 	}
@@ -173,7 +173,7 @@ p_2:redownload_result = downloadengine();
 		printf("----------------------下载失败!----------------------\n");
 		printf("-----------------------------------------------------\n");
 		system("Timeout /T 3");
-		if (downloadmode == 1 || downloadmode == 3 || downloadmode == 4 || downloadmode == 5 || downloadmode == 6) {
+		if (downloadmode == 1 || downloadmode == 3 || downloadmode == 4 || downloadmode == 5 ) {
 			system("cls");
 			goto p_2;
 		}
@@ -190,16 +190,6 @@ int NormalDownloader() {
 	threader();
 	proxyswitcher();
 	BroswerMark();
-}
-
-int ExportDownloader() {
-	url();
-	config_thread = 1;
-	sprintf(Downloader_Use, "%s", "aria2c.exe");
-	sprintf(head_show, "%s", "用户自定义");
-	proxyswitcher();
-	downloadengine();
-	return 0;
 }
 
 int MagnetDownloader() {
@@ -374,15 +364,6 @@ int url() {
 		sprintf(config_url, "%s", "-i temp\\advance.download");
 	}
 	else if (downloadmode == 5) {
-		if (fopen("temp\\Export.bat", "r") == NULL) {
-			url = fopen("temp\\Export.bat", "w");
-			fprintf(url, "%s", "%Input command below,only support aria2c%\n");
-			fclose(url);
-		}
-		printf("\n请在弹出页输入下载地址. . .\n\n");
-		system("notepad.exe temp\\Export.bat");
-	}
-	else if (downloadmode == 6) {
 		if (magnet_mode == 2) {
 			if (fopen("temp\\magnet.download", "r") == NULL) {
 				url = fopen("temp\\magnet.download", "w");
@@ -426,7 +407,7 @@ int threader() {
 		}
 		config_thread = 16;
 	}
-	else if (downloadmode == 6) {
+	else if (downloadmode == 5) {
 		Download_Task = 1;//同时下载任务数
 		sprintf(Downloader_Use, "%s", "aria2c.exe");
 		config_thread = 16;
@@ -445,7 +426,7 @@ int dir() {
 		}
 	}
 	else {
-		if (downloadmode == 6 && magnet_mode == 1) {
+		if (downloadmode == 5 && magnet_mode == 1) {
 
 		}
 		else sprintf(config_dir, "%s", "--dir=\"Downloads\"");
@@ -459,7 +440,7 @@ int proxyswitcher() {
 		sprintf(config_proxy, "%s", "");
 	}
 	else {
-		if (downloadmode == 1 || downloadmode == 2 || downloadmode == 3 || downloadmode == 4 || downloadmode == 6) {
+		if (downloadmode == 1 || downloadmode == 2 || downloadmode == 3 || downloadmode == 4 || downloadmode == 5) {
 			printf("\n是否设置网络代理（是=1，否=0）：");
 			scanf("%d", &proxymode);
 		}
@@ -499,8 +480,8 @@ int BroswerMark() {
 		sprintf(head_show, "Windows版Chrome");
 	}
 	else if(downloadmode==2){
-		printf("\n应用id为778750，下载失败请切换浏览器标识！\n");
-		printf("\n请选择浏览器标识：\n\n1.爱奇艺\n\n2.百度网盘客户端\n\n请输入：");
+		printf("\n应用id为250528(官方)或778750，下载失败请尝试切换应用id与浏览器标识！\n");
+		printf("\n请选择浏览器标识：\n\n1.爱奇艺(官方的高速通道，不过貌似对1G以上文件不友好)\n\n2.百度网盘客户端(应该是最慢的方案了)\n\n3.Pandownload(最新解决方案，可能不稳定)\n\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 5.0; SM-N9100 Build/LRX21V) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/37.0.0.0 Mobile Safari/537.36 NetType/WIFI Amoeba/1.0");//爱奇艺
@@ -510,10 +491,14 @@ int BroswerMark() {
 			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.9.10.1;PC;PC-Windows;10.0.19041;WindowsBaiduYunGuanJia");//百度网盘
 			sprintf(head_show, "%s", "百度网盘客户端");
 		}
+		else if (mark == 3) {
+			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;P2SP;2.2.60.26");//Pandownload
+			sprintf(head_show, "%s", "Pandownload");
+		}
 		else {
-			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.9.10.1;PC;PC-Windows;10.0.19041;WindowsBaiduYunGuanJia");//百度网盘
-			sprintf(head_show, "%s", "百度网盘客户端");
+			mark = 3;
+			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;P2SP;2.2.60.26");//Pandownload
+			sprintf(head_show, "%s", "Pandownload");
 		}
 	}
 	else if(downloadmode==1){
@@ -545,7 +530,7 @@ int BroswerMark() {
 			sprintf(head_show, "Windows版Chrome");
 		}
 	}
-	else if (downloadmode == 6) {
+	else if (downloadmode == 5) {
 		sprintf(head_show, "Transmission/2.77");
 	}
 	return 0;
@@ -800,9 +785,6 @@ int downloadengine() {
 		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 5) {
-		sprintf(cmd, "%s","temp\\Export.bat");
-	}
-	else if (downloadmode == 6) {
 		if (magnet_mode == 2) {
 			sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s --conf-path=config\\bt.conf %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 		}
