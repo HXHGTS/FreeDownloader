@@ -77,7 +77,8 @@ int CreateFolder() {
 		fprintf(Media_conf, "max-connection-per-server=16\n");
 		fprintf(Media_conf, "min-split-size=2M\n");
 		fprintf(Media_conf, "disk-cache=128M\n");
-		fprintf(Media_conf, "split=16\n");
+		fprintf(Media_conf, "split=64\n");
+		fprintf(Media_conf, "file-allocation=none\n");
 		fprintf(Media_conf, "enable-rpc=true\n");
 		fprintf(Media_conf, "rpc-secret=%s\n",rpctoken);
 		fprintf(Media_conf, "rpc-allow-origin-all=true\n");
@@ -216,13 +217,14 @@ int MagnetDownloader() {
 			fprintf(conf, "bt-max-peers=999\n");
 			fprintf(conf, "min-split-size=2M\n");
 			fprintf(conf, "disk-cache=128M\n");
-			fprintf(conf, "split=16\n");;
+			fprintf(conf, "split=64\n");;
 			fprintf(conf, "dir=Downloads/\n");
+			fprintf(conf, "file-allocation=none\n");
 			fprintf(conf, "enable-peer-exchange=true\n");
 			fprintf(conf, "seed-ratio=0.0\n");
-			fprintf(conf, "user-agent=Transmission/2.77\n");
-			fprintf(conf, "peer-agent=Transmission/2.77\n");
-			fprintf(conf, "peer-id-prefix=-TR2770-\n");
+			fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
+			fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
+			fprintf(conf, "peer-id-prefix=-qB4250-\n");
 			fclose(conf);
 		}
 			else {
@@ -239,13 +241,14 @@ int MagnetDownloader() {
 				fprintf(conf, "bt-max-peers=999\n");
 				fprintf(conf, "min-split-size=2M\n");
 				fprintf(conf, "disk-cache=128M\n");
-				fprintf(conf, "split=16\n");;
+				fprintf(conf, "split=64\n");;
 				fprintf(conf, "dir=Downloads/\n");
+				fprintf(conf, "file-allocation=none\n");
 				fprintf(conf, "enable-peer-exchange=true\n");
 				fprintf(conf, "seed-ratio=0.0\n");
-				fprintf(conf, "user-agent=Transmission/2.77\n");
-				fprintf(conf, "peer-agent=Transmission/2.77\n");
-				fprintf(conf, "peer-id-prefix=-TR2770-\n");
+				fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
+				fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
+				fprintf(conf, "peer-id-prefix=-qB4250-\n");
 				fclose(conf);
 			}
 		}
@@ -261,13 +264,14 @@ int MagnetDownloader() {
 			fprintf(conf, "bt-max-peers=999\n");
 			fprintf(conf, "min-split-size=2M\n");
 			fprintf(conf, "disk-cache=128M\n");
-			fprintf(conf, "split=16\n");;
+			fprintf(conf, "split=64\n");;
 			fprintf(conf, "dir=Downloads/\n");
+			fprintf(conf, "file-allocation=none\n");
 			fprintf(conf, "enable-peer-exchange=true\n");
 			fprintf(conf, "seed-ratio=0.0\n");
-			fprintf(conf, "user-agent=Transmission/2.77\n");
-			fprintf(conf, "peer-agent=Transmission/2.77\n");
-			fprintf(conf, "peer-id-prefix=-TR2770-\n");
+			fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
+			fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
+			fprintf(conf, "peer-id-prefix=-qB4250-\n");
 			fclose(conf);
 		}
 	}
@@ -394,7 +398,7 @@ int threader() {
 	else if (downloadmode == 2) {
 		Download_Task = 1;//同时下载任务数
 		sprintf(Downloader_Use, "%s", "aria2c.exe");
-		config_thread = 1;
+		config_thread = 4;
 		sprintf(split, "1M");
 	}
 	else if (downloadmode == 3) {
@@ -531,7 +535,7 @@ int BroswerMark() {
 		}
 	}
 	else if (downloadmode == 5) {
-		sprintf(head_show, "Transmission/2.77");
+		sprintf(head_show, "qBittorrent/4.2.5");
 	}
 	return 0;
 }
@@ -749,12 +753,12 @@ int downloadengine() {
 		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 	}
 	else if (downloadmode == 2) {
-		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		sprintf(cmd, "%s -c -x%d -s64 --timeout=10 --file-allocation=none --input-file=\\temp\\aria2.session --save-session=\\temp\\aria2.session --min-split-size=10M -k%s -j %d %s %s %s %s %s --check-certificate=false --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
-			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs --cookies cookies\\ytb_Cookies.txt %s %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 2M\"\n", Downloader_Use, play_list, config_dir,config_url);
+			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs --cookies cookies\\ytb_Cookies.txt %s %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 2M --file-allocation=none\"\n", Downloader_Use, play_list, config_dir,config_url);
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
