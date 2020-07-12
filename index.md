@@ -52,6 +52,6 @@
 
 ### 八、其它事项
 
-由于更新软件工程量巨大，所以源代码的更新速度远远先于release文件，如需使用最新版本可以自己下载[master.zip](https://github.com/HXHGTS/FreeDownloader/archive/master.zip)文件，使用vistual studio编译！
+由于更新软件工程量巨大，所以源代码的更新速度远远先于release文件，如需使用最新版本可以自己下载[软件源码](https://github.com/HXHGTS/FreeDownloader/archive/master.zip)文件，使用vistual studio2019编译！
 
 
