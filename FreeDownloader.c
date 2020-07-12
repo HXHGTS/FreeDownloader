@@ -13,7 +13,7 @@ FILE* * conf,*save,*power_ini,*dic,*Media_conf,*dir_mark, *skin;
 
 int WindowSkin() {
 	if (fopen("config\\skin.ini", "r") == NULL) {
-		printf("重置窗体与字体颜色请直接删除软件目录下skin.ini文件！\n");
+		printf("重置窗体与字体颜色请直接删除config目录下skin.ini文件！\n");
 		printf("请按照\"窗口颜色+字体颜色\"的格式设置皮肤，对应关系如下：\n");
 		printf("---------------------------------------\n");
 		printf("0=黑色   8=灰色\n");
@@ -480,7 +480,7 @@ int BroswerMark() {
 		sprintf(head_show, "Windows版Chrome");
 	}
 	else if(downloadmode==2){
-		printf("\n应用id为250528(官方)或778750，下载失败请尝试切换应用id与浏览器标识！\n");
+		printf("\n应用id为778750，下载失败请尝试切换应用id与浏览器标识！\n");
 		printf("\n请选择浏览器标识：\n\n1.爱奇艺(官方的高速通道，不过貌似对1G以上文件不友好)\n\n2.百度网盘客户端(应该是最慢的方案了)\n\n3.Pandownload(最新解决方案，可能不稳定)\n\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
