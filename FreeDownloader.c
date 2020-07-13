@@ -750,7 +750,7 @@ int downloadengine() {
 		sprintf(cmd, "%s -c -x%d -k%s --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 	}
 	else if (downloadmode == 2) {
-		sprintf(cmd, "%s -c -x%d -s5 --timeout=10 --file-allocation=none --input-file=\\temp\\aria2.session --save-session=\\temp\\aria2.session --min-split-size=10M -k%s -j %d %s %s %s %s %s --check-certificate=false --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		sprintf(cmd, "%s -c -x%d -s3 --timeout=10 --file-allocation=none --input-file=\\temp\\aria2.session --save-session=\\temp\\aria2.session --min-split-size=10M -k%s -j %d %s %s %s %s %s --check-certificate=false --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
