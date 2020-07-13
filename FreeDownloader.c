@@ -482,23 +482,15 @@ int BroswerMark() {
 	}
 	else if(downloadmode==2){
 		printf("\n应用id为778750，下载失败请尝试切换应用id与浏览器标识！\n");
-		printf("\n请选择浏览器标识：\n\n1.爱奇艺(官方的高速通道，不过貌似对1G以上文件不友好)\n\n2.百度网盘客户端(应该是最慢的方案了)\n\n3.Pandownload(最新解决方案，可能不稳定)\n\n请输入：");
+		printf("\n请选择浏览器标识：\n\n1.爱奇艺(官方的高速通道，不过貌似对1G以上文件不友好)\n\n2.百度网盘客户端(最新解决方案，可能不稳定)\n\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 5.0; SM-N9100 Build/LRX21V) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/37.0.0.0 Mobile Safari/537.36 NetType/WIFI Amoeba/1.0");//爱奇艺
 			sprintf(head_show, "%s", "爱奇艺");
 		}
-		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.9.10.1;PC;PC-Windows;10.0.19041;WindowsBaiduYunGuanJia");//百度网盘
-			sprintf(head_show, "%s", "百度网盘客户端");
-		}
-		else if (mark == 3) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;P2SP;2.2.60.26");//Pandownload
-			sprintf(head_show, "%s", "Pandownload");
-		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.9.10.1;PC;PC-Windows;10.0.19041;WindowsBaiduYunGuanJia");//百度网盘
+			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;P2SP;2.2.60.26");//百度网盘
 			sprintf(head_show, "%s", "百度网盘客户端");
 		}
 	}
