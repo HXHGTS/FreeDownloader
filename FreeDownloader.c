@@ -764,24 +764,28 @@ int downloadengine() {
 		}
 		else if (config_media == 2) {
 			Bilibili_Download = fopen("temp\\Bilibili_Download.bat", "w");
+			fprintf(Bilibili_Download, "@echo off\n");
 			fprintf(Bilibili_Download, "%s %s -c cookies\\Bilibili_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url,rpctoken);
 			fclose(Bilibili_Download);
 			
 		}
 		else if (config_media == 3) {
 			QQVideo_Download = fopen("temp\\QQVideo_Download.bat", "w");
+			fprintf(QQVideo_Download, "@echo off\n");
 			fprintf(QQVideo_Download, "%s %s -c cookies\\QQVideo_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
 			fclose(QQVideo_Download);
 
 		}
 		else if (config_media == 4) {
 			iqiyi_Download = fopen("temp\\iqiyi_Download.bat", "w");
+			fprintf(iqiyi_Download, "@echo off\n");
 			fprintf(iqiyi_Download, "%s %s -c cookies\\iqiyi_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
 			fclose(iqiyi_Download);
 
 		}
 		else {
 			Youku_Download = fopen("temp\\Youku_Download.bat", "w");
+			fprintf(Youku_Download, "@echo off\n");
 			fprintf(Youku_Download, "%s %s -c cookies\\Youku_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
 			fclose(Youku_Download);
 		}
@@ -818,19 +822,19 @@ int downloadengine() {
 			system("temp\\ytb_Download.bat");
 		}
 		if (config_media != 1) {
-			printf("\n正在新建弹出窗口并发送下载任务. . .\n");
+			printf("\n正在新建弹出窗口并发送下载任务. . .\n\n");
 			system("start aria2c --conf-path=config\\Media.conf");
 		if (config_media == 2) {
-			system("start "" /min temp\\Bilibili_Download.bat");
+			system("temp\\Bilibili_Download.bat");
 		}
 		else if (config_media == 3) {
-			system("start "" /min temp\\QQVideo_Download.bat");
+			system("temp\\QQVideo_Download.bat");
 		}
 		else if (config_media == 4) {
-			system("start "" /min temp\\iqiyi_Download.bat");
+			system("temp\\iqiyi_Download.bat");
 		}
 		else {
-			system("start "" /min temp\\Youku_Download.bat");
+			system("temp\\Youku_Download.bat");
 		}
 			printf("\n由于系统限制，下载进程无法自动停止，若弹出窗口一直显示complete，或需停止下载，");
 			system("pause");
