@@ -99,7 +99,7 @@ p_3:system("cls");
 	printf("------------------------------------------------\n");
 	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
-	printf("请选择下载功能：\n\n1.普通下载模式\n2.百度网盘下载\n3.视频下载模式\n4.高级下载模式\n5.磁力链下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.打开下载文件夹\n9.清空下载记录\n0.退出\n");
+	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘下载\n3.视频下载模式\n4.高级下载模式\n5.磁力链下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.打开下载文件夹\n9.清空下载记录\n0.退出\n");
 	printf("------------------------------------------------\n");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
@@ -758,7 +758,7 @@ int downloadengine() {
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
-			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs --cookies cookies\\ytb_Cookies.txt %s %s %s --external-downloader aria2c --external-downloader-args \"-x16 -s64 -k2M --file-allocation=none\"\n", Downloader_Use, play_list, config_dir,config_url);
+			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs --cookies cookies\\ytb_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir,config_url);//暂时不添加aria2c支持，待官方修复
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
