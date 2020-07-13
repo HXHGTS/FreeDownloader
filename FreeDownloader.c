@@ -160,6 +160,7 @@ p_2:redownload_result = downloadengine();
 		printf("----------------------下载成功!----------------------\n");
 		printf("-----------------------------------------------------\n");
 		AutoShutdown(shutdown);
+		system("del /f /s /q temp\\*.bat");
 		printf("\n是否打开下载文件夹：\n\n1.是\n\n0.否\n\n请输入：");
 		scanf("%d", &OpenDir);
 		if (OpenDir != 0) {
@@ -178,10 +179,6 @@ p_2:redownload_result = downloadengine();
 			system("cls");
 			goto p_2;
 		}
-		else {
-				system("cls");
-				goto p_2;
-			}
 	}
 }//下载工具主程序
 
@@ -500,9 +497,9 @@ int BroswerMark() {
 			sprintf(head_show, "%s", "Pandownload");
 		}
 		else {
-			mark = 3;
-			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;P2SP;2.2.60.26");//Pandownload
-			sprintf(head_show, "%s", "Pandownload");
+			mark = 2;
+			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;6.9.10.1;PC;PC-Windows;10.0.19041;WindowsBaiduYunGuanJia");//百度网盘
+			sprintf(head_show, "%s", "百度网盘客户端");
 		}
 	}
 	else if(downloadmode==1){
@@ -753,7 +750,7 @@ int downloadengine() {
 		sprintf(cmd, "%s -c -x%d -k%s --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 	}
 	else if (downloadmode == 2) {
-		sprintf(cmd, "%s -c -x%d -s64 --timeout=10 --file-allocation=none --input-file=\\temp\\aria2.session --save-session=\\temp\\aria2.session --min-split-size=10M -k%s -j %d %s %s %s %s %s --check-certificate=false --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		sprintf(cmd, "%s -c -x%d -s5 --timeout=10 --file-allocation=none --input-file=\\temp\\aria2.session --save-session=\\temp\\aria2.session --min-split-size=10M -k%s -j %d %s %s %s %s %s --check-certificate=false --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
@@ -813,15 +810,12 @@ int downloadengine() {
 	printf("-----------------------------------------------------\n");
 	if (downloadmode == 3) {
 		if (config_media != 1) {
-			printf("正在弹出窗口中建立本地下载任务监听进程，请不要手动关闭. . .\n");
-		}
-		else {
-			printf("正在执行下载任务. . .\n\n");
+			printf("正在弹出窗口中建立本地下载任务监听进程，请不要手动关闭. . .\n\n");
 		}
 		if (config_media == 1) {
 			system("temp\\ytb_Download.bat");
 		}
-		if (config_media != 1) {
+		else{
 			printf("\n正在新建弹出窗口并发送下载任务. . .\n\n");
 			system("start aria2c --conf-path=config\\Media.conf");
 		if (config_media == 2) {
@@ -842,8 +836,6 @@ int downloadengine() {
 			system("taskkill /f /im aria2c.exe");
 			system("del Downloads\\best_aria2.txt");
 		}
-		system("del /f /s /q temp\\*.bat");
-		system("cls");
 		download_result = 0;
 	}
 	else {
@@ -852,8 +844,6 @@ int downloadengine() {
 		fprintf(Download, "%s\n", cmd);
 		fclose(Download);
 		download_result = system("temp\\Download.bat");
-		system("del /f /s /q temp\\*.bat");
-		system("cls");
 	}
 	if (download_result == 0) {
 		return 0;
