@@ -747,7 +747,7 @@ int MediaDownloader() {
 }
 
 int downloadengine() {
-	FILE* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download;
+	FILE* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download,*Download;
 	int download_result;
 	if (downloadmode == 1) {
 		sprintf(cmd, "%s -c -x%d -k%s --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
@@ -847,7 +847,13 @@ int downloadengine() {
 		download_result = 0;
 	}
 	else {
-		download_result = system(cmd);
+		Download = fopen("temp\\Download.bat","w");
+		fprintf(Download, "@echo off\n");
+		fprintf(Download, "%s\n", cmd);
+		fclose(Download);
+		download_result = system("temp\\Download.bat");
+		system("del /f /s /q temp\\*.bat");
+		system("cls");
 	}
 	if (download_result == 0) {
 		return 0;
