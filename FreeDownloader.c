@@ -392,28 +392,28 @@ int threader() {
 	if (downloadmode == 1 || downloadmode == 4) {
 		Download_Task = 1;//同时下载任务数
 		config_thread = 16;
-		sprintf(Downloader_Use, "%s", "aria2c.exe");
+		sprintf(Downloader_Use, "%s", "aria2c");
 		sprintf(split, "1M");
 	}
 	else if (downloadmode == 2) {
 		Download_Task = 1;//同时下载任务数
-		sprintf(Downloader_Use, "%s", "aria2c.exe");
+		sprintf(Downloader_Use, "%s", "aria2c");
 		config_thread = 3;
 		sprintf(split, "1M");
 	}
 	else if (downloadmode == 3) {
 		Download_Task = 1;//同时下载任务数
 		if (config_media != 1) {
-			sprintf(Downloader_Use, "%s", "annie.exe");
+			sprintf(Downloader_Use, "%s", "annie");
 		}
 		else {
-			sprintf(Downloader_Use, "%s", "youtube-dl.exe");
+			sprintf(Downloader_Use, "%s", "youtube-dl");
 		}
 		config_thread = 16;
 	}
 	else if (downloadmode == 5) {
 		Download_Task = 1;//同时下载任务数
-		sprintf(Downloader_Use, "%s", "aria2c.exe");
+		sprintf(Downloader_Use, "%s", "aria2c");
 		config_thread = 16;
 		if (magnet_mode == 2)sprintf(split, "1M");
 	}
@@ -840,7 +840,6 @@ int downloadengine() {
 			system("pause");
 			printf("\n\n");
 			system("taskkill /f /im aria2c.exe");
-			system("taskkill /f /im cmd.exe");
 			system("del Downloads\\best_aria2.txt");
 		}
 		system("del /f /s /q temp\\*.bat");
