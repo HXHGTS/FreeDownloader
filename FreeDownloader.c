@@ -758,6 +758,7 @@ int downloadengine() {
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
+			fprintf(ytb_Download, "@echo off\n");
 			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs --cookies cookies\\ytb_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir,config_url);//暂时不添加aria2c支持，待官方修复
 			fclose(ytb_Download);
 		}
@@ -836,10 +837,10 @@ int downloadengine() {
 			printf("\n\n");
 			system("taskkill /f /im aria2c.exe");
 			system("taskkill /f /im cmd.exe");
-			system("del /f /s /q temp\\*.bat");
 			system("del Downloads\\best_aria2.txt");
-			system("cls");
 		}
+		system("del /f /s /q temp\\*.bat");
+		system("cls");
 		download_result = 0;
 	}
 	else {
