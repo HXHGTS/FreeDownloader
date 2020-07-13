@@ -99,7 +99,7 @@ p_3:system("cls");
 	printf("------------------------------------------------\n");
 	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
-	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘下载\n3.视频下载模式\n4.高级下载模式\n5.磁力链下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.打开下载文件夹\n9.清空下载记录\n0.退出\n");
+	printf("请选择下载功能：\n\n1.普通下载模式\n2.百度网盘下载\n3.视频下载模式\n4.高级下载模式\n5.磁力链下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.打开下载文件夹\n9.清空下载记录\n0.退出\n");
 	printf("------------------------------------------------\n");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
@@ -398,7 +398,7 @@ int threader() {
 	else if (downloadmode == 2) {
 		Download_Task = 1;//同时下载任务数
 		sprintf(Downloader_Use, "%s", "aria2c.exe");
-		config_thread = 4;
+		config_thread = 3;
 		sprintf(split, "1M");
 	}
 	else if (downloadmode == 3) {
@@ -750,7 +750,7 @@ int downloadengine() {
 	FILE* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download;
 	int download_result;
 	if (downloadmode == 1) {
-		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
+		sprintf(cmd, "%s -c -x%d -k%s --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 	}
 	else if (downloadmode == 2) {
 		sprintf(cmd, "%s -c -x%d -s64 --timeout=10 --file-allocation=none --input-file=\\temp\\aria2.session --save-session=\\temp\\aria2.session --min-split-size=10M -k%s -j %d %s %s %s %s %s --check-certificate=false --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
@@ -758,7 +758,7 @@ int downloadengine() {
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
-			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs --cookies cookies\\ytb_Cookies.txt %s %s %s --external-downloader aria2c --external-downloader-args \"-x 16 -k 2M --file-allocation=none\"\n", Downloader_Use, play_list, config_dir,config_url);
+			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs --cookies cookies\\ytb_Cookies.txt %s %s %s --external-downloader aria2c --external-downloader-args \"-x16 -s64 -k2M --file-allocation=none\"\n", Downloader_Use, play_list, config_dir,config_url);
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
@@ -786,7 +786,7 @@ int downloadengine() {
 		}
 	}
 	else if (downloadmode == 4) {
-		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s %s --file-allocation=none --content-disposition-default-utf8=true %s", Downloader_Use, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 5) {
 		if (magnet_mode == 2) {
