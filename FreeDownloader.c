@@ -75,7 +75,7 @@ int CreateFolder() {
 		fprintf(Media_conf, "max-connection-per-server=16\n");
 		fprintf(Media_conf, "min-split-size=2M\n");
 		fprintf(Media_conf, "disk-cache=128M\n");
-		fprintf(Media_conf, "split=64\n");
+		fprintf(Media_conf, "split=16\n");
 		fprintf(Media_conf, "file-allocation=none\n");
 		fprintf(Media_conf, "enable-rpc=true\n");
 		fprintf(Media_conf, "rpc-secret=%s\n",rpctoken);
@@ -222,7 +222,7 @@ int MagnetDownloader() {
 	fprintf(conf, "bt-max-peers=999\n");
 	fprintf(conf, "min-split-size=2M\n");
 	fprintf(conf, "disk-cache=128M\n");
-	fprintf(conf, "split=64\n");;
+	fprintf(conf, "split=16\n");;
 	fprintf(conf, "dir=Downloads/\n");
 	fprintf(conf, "file-allocation=none\n");
 	fprintf(conf, "enable-peer-exchange=true\n");
@@ -700,10 +700,10 @@ int downloadengine() {
 	FILE* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download,*Download;
 	int download_result;
 	if (downloadmode == 1) {
-		sprintf(cmd, "%s -c -x%d -k%s --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
+		sprintf(cmd, "%s -c -x%d -s%d -k%s --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread,config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 	}
 	else if (downloadmode == 2) {
-		sprintf(cmd, "%s -c -x%d -s3 --log-level=error --file-allocation=none --input-file=\\temp\\aria2.session --save-session=\\temp\\aria2.session --save-session-interval=60 --force-save=true -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		sprintf(cmd, "%s -c -x%d -s%d --log-level=error --file-allocation=none --input-file=\\temp\\aria2.session --save-session=\\temp\\aria2.session --save-session-interval=60 --force-save=true -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
@@ -741,11 +741,11 @@ int downloadengine() {
 		}
 	}
 	else if (downloadmode == 4) {
-		sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s %s %s --file-allocation=none --content-disposition-default-utf8=true %s", Downloader_Use, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		sprintf(cmd, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --file-allocation=none --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 5) {
 		if (magnet_mode == 2) {
-			sprintf(cmd, "%s -c -x%d -k%s -j %d %s %s %s --conf-path=config\\bt.conf %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
+			sprintf(cmd, "%s -c -x%d -s%d -k%s -j %d %s %s %s --conf-path=config\\bt.conf %s", Downloader_Use, config_thread, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 		}
 		else {
 			sprintf(cmd, "%s --conf-path=config\\bt.conf %s", Downloader_Use,config_url);
