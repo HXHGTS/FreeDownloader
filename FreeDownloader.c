@@ -5,11 +5,11 @@ int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(),dir(),downloaden
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
 int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
 char config_proxy[65], config_url[260], config_dir[35], config_cookie[40], smallcmd[20],cmd[1500], Downloader_Use[15];
-char reference[216], head[300], head_show[30];
+char reference[216], head[300], head_show[35];
 char location[200],split[7],torrent_loca[250],play_list[30], color[4];
-char rpctoken[21] = "UpxBsuNq2rHVKxdJh9Tp";
+char rpctoken[65] = "c5vAB96x3cCCYeY5JigY!WIVgN2aK*A*c7KD4HpM$n9ism96fECphJ!9TU7!6ck0";
 int mark,proxymode, redownload_result,  shutdown, filecheck,use_list,OpenDir;
-FILE* * conf,*save,*power_ini,*dic,*Media_conf,*dir_mark, *skin;
+FILE* * conf,*save,*power_ini,*proxy_ini,*dic,*Media_conf,*dir_mark, *skin;
 
 int WindowSkin() {
 	if (fopen("config\\skin.ini", "r") == NULL) {
@@ -67,8 +67,6 @@ int CreateFolder() {
 		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
 		fclose(dir_mark);
 	}
-		system("del Downloads\\best_aria2.txt");
-		system("cls");
 		Media_conf = fopen("config\\Media.conf", "w");
 		fprintf(Media_conf, "dir=Downloads\n");
 		fprintf(Media_conf, "continue=true\n");
@@ -99,7 +97,7 @@ p_3:system("cls");
 	printf("------------------------------------------------\n");
 	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
-	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘下载\n3.视频下载模式\n4.高级下载模式\n5.磁力链下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.打开下载文件夹\n9.清空下载记录\n0.退出\n");
+	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.打开下载文件夹\n9.清空下载记录\n0.退出\n");
 	printf("------------------------------------------------\n");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
@@ -108,11 +106,18 @@ p_3:system("cls");
 		if (downloadmode != 7 && downloadmode != 8 && downloadmode != 9 && downloadmode != 0) {
 			printf("\n是否设置下载完成自动关机（是=1，否=0）：");
 			scanf("%d", &shutdown);
+			if (shutdown == 0) {
+				power_ini = fopen("config\\power.ini", "w");
+				fprintf(power_ini, "##如果需要在程序中设置下载完成后自动关机请删除本文件##\n");
+				fprintf(power_ini, "power=0\n");
+				fclose(power_ini);
+			}
 		}
 	}
 	else {
 		shutdown = 0;
 	}
+	system("cls");
 	if (downloadmode == 1) {
 		NormalDownloader();
 	}
@@ -155,12 +160,12 @@ p_3:system("cls");
 	}
 p_2:redownload_result = downloadengine();
 	if (redownload_result == 0) {
+		system("del /f /s /q temp\\*.bat");
 		system("cls");
 		printf("-----------------------------------------------------\n");
 		printf("----------------------下载成功!----------------------\n");
 		printf("-----------------------------------------------------\n");
 		AutoShutdown(shutdown);
-		system("del /f /s /q temp\\*.bat");
 		printf("\n是否打开下载文件夹：\n\n1.是\n\n0.否\n\n请输入：");
 		scanf("%d", &OpenDir);
 		if (OpenDir != 0) {
@@ -175,11 +180,10 @@ p_2:redownload_result = downloadengine();
 		printf("----------------------下载失败!----------------------\n");
 		printf("-----------------------------------------------------\n");
 		system("Timeout /T 3");
-		if (downloadmode == 1 || downloadmode == 3 || downloadmode == 4 || downloadmode == 5 ) {
-			system("cls");
-			goto p_2;
-		}
+		system("cls");
+		goto p_2;
 	}
+	return 0;
 }//下载工具主程序
 
 int NormalDownloader() {
@@ -198,80 +202,35 @@ int MagnetDownloader() {
 		dir();
 	}
 	threader();
-	printf("\n是否联网更新tracker：\n\n1.是\n\n0.否\n\n请输入：");
-	scanf("%d", &tracker_update);
 	system("cls");
-	if (tracker_update == 1) {
-		printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
-		if (system("aria2c --dir=Downloads https://trackerslist.com/best_aria2.txt") != 0) {
+	printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
+	conf = fopen("config\\bt.conf", "w");
+	fprintf(conf, "bt-tracker=");
+	fclose(conf);
+	if (system("aria2c --dir=Downloads --allow-overwrite=true https://trackerslist.com/best_aria2.txt") != 0) {
 			printf("\n更新失败，正在本地建立BT配置文件. . .\n");
-			conf = fopen("config\\bt.conf", "w");
-			fprintf(conf, "##bt-tracker=server1,server2,server3\n");
-			fprintf(conf, "listen-port=20331\n");
-			fprintf(conf, "continue=true\n");
-			fprintf(conf, "max-concurrent-downloads=1\n");
-			fprintf(conf, "max-connection-per-server=16\n");
-			fprintf(conf, "bt-max-peers=999\n");
-			fprintf(conf, "min-split-size=2M\n");
-			fprintf(conf, "disk-cache=128M\n");
-			fprintf(conf, "split=64\n");;
-			fprintf(conf, "dir=Downloads/\n");
-			fprintf(conf, "file-allocation=none\n");
-			fprintf(conf, "enable-peer-exchange=true\n");
-			fprintf(conf, "seed-ratio=0.0\n");
-			fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
-			fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
-			fprintf(conf, "peer-id-prefix=-qB4250-\n");
-			fclose(conf);
-		}
-			else {
-				printf("\n更新成功，正在本地建立BT配置文件. . .\n");
-				conf = fopen("config\\bt.conf", "w");
-				fprintf(conf, "bt-tracker=");
-				fclose(conf);
-				system("type Downloads\\best_aria2.txt>>config\\bt.conf");
-				conf = fopen("config\\bt.conf", "a");
-				fprintf(conf, "\nlisten-port=20331\n");
-				fprintf(conf, "continue=true\n");
-				fprintf(conf, "max-concurrent-downloads=1\n");
-				fprintf(conf, "max-connection-per-server=16\n");
-				fprintf(conf, "bt-max-peers=999\n");
-				fprintf(conf, "min-split-size=2M\n");
-				fprintf(conf, "disk-cache=128M\n");
-				fprintf(conf, "split=64\n");;
-				fprintf(conf, "dir=Downloads/\n");
-				fprintf(conf, "file-allocation=none\n");
-				fprintf(conf, "enable-peer-exchange=true\n");
-				fprintf(conf, "seed-ratio=0.0\n");
-				fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
-				fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
-				fprintf(conf, "peer-id-prefix=-qB4250-\n");
-				fclose(conf);
-			}
-		}
-	else {
-		printf("正在本地建立BT配置文件，建议手动导入tracker服务器列表以加快BT下载速度. . .\n");
-		if (fopen("config\\bt.conf", "r") == NULL) {
-			conf = fopen("config\\bt.conf", "w");
-			fprintf(conf, "##bt-tracker=server1,server2,server3\n");
-			fprintf(conf, "listen-port=20331\n");
-			fprintf(conf, "continue=true\n");
-			fprintf(conf, "max-concurrent-downloads=1\n");
-			fprintf(conf, "max-connection-per-server=16\n");
-			fprintf(conf, "bt-max-peers=999\n");
-			fprintf(conf, "min-split-size=2M\n");
-			fprintf(conf, "disk-cache=128M\n");
-			fprintf(conf, "split=64\n");;
-			fprintf(conf, "dir=Downloads/\n");
-			fprintf(conf, "file-allocation=none\n");
-			fprintf(conf, "enable-peer-exchange=true\n");
-			fprintf(conf, "seed-ratio=0.0\n");
-			fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
-			fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
-			fprintf(conf, "peer-id-prefix=-qB4250-\n");
-			fclose(conf);
-		}
 	}
+	else {
+			printf("\n更新成功，正在本地建立BT配置文件. . .\n");
+			system("type Downloads\\best_aria2.txt>>config\\bt.conf");
+	}
+	conf = fopen("config\\bt.conf", "a");
+	fprintf(conf, "\nlisten-port=20331\n");
+	fprintf(conf, "continue=true\n");
+	fprintf(conf, "max-concurrent-downloads=1\n");
+	fprintf(conf, "max-connection-per-server=16\n");
+	fprintf(conf, "bt-max-peers=999\n");
+	fprintf(conf, "min-split-size=2M\n");
+	fprintf(conf, "disk-cache=128M\n");
+	fprintf(conf, "split=64\n");;
+	fprintf(conf, "dir=Downloads/\n");
+	fprintf(conf, "file-allocation=none\n");
+	fprintf(conf, "enable-peer-exchange=true\n");
+	fprintf(conf, "seed-ratio=0.0\n");
+	fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
+	fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
+	fprintf(conf, "peer-id-prefix=-qB4250-\n");
+	fclose(conf);
 	printf("\n请在弹出窗口中修改BT配置文件. . .\n");
 	system("notepad config\\bt.conf");
 	BroswerMark();
@@ -470,6 +429,12 @@ int proxyswitcher() {
 				}
 			}
 		}
+		if (proxymode == 0) {
+			proxy_ini = fopen("config\\proxy.ini", "w");
+			fprintf(proxy_ini, "##如果需要在程序中自定义代理请删除本文件##\n");
+			fprintf(proxy_ini, "proxy=0\n");
+			fclose(proxy_ini);
+		}
 	}
 	return 0;
 }
@@ -481,7 +446,7 @@ int BroswerMark() {
 		sprintf(head_show, "Windows版Chrome");
 	}
 	else if(downloadmode==2){
-		printf("\n应用id为778750，下载失败请尝试切换应用id与浏览器标识！\n");
+		printf("应用id为778750，下载失败请尝试切换浏览器标识！\n");
 		printf("\n请选择浏览器标识：\n\n1.爱奇艺(官方的高速通道，不过貌似对1G以上文件不友好)\n\n2.百度网盘客户端(最新解决方案，可能不稳定)\n\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
@@ -499,28 +464,24 @@ int BroswerMark() {
 		sprintf(head_show, "Windows版Chrome");
 	}
 	else if (downloadmode == 4) {
-		printf("\n请选择浏览器标识：\n\n1.IE浏览器（新版）\n\n2.Windows版Chrome\n\n3.Edge浏览器\n\n4.IE浏览器（旧版）\n\n请输入：");
+		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Windows版Chrome浏览器\n\n3.Mac版Safari浏览器\n\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");//IE浏览器（增强模式）
-			sprintf(head_show, "IE浏览器（新版）");
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E)");//IE浏览器
+			sprintf(head_show, "IE浏览器");
 		}
 		else if (mark == 2) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36");//Windows版Chrome
-			sprintf(head_show, "Windows版Chrome");
+			sprintf(head_show, "Windows版Chrome浏览器");
 		}
 		else if (mark == 3) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.19041");//Edge浏览器
-			sprintf(head_show, "Edge浏览器");
-		}
-		else if (mark == 4) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729)");//IE浏览器（兼容模式）
-			sprintf(head_show, "IE浏览器（旧版）");
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.27 (KHTML, like Gecko) Version/8.1 Safari/601.1.27");//Edge浏览器
+			sprintf(head_show, "Mac版Safari浏览器");
 		}
 		else {
 			mark = 2;
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36");//Windows版Chrome
-			sprintf(head_show, "Windows版Chrome");
+			sprintf(head_show, "Windows版Chrome浏览器");
 		}
 	}
 	else if (downloadmode == 5) {
@@ -564,9 +525,9 @@ int Netdisk() {
 	int cookieuse;
 	FILE* cookie;
 	BroswerMark();
-	if(mark == 1)sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/wap/home#/\"");
+	if(mark == 1)sprintf(reference, "%s", "--referer=\"http://pan.baidu.com/wap/home#/\"");
 	else {
-		sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
+		sprintf(reference, "%s", "--referer=\"http://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
 	}
 	if (fopen("cookies\\Netdisk_Cookies.txt", "r") == NULL) {
 	p_4:cookie = fopen("temp\\Netdisk_Cookies_tmp.txt", "w");
@@ -637,7 +598,7 @@ int AutoShutdown(int mode) {
 int MediaDownloader() {
 	FILE* Bilibili_Cookies,*ytb_Cookies,* QQVideo_Cookies,*iqiyi_Cookies,*Youku_Cookies;
 	char chapter[14];
-	printf("\n下载音视频来源：\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n请输入：");
+	printf("下载音视频来源：\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n请输入：");
 	scanf("%d", &config_media);
 	if (config_media == 1) {
 		printf("\n下载整个列表内所有音视频？\n\n1.是\n\n0.否\n\n请输入：");
@@ -742,7 +703,7 @@ int downloadengine() {
 		sprintf(cmd, "%s -c -x%d -k%s --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 	}
 	else if (downloadmode == 2) {
-		sprintf(cmd, "%s -c -x%d -s3 --timeout=10 --file-allocation=none --input-file=\\temp\\aria2.session --save-session=\\temp\\aria2.session --min-split-size=10M -k%s -j %d %s %s %s %s %s --check-certificate=false --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		sprintf(cmd, "%s -c -x%d -s3 --log-level=error --file-allocation=none --input-file=\\temp\\aria2.session --save-session=\\temp\\aria2.session --save-session-interval=60 --force-save=true -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
@@ -826,7 +787,6 @@ int downloadengine() {
 			system("pause");
 			printf("\n\n");
 			system("taskkill /f /im aria2c.exe");
-			system("del Downloads\\best_aria2.txt");
 		}
 		download_result = 0;
 	}
