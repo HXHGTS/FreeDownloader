@@ -76,6 +76,7 @@ int CreateFolder() {
 		fprintf(Media_conf, "min-split-size=2M\n");
 		fprintf(Media_conf, "disk-cache=128M\n");
 		fprintf(Media_conf, "split=16\n");
+		fprintf(Media_conf, "max-tries=0\n");
 		fprintf(Media_conf, "file-allocation=none\n");
 		fprintf(Media_conf, "enable-rpc=true\n");
 		fprintf(Media_conf, "rpc-secret=%s\n",rpctoken);
@@ -179,9 +180,9 @@ p_2:redownload_result = downloadengine();
 		printf("-----------------------------------------------------\n");
 		printf("----------------------下载失败!----------------------\n");
 		printf("-----------------------------------------------------\n");
-		system("Timeout /T 3");
+		system("pause");
 		system("cls");
-		goto p_2;
+		goto p_3;
 	}
 	return 0;
 }//下载工具主程序
@@ -207,8 +208,12 @@ int MagnetDownloader() {
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	if (system("aria2c --dir=Downloads --allow-overwrite=true https://trackerslist.com/best_aria2.txt") != 0) {
+	if (system("aria2c --dir=Downloads --allow-overwrite=true --timeout=5 --max-tries=3 --stop=15 https://trackerslist.com/best_aria2.txt") != 0) {
 			printf("\n更新失败，正在本地建立BT配置文件. . .\n");
+			if (fopen("Downloads\\best_aria2.txt", "r") != NULL) {
+				printf("\n检测到已有的trackerlist记录，正在读取配置文件. . .\n");
+				system("type Downloads\\best_aria2.txt>>config\\bt.conf");
+			}
 	}
 	else {
 			printf("\n更新成功，正在本地建立BT配置文件. . .\n");
@@ -220,10 +225,11 @@ int MagnetDownloader() {
 	fprintf(conf, "max-concurrent-downloads=1\n");
 	fprintf(conf, "max-connection-per-server=16\n");
 	fprintf(conf, "bt-max-peers=999\n");
-	fprintf(conf, "min-split-size=2M\n");
+	fprintf(conf, "min-split-size=1M\n");
 	fprintf(conf, "disk-cache=128M\n");
 	fprintf(conf, "split=16\n");;
 	fprintf(conf, "dir=Downloads/\n");
+	fprintf(conf, "max-tries=0\n");
 	fprintf(conf, "file-allocation=none\n");
 	fprintf(conf, "enable-peer-exchange=true\n");
 	fprintf(conf, "seed-ratio=0.0\n");
@@ -700,10 +706,10 @@ int downloadengine() {
 	FILE* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download,*Download;
 	int download_result;
 	if (downloadmode == 1) {
-		sprintf(cmd, "%s -c -x%d -s%d -k%s --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread,config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
+		sprintf(cmd, "%s -c -x%d -s%d -k%s --max-tries=0 --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread,config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 	}
 	else if (downloadmode == 2) {
-		sprintf(cmd, "%s -c -x%d -s%d --log-level=error --file-allocation=none --input-file=\\temp\\aria2.session --save-session=\\temp\\aria2.session --save-session-interval=60 --force-save=true -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		sprintf(cmd, "%s -c -x%d -s%d --max-tries=0 --log-level=error --file-allocation=none -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
@@ -741,11 +747,11 @@ int downloadengine() {
 		}
 	}
 	else if (downloadmode == 4) {
-		sprintf(cmd, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --file-allocation=none --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		sprintf(cmd, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --max-tries=0 --file-allocation=none --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 5) {
 		if (magnet_mode == 2) {
-			sprintf(cmd, "%s -c -x%d -s%d -k%s -j %d %s %s %s --conf-path=config\\bt.conf %s", Downloader_Use, config_thread, config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
+			sprintf(cmd, "%s --conf-path=config\\bt.conf %s", Downloader_Use,config_url);
 		}
 		else {
 			sprintf(cmd, "%s --conf-path=config\\bt.conf %s", Downloader_Use,config_url);
