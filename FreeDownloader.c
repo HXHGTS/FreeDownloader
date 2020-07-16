@@ -4,7 +4,7 @@
 int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(),dir(),downloadengine(),ExportDownloader(),WindowSkin();
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
 int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
-char config_proxy[65], config_url[260], config_dir[35], config_cookie[40], smallcmd[20],cmd[1500], Downloader_Use[15];
+char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20],cmd[1500], Downloader_Use[15];
 char reference[216], head[300], head_show[35];
 char location[200],split[7],torrent_loca[250],play_list[30], color[4];
 char rpctoken[65] = "c5vAB96x3cCCYeY5JigY!WIVgN2aK*A*c7KD4HpM$n9ism96fECphJ!9TU7!6ck0";
@@ -247,6 +247,7 @@ int MagnetDownloader() {
 
 int url() {
 	FILE* url;
+	int NetdiskURL_Import;
 	if (downloadmode == 1) {
 		if (fopen("temp\\normal.download", "r")==NULL) {
 			url = fopen("temp\\normal.download", "w");
@@ -258,13 +259,20 @@ int url() {
 		sprintf(config_url, "%s", "-i temp\\normal.download");
 	}
 	else if (downloadmode == 2) {
-		if (fopen("temp\\netdisk.download", "r") == NULL) {
-			url = fopen("temp\\netdisk.download", "w");
-			fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
-			fclose(url);
+		printf("\n请选择下载链接导入方式:(1=插件导入 0=软件生成(不稳定)):");
+		scanf("%d", &NetdiskURL_Import);
+		if (NetdiskURL_Import == 0) {
+			NetdiskLinkGenerate();
 		}
-		printf("\n请在弹出页输入下载地址. . .\n\n");
-		system("notepad.exe temp\\netdisk.download");
+		else {
+			if (fopen("temp\\netdisk.download", "r") == NULL) {
+				url = fopen("temp\\netdisk.download", "w");
+				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
+				fclose(url);
+			}
+			printf("\n请在弹出页输入下载地址. . .\n\n");
+			system("notepad.exe temp\\netdisk.download");
+		}
 		sprintf(config_url, "%s", "-i temp\\netdisk.download");
 	}
 	else if (downloadmode == 3) {
@@ -360,7 +368,7 @@ int threader() {
 	else if (downloadmode == 2) {
 		Download_Task = 1;//同时下载任务数
 		sprintf(Downloader_Use, "%s", "aria2c");
-		config_thread = 3;
+		config_thread = 2;
 		sprintf(split, "1M");
 	}
 	else if (downloadmode == 3) {
@@ -497,7 +505,7 @@ int BroswerMark() {
 }
 
 int AdvanceDownloader() {
-	int cookieuse;
+	int cookie_import;
 	char reference_input[200];
 	FILE* cookie;
 	BroswerMark();
@@ -514,8 +522,8 @@ int AdvanceDownloader() {
 	}
 	else {
 		printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
-		scanf("%d", &cookieuse);
-		if (cookieuse != 1) {
+		scanf("%d", &cookie_import);
+		if (cookie_import != 1) {
 			goto p_4;
 		}
 	}
@@ -528,30 +536,40 @@ int AdvanceDownloader() {
 }
 
 int Netdisk() {
-	int cookieuse;
+	int cookie_import,cookie_mode;
+	char BDUSS[193];
 	FILE* cookie;
 	BroswerMark();
-	if(mark == 1)sprintf(reference, "%s", "--referer=\"http://pan.baidu.com/wap/home#/\"");
+	if(mark == 1)sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/wap/home#/\"");
 	else {
-		sprintf(reference, "%s", "--referer=\"http://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
+		sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
 	}
-	if (fopen("cookies\\Netdisk_Cookies.txt", "r") == NULL) {
-	p_4:cookie = fopen("temp\\Netdisk_Cookies_tmp.txt", "w");
-		fprintf(cookie, "# Input Cookie below#\n");
-		fclose(cookie);
-		printf("\n请在弹出窗口中导入百度网盘Cookies信息 . . .\n");
-		system("notepad temp\\Netdisk_Cookies_tmp.txt");
-		system("type temp\\Netdisk_Cookies_tmp.txt | find \"BDUSS\" > cookies\\Netdisk_Cookies.txt");
-		system("del temp\\Netdisk_Cookies_tmp.txt");
-	}
-	else {
-		printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
-		scanf("%d", &cookieuse);
-		if (cookieuse != 1) {
-			goto p_4;
+	printf("\n是否使用插件导入Cookie(1=插件手动导入 0=浏览器手动导入):");
+	scanf("%d", &cookie_mode);
+	if (cookie_mode != 0) {
+		if (fopen("cookies\\Netdisk_Cookies.txt", "r") == NULL) {
+		p_4:cookie = fopen("temp\\Netdisk_Cookies_tmp.txt", "w");
+			fprintf(cookie, "# Input Cookie below#\n");
+			fclose(cookie);
+			printf("\n请在弹出窗口中导入百度网盘Cookies信息 . . .\n");
+			system("notepad temp\\Netdisk_Cookies_tmp.txt");
+			system("type temp\\Netdisk_Cookies_tmp.txt | find \"BDUSS\" > cookies\\Netdisk_Cookies.txt");
+			system("del temp\\Netdisk_Cookies_tmp.txt");
 		}
+		else {
+			printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
+			scanf("%d", &cookie_import);
+			if (cookie_import != 1) {
+				goto p_4;
+			}
+		}
+		sprintf(config_cookie, "--load-cookies=\"cookies\\Netdisk_Cookies.txt\"");
 	}
-	sprintf(config_cookie, "--load-cookies=\"cookies\\Netdisk_Cookies.txt\"");
+	else {
+		printf("\n请输入BDUSS值:\n");
+		scanf("%s", BDUSS);
+		sprintf(config_cookie, "--header=\"Cookie: BDUSS=%s\"",BDUSS);
+	}
 	url();
 	dir();
 	proxyswitcher();
@@ -809,4 +827,58 @@ int downloadengine() {
 	else {
 		return 1;
 	}
+}
+
+char FileName[300];
+char LocationInput, LocationOutput[300];
+int appid;
+FILE* url_output;
+
+int appid_x() {
+	appid = 778750;
+	url_output = fopen("temp\\netdisk.download.1", "w");
+	fprintf(url_output, "https://pcs.baidu.com/rest/2.0/pcs/file?method=download&app_id=%d&", appid);
+	fclose(url_output);
+	url_output = fopen("temp\\netdisk.download.1", "a");
+	fprintf(url_output, "filename=%s&", FileName);
+	fclose(url_output);
+	return 0;
+}
+
+int FileLocation() {
+	url_output = fopen("temp\\netdisk.download.1", "a");
+	fprintf(url_output, "path=");
+	printf("\n请输入文件路径，不要包含\"全部文件\"文件夹与文件名，以^符号结束，如/etc/123/^:\n");
+re1:LocationInput = getchar();
+	if (LocationInput != '^') {
+		if (LocationInput == '/') {
+			fprintf(url_output, "%s", "%2F");
+		}
+		else {
+			fprintf(url_output, "%c", LocationInput);
+		}
+		goto re1;
+	}
+	fprintf(url_output, "%s", FileName);
+	fclose(url_output);
+	return 0;
+}
+
+int FileName_x() {
+	url_output = fopen("temp\\netdisk.download.1", "a");
+	fprintf(url_output, "&filename=%s", FileName);
+	fclose(url_output);
+	return 0;
+}
+
+int NetdiskLinkGenerate() {
+	printf("\n请输入文件名(尽量把文件名改的简单，不要出现韩语等字符):");
+	scanf("%s", FileName);
+	appid_x();
+	FileLocation();
+	FileName_x();
+	system("powershell \" -join((gc -LiteralPath 'temp\\netdisk.download.1'))\" >temp\\netdisk.download");
+	system("del temp\\netdisk.download.1");
+	system("notepad temp\\netdisk.download");
+	return 0;
 }
