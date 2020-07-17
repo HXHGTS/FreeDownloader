@@ -3,13 +3,20 @@
 
 int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(),dir(),downloadengine(),ExportDownloader(),WindowSkin();
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
-int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
+int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum, NetdiskShareLink;
 char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20],cmd[1500], Downloader_Use[15];
 char reference[216], head[300], head_show[35];
 char location[200],split[7],torrent_loca[250],play_list[30], color[4];
 char rpctoken[65] = "c5vAB96x3cCCYeY5JigY!WIVgN2aK*A*c7KD4HpM$n9ism96fECphJ!9TU7!6ck0";
 int mark,proxymode, redownload_result,  shutdown, filecheck,use_list,OpenDir;
-FILE* * conf,*save,*power_ini,*proxy_ini,*dic,*Media_conf,*dir_mark, *skin;
+char FileName[300];
+char LocationInput, LocationOutput[300];
+int appid;
+FILE* url_output;
+FILE* conf,*save,*power_ini,*proxy_ini,*dic,*Media_conf,*dir_mark, *skin;
+int cookie_import, cookie_mode;
+char BDUSS[193], ShareLink[300];
+FILE* cookie,*bat;
 
 int WindowSkin() {
 	if (fopen("config\\skin.ini", "r") == NULL) {
@@ -98,7 +105,7 @@ p_3:system("cls");
 	printf("------------------------------------------------\n");
 	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
-	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.打开下载文件夹\n9.清空下载记录\n0.退出\n");
+	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.文件完整性测试\n7.分段视频拼合\n8.Github上的软件帮助\n9.打开下载文件夹\n0.退出\n");
 	printf("------------------------------------------------\n");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
@@ -140,21 +147,20 @@ p_3:system("cls");
 		system("cls");
 		goto p_3;
 	}
-	else if (downloadmode == 7) {
+	else if (downloadmode == 8) {
 		printf("正在打开帮助界面. . .\n");
 		system("explorer.exe \"https://hxhgts.github.io/FreeDownloader/\"");
 		system("cls");
 		goto p_3;
 	}
-	else if (downloadmode == 8) {
+	else if (downloadmode == 9) {
 		system("explorer.exe Downloads");
 		system("cls");
 		goto p_3;
 	}
-	else if (downloadmode == 9) {
-		system("del /f /s /q temp\\*");
+	else if (downloadmode == 7) {
 		system("cls");
-		goto p_3;
+		goto p_3;//分段视频拼合工具，待开发
 	}
 	else {
 		exit(0);
@@ -259,20 +265,33 @@ int url() {
 		sprintf(config_url, "%s", "-i temp\\normal.download");
 	}
 	else if (downloadmode == 2) {
-		printf("\n请选择下载链接导入方式:(1=插件导入 0=软件生成(不稳定)):");
-		scanf("%d", &NetdiskURL_Import);
-		if (NetdiskURL_Import == 0) {
-			NetdiskLinkGenerate();
+		if (NetdiskShareLink == 1) {
+			printf("\n请选择下载链接导入方式:(1=插件导入 0=软件生成(不稳定)):");
+			scanf("%d", &NetdiskURL_Import);
+			if (NetdiskURL_Import == 0) {
+				NetdiskLinkGenerate();
+			}
+			else {
+				if (fopen("temp\\netdisk.download", "r") == NULL) {
+					url = fopen("temp\\netdisk.download", "w");
+					fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
+					fclose(url);
+				}
+				printf("\n请在弹出页输入下载地址. . .\n\n");
+		}
 		}
 		else {
-			if (fopen("temp\\netdisk.download", "r") == NULL) {
-				url = fopen("temp\\netdisk.download", "w");
-				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
-				fclose(url);
-			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
-			system("notepad.exe temp\\netdisk.download");
+			printf("\n请将百度网盘分享链粘贴至此，以%%结束，如\"链接:XXX 提取码:xxxx 复制这段内容后打开百度网盘手机App，操作更方便哦%%\":\n");
+			scanf("%[^%]", ShareLink);
+			bat = fopen("temp\\url.bat.1", "w");
+			fprintf(bat, "explorer \"http://pan.naifei.cc/?%s\"",ShareLink);
+			fclose(bat);
+			system("powershell \" -join((gc -LiteralPath 'temp\\url.bat.1'))\" > temp\\url.bat");
+			system("del temp\\url.bat.1");
+			system("temp\\url.bat");
+			printf("\n请在弹出的浏览器中复制转换的下载链接到弹出的记事本窗口中:\n");
 		}
+		system("notepad.exe temp\\netdisk.download");
 		sprintf(config_url, "%s", "-i temp\\netdisk.download");
 	}
 	else if (downloadmode == 3) {
@@ -366,10 +385,18 @@ int threader() {
 		sprintf(split, "1M");
 	}
 	else if (downloadmode == 2) {
+		if (NetdiskShareLink == 1) {
+			config_thread = 2;
+			sprintf(split, "1M");
+			sprintf(Downloader_Use, "%s", "aria2c");
+		}
+		else {
+			config_thread = 32;
+			sprintf(split, "1M");
+			sprintf(Downloader_Use, "%s", "aria2c_x");
+		}
 		Download_Task = 1;//同时下载任务数
-		sprintf(Downloader_Use, "%s", "aria2c");
-		config_thread = 2;
-		sprintf(split, "1M");
+		
 	}
 	else if (downloadmode == 3) {
 		Download_Task = 1;//同时下载任务数
@@ -460,22 +487,29 @@ int BroswerMark() {
 		sprintf(head_show, "Windows版Chrome");
 	}
 	else if(downloadmode==2){
-		printf("应用id为778750，下载失败请尝试切换浏览器标识！\n");
-		printf("\n请选择浏览器标识：\n\n1.爱奇艺(官方的高速通道，不过貌似对1G以上文件不友好)\n\n2.百度网盘客户端(最新解决方案，可能不稳定)\n\n请输入：");
-		scanf("%d", &mark);
-		if (mark == 1) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 5.0; SM-N9100 Build/LRX21V) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/37.0.0.0 Mobile Safari/537.36 NetType/WIFI Amoeba/1.0");//爱奇艺
-			sprintf(head_show, "%s", "爱奇艺");
+		if (NetdiskShareLink == 1) {
+			printf("应用id为778750，下载失败请尝试切换浏览器标识！\n");
+			printf("\n请选择浏览器标识：\n\n1.爱奇艺(官方的高速通道，不过貌似对1G以上文件不友好)\n\n2.百度网盘客户端(最新解决方案，可能不稳定)\n\n请输入：");
+			scanf("%d", &mark);
+			if (mark == 1) {
+				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 5.0; SM-N9100 Build/LRX21V) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/37.0.0.0 Mobile Safari/537.36 NetType/WIFI Amoeba/1.0");//爱奇艺
+				sprintf(head_show, "%s", "爱奇艺");
+			}
+			else {
+				mark = 2;
+				sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;P2SP;2.2.60.26");//百度网盘
+				sprintf(head_show, "%s", "百度网盘客户端");
+			}
 		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;P2SP;2.2.60.26");//百度网盘
-			sprintf(head_show, "%s", "百度网盘客户端");
+			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;7.0.1.1;PC;PC-Windows;10.0.18362;WindowsBaiduYunGuanJia");//百度网盘
+			sprintf(head_show, "百度网盘客户端");
 		}
 	}
 	else if(downloadmode==1){
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36");//Windows版Chrome
-		sprintf(head_show, "Windows版Chrome");
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.27 (KHTML, like Gecko) Version/8.1 Safari/601.1.27");//Edge浏览器
+			sprintf(head_show, "Mac版Safari浏览器");
 	}
 	else if (downloadmode == 4) {
 		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Windows版Chrome浏览器\n\n3.Mac版Safari浏览器\n\n请输入：");
@@ -536,39 +570,43 @@ int AdvanceDownloader() {
 }
 
 int Netdisk() {
-	int cookie_import,cookie_mode;
-	char BDUSS[193];
-	FILE* cookie;
 	BroswerMark();
 	if(mark == 1)sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/wap/home#/\"");
 	else {
 		sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
 	}
-	printf("\n是否使用插件导入Cookie(1=插件手动导入 0=浏览器手动导入):");
-	scanf("%d", &cookie_mode);
-	if (cookie_mode != 0) {
-		if (fopen("cookies\\Netdisk_Cookies.txt", "r") == NULL) {
-		p_4:cookie = fopen("temp\\Netdisk_Cookies_tmp.txt", "w");
-			fprintf(cookie, "# Input Cookie below#\n");
-			fclose(cookie);
-			printf("\n请在弹出窗口中导入百度网盘Cookies信息 . . .\n");
-			system("notepad temp\\Netdisk_Cookies_tmp.txt");
-			system("type temp\\Netdisk_Cookies_tmp.txt | find \"BDUSS\" > cookies\\Netdisk_Cookies.txt");
-			system("del temp\\Netdisk_Cookies_tmp.txt");
+	printf("\n下载方式(1=直接下载(大文件可能触发限速机制) 0=分享链接导入下载(依赖第三方服务器，不触发限速)):");
+	scanf("%d", &NetdiskShareLink);
+	if (NetdiskShareLink == 1) {
+		printf("\n是否使用插件导入Cookie(1=插件手动导入 0=浏览器手动导入):");
+		scanf("%d", &cookie_mode);
+		if (cookie_mode != 0) {
+			if (fopen("cookies\\Netdisk_Cookies.txt", "r") == NULL) {
+			p_4:cookie = fopen("temp\\Netdisk_Cookies_tmp.txt", "w");
+				fprintf(cookie, "# Input Cookie below#\n");
+				fclose(cookie);
+				printf("\n请在弹出窗口中导入百度网盘Cookies信息 . . .\n");
+				system("notepad temp\\Netdisk_Cookies_tmp.txt");
+				system("type temp\\Netdisk_Cookies_tmp.txt | find \"BDUSS\" > cookies\\Netdisk_Cookies.txt");
+				system("del temp\\Netdisk_Cookies_tmp.txt");
+			}
+			else {
+				printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
+				scanf("%d", &cookie_import);
+				if (cookie_import != 1) {
+					goto p_4;
+				}
+			}
+			sprintf(config_cookie, "--load-cookies=\"cookies\\Netdisk_Cookies.txt\"");
 		}
 		else {
-			printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
-			scanf("%d", &cookie_import);
-			if (cookie_import != 1) {
-				goto p_4;
-			}
+			printf("\n请输入BDUSS值:\n");
+			scanf("%s", BDUSS);
+			sprintf(config_cookie, "--header=\"Cookie: BDUSS=%s\"", BDUSS);
 		}
-		sprintf(config_cookie, "--load-cookies=\"cookies\\Netdisk_Cookies.txt\"");
 	}
 	else {
-		printf("\n请输入BDUSS值:\n");
-		scanf("%s", BDUSS);
-		sprintf(config_cookie, "--header=\"Cookie: BDUSS=%s\"",BDUSS);
+		
 	}
 	url();
 	dir();
@@ -727,7 +765,12 @@ int downloadengine() {
 		sprintf(cmd, "%s -c -x%d -s%d -k%s --max-tries=0 --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread,config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 	}
 	else if (downloadmode == 2) {
-		sprintf(cmd, "%s -c -x%d -s%d --max-tries=0 --log-level=error --file-allocation=none -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		if (NetdiskShareLink == 1) {
+			sprintf(cmd, "%s -c -x%d -s%d --max-tries=0 --log-level=error --file-allocation=none -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		}
+		else {
+			sprintf(cmd, "%s -c -x%d -s%d --max-tries=0 --log-level=error --file-allocation=none -k%s -j %d %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread, split, Download_Task, config_dir, config_proxy, config_url);
+		}
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
@@ -828,11 +871,6 @@ int downloadengine() {
 		return 1;
 	}
 }
-
-char FileName[300];
-char LocationInput, LocationOutput[300];
-int appid;
-FILE* url_output;
 
 int appid_x() {
 	appid = 778750;
