@@ -7,7 +7,7 @@ int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Downlo
 char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20],cmd[1500], Downloader_Use[15];
 char reference[216], head[300], head_show[35];
 char location[200],split[7],torrent_loca[250],play_list[30], color[4];
-char rpctoken[65] = "c5vAB96x3cCCYeY5JigY!WIVgN2aK*A*c7KD4HpM$n9ism96fECphJ!9TU7!6ck0";
+char rpctoken[65] = "c5vAB96x3cCCYeY5JigY!WIVgN2aK*A*c7KD4HpM$n9ism96fECphJ!9TU7!6ck0";//定义rpc密钥
 int mark,proxymode, redownload_result,  shutdown, filecheck,use_list,OpenDir;
 char FileName[300];
 char LocationInput, LocationOutput[300];
@@ -77,7 +77,7 @@ int CreateFolder() {
 		Media_conf = fopen("config\\Media.conf", "w");
 		fprintf(Media_conf, "dir=Downloads\n");
 		fprintf(Media_conf, "continue=true\n");
-		fprintf(Media_conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36\n");
+		fprintf(Media_conf, "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36\n");
 		fprintf(Media_conf, "max-concurrent-downloads=1\n");
 		fprintf(Media_conf, "max-connection-per-server=16\n");
 		fprintf(Media_conf, "min-split-size=2M\n");
@@ -105,7 +105,7 @@ p_3:system("cls");
 	printf("------------------------------------------------\n");
 	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
-	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.文件完整性测试\n7.分段视频拼合\n8.Github上的软件帮助\n9.打开下载文件夹\n0.退出\n");
+	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.文件完整性测试\n7.分段视频拼合(待开发)\n8.Github上的软件帮助\n9.打开下载文件夹\n0.退出\n");
 	printf("------------------------------------------------\n");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
@@ -266,19 +266,12 @@ int url() {
 	}
 	else if (downloadmode == 2) {
 		if (NetdiskShareLink == 1) {
-			printf("\n请选择下载链接导入方式:(1=插件导入 0=软件生成(不稳定)):");
-			scanf("%d", &NetdiskURL_Import);
-			if (NetdiskURL_Import == 0) {
-				NetdiskLinkGenerate();
-			}
-			else {
 				if (fopen("temp\\netdisk.download", "r") == NULL) {
 					url = fopen("temp\\netdisk.download", "w");
 					fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 					fclose(url);
 				}
 				printf("\n请在弹出页输入下载地址. . .\n\n");
-		}
 		}
 		else {
 			printf("\n请将百度网盘分享链粘贴至此，以%%结束，如\"链接:XXX 提取码:xxxx 复制这段内容后打开百度网盘手机App，操作更方便哦%%\":\n");
@@ -293,6 +286,7 @@ int url() {
 		}
 		system("notepad.exe temp\\netdisk.download");
 		sprintf(config_url, "%s", "-i temp\\netdisk.download");
+		system("del temp\\url.bat");
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
@@ -385,16 +379,9 @@ int threader() {
 		sprintf(split, "1M");
 	}
 	else if (downloadmode == 2) {
-		if (NetdiskShareLink == 1) {
-			config_thread = 2;
-			sprintf(split, "1M");
-			sprintf(Downloader_Use, "%s", "aria2c");
-		}
-		else {
-			config_thread = 32;
-			sprintf(split, "1M");
-			sprintf(Downloader_Use, "%s", "aria2c_x");
-		}
+		config_thread = 2;
+		sprintf(split, "1M");
+		sprintf(Downloader_Use, "%s", "aria2c");
 		Download_Task = 1;//同时下载任务数
 		
 	}
@@ -483,36 +470,29 @@ int proxyswitcher() {
 int BroswerMark() {
 	char UserAgent_DIY[275];
 	if (downloadmode == 3) {
-		sprintf(head, "--user-agent \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36");
-		sprintf(head_show, "Windows版Chrome");
+		sprintf(head, "--user-agent %s", "\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36\"");//Yandex浏览器
+		sprintf(head_show, "Yandex浏览器");
 	}
 	else if(downloadmode==2){
-		if (NetdiskShareLink == 1) {
-			printf("应用id为778750，下载失败请尝试切换浏览器标识！\n");
-			printf("\n请选择浏览器标识：\n\n1.爱奇艺(官方的高速通道，不过貌似对1G以上文件不友好)\n\n2.百度网盘客户端(最新解决方案，可能不稳定)\n\n请输入：");
-			scanf("%d", &mark);
-			if (mark == 1) {
-				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 5.0; SM-N9100 Build/LRX21V) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/37.0.0.0 Mobile Safari/537.36 NetType/WIFI Amoeba/1.0");//爱奇艺
-				sprintf(head_show, "%s", "爱奇艺");
-			}
-			else {
-				mark = 2;
-				sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;P2SP;2.2.60.26");//百度网盘
-				sprintf(head_show, "%s", "百度网盘客户端");
-			}
+		printf("\n请选择浏览器标识：\n\n1.Yandex浏览器\n\n2.外部导入\n\n请输入：");
+		scanf("%d", &mark);
+		if (mark == 1) {
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36");//Yandex浏览器
+			sprintf(head_show, "Yandex浏览器");
 		}
 		else {
-			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;7.0.1.1;PC;PC-Windows;10.0.18362;WindowsBaiduYunGuanJia");//百度网盘
-			sprintf(head_show, "百度网盘客户端");
+			printf("请输入useragent值:\n");
+			scanf("%s", UserAgent_DIY);
+			sprintf(head, "--header=\"User-Agent:%s\"", UserAgent_DIY);//外部导入
+			sprintf(head_show, "外部导入");
 		}
-	}
+		}
 	else if(downloadmode==1){
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.27 (KHTML, like Gecko) Version/8.1 Safari/601.1.27");//Edge浏览器
-			sprintf(head_show, "Mac版Safari浏览器");
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36");//Yandex浏览器
+		sprintf(head_show, "Yandex浏览器");
 	}
 	else if (downloadmode == 4) {
-		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Windows版Chrome浏览器\n\n3.Mac版Safari浏览器\n\n请输入：");
+		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Windows版Chrome浏览器\n\n3.Yandex浏览器\n\n请输入：");
 		scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E)");//IE浏览器
@@ -523,13 +503,13 @@ int BroswerMark() {
 			sprintf(head_show, "Windows版Chrome浏览器");
 		}
 		else if (mark == 3) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.27 (KHTML, like Gecko) Version/8.1 Safari/601.1.27");//Edge浏览器
-			sprintf(head_show, "Mac版Safari浏览器");
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36");//Yandex浏览器
+			sprintf(head_show, "Yandex浏览器");
 		}
 		else {
-			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36");//Windows版Chrome
-			sprintf(head_show, "Windows版Chrome浏览器");
+			mark = 3;
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36");//Yandex浏览器
+			sprintf(head_show, "Yandex浏览器");
 		}
 	}
 	else if (downloadmode == 5) {
@@ -571,10 +551,7 @@ int AdvanceDownloader() {
 
 int Netdisk() {
 	BroswerMark();
-	if(mark == 1)sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/wap/home#/\"");
-	else {
-		sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
-	}
+	sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
 	printf("\n下载方式(1=直接下载(大文件可能触发限速机制) 0=分享链接导入下载(依赖第三方服务器，不触发限速)):");
 	scanf("%d", &NetdiskShareLink);
 	if (NetdiskShareLink == 1) {
@@ -693,7 +670,7 @@ int MediaDownloader() {
 	if (config_media == 1) {
 		if (fopen("cookies\\ytb_Cookies.txt", "r") == NULL) {
 			ytb_Cookies = fopen("cookies\\ytb_Cookies.txt", "w");
-			fprintf(ytb_Cookies, "# Input Cookie below#\n");
+			fprintf(ytb_Cookies, "# Input Cookie below (must delete this line!!!)#\n");
 			fclose(ytb_Cookies);
 		}
 		system("notepad cookies\\ytb_Cookies.txt");
@@ -776,7 +753,7 @@ int downloadengine() {
 		if (config_media == 1) {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
 			fprintf(ytb_Download, "@echo off\n");
-			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs --cookies cookies\\ytb_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir,config_url);//暂时不添加aria2c支持，待官方修复
+			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs %s --cookies cookies\\ytb_Cookies.txt %s %s %s\n", Downloader_Use, head,play_list, config_dir,config_url);//暂时不添加aria2c支持，待官方修复
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
@@ -828,14 +805,7 @@ int downloadengine() {
 	printf("-----------------------------------------------------\n");
 	printf("下载正在执行，希望中断下载建议按Ctrl+C以正常退出. . .\n");
 	printf("-----------------------------------------------------\n");
-	if (downloadmode == 3) {
-		if (config_media != 1) {
-			printf("正在弹出窗口中建立本地下载任务监听进程，请不要手动关闭. . .\n\n");
-		}
-		if (config_media == 1) {
-			system("temp\\ytb_Download.bat");
-		}
-		else{
+	if (downloadmode == 3&& config_media != 1) {
 			printf("\n正在新建弹出窗口并发送下载任务. . .\n\n");
 			system("start aria2c --conf-path=config\\Media.conf");
 		if (config_media == 2) {
@@ -854,15 +824,19 @@ int downloadengine() {
 			system("pause");
 			printf("\n\n");
 			system("taskkill /f /im aria2c.exe");
-		}
 		download_result = 0;
 	}
 	else {
-		Download = fopen("temp\\Download.bat","w");
-		fprintf(Download, "@echo off\n");
-		fprintf(Download, "%s\n", cmd);
-		fclose(Download);
-		download_result = system("temp\\Download.bat");
+		if (downloadmode == 3 && config_media == 1) {
+			download_result = system("temp\\ytb_Download.bat");
+			}
+		else {
+			Download = fopen("temp\\Download.bat", "w");
+			fprintf(Download, "@echo off\n");
+			fprintf(Download, "%s\n", cmd);
+			fclose(Download);
+			download_result = system("temp\\Download.bat");
+		}
 	}
 	if (download_result == 0) {
 		return 0;
@@ -870,53 +844,4 @@ int downloadengine() {
 	else {
 		return 1;
 	}
-}
-
-int appid_x() {
-	appid = 778750;
-	url_output = fopen("temp\\netdisk.download.1", "w");
-	fprintf(url_output, "https://pcs.baidu.com/rest/2.0/pcs/file?method=download&app_id=%d&", appid);
-	fclose(url_output);
-	url_output = fopen("temp\\netdisk.download.1", "a");
-	fprintf(url_output, "filename=%s&", FileName);
-	fclose(url_output);
-	return 0;
-}
-
-int FileLocation() {
-	url_output = fopen("temp\\netdisk.download.1", "a");
-	fprintf(url_output, "path=");
-	printf("\n请输入文件路径，不要包含\"全部文件\"文件夹与文件名，以^符号结束，如/etc/123/^:\n");
-re1:LocationInput = getchar();
-	if (LocationInput != '^') {
-		if (LocationInput == '/') {
-			fprintf(url_output, "%s", "%2F");
-		}
-		else {
-			fprintf(url_output, "%c", LocationInput);
-		}
-		goto re1;
-	}
-	fprintf(url_output, "%s", FileName);
-	fclose(url_output);
-	return 0;
-}
-
-int FileName_x() {
-	url_output = fopen("temp\\netdisk.download.1", "a");
-	fprintf(url_output, "&filename=%s", FileName);
-	fclose(url_output);
-	return 0;
-}
-
-int NetdiskLinkGenerate() {
-	printf("\n请输入文件名(尽量把文件名改的简单，不要出现韩语等字符):");
-	scanf("%s", FileName);
-	appid_x();
-	FileLocation();
-	FileName_x();
-	system("powershell \" -join((gc -LiteralPath 'temp\\netdisk.download.1'))\" >temp\\netdisk.download");
-	system("del temp\\netdisk.download.1");
-	system("notepad temp\\netdisk.download");
-	return 0;
 }
