@@ -383,17 +383,17 @@ int threader() {
 		sprintf(split, "1M");
 		sprintf(Downloader_Use, "%s", "aria2c");
 		Download_Task = 1;//同时下载任务数
-		
 	}
 	else if (downloadmode == 3) {
 		Download_Task = 1;//同时下载任务数
 		if (config_media != 1) {
 			sprintf(Downloader_Use, "%s", "annie");
+			config_thread = 16;
 		}
 		else {
 			sprintf(Downloader_Use, "%s", "youtube-dl");
+			config_thread = 1;//aria2调用出现bug，等待修复
 		}
-		config_thread = 16;
 	}
 	else if (downloadmode == 5) {
 		Download_Task = 1;//同时下载任务数
