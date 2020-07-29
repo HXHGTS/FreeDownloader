@@ -3,20 +3,23 @@
 
 int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(),dir(),downloadengine(),ExportDownloader(),WindowSkin();
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
-int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum, NetdiskShareLink;
+int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
+int mark, proxymode, redownload_result, shutdown, filecheck, use_list, OpenDir;
+int cookie_import, cookie_mode,appid;
 char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20],cmd[1500], Downloader_Use[15];
 char reference[216], head[300], head_show[35];
 char location[200],split[7],torrent_loca[250],play_list[30], color[4];
-char rpctoken[65] = "c5vAB96x3cCCYeY5JigY!WIVgN2aK*A*c7KD4HpM$n9ism96fECphJ!9TU7!6ck0";//定义rpc密钥
-int mark,proxymode, redownload_result,  shutdown, filecheck,use_list,OpenDir;
-char FileName[300];
+char rpctoken[65];//定义rpc密钥
+char BDUSS[193];
 char LocationInput, LocationOutput[300];
-int appid;
 FILE* url_output;
-FILE* conf,*save,*power_ini,*proxy_ini,*dic,*Media_conf,*dir_mark, *skin;
-int cookie_import, cookie_mode;
-char BDUSS[193], ShareLink[300];
+FILE* conf,*save,*power_ini,*proxy_ini,*dic,*Media_conf,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat;
+
+int TokenGenerate() {
+	sprintf(rpctoken,"R8xpY:~y9HuF+i}?Fuqd~Hi2]ww@AN^Tw^8:c!JrQ@-A_9Kz1wKQpZc1GQCsDhLx");//后期考虑加入自生成密钥功能
+	return 0;
+}
 
 int WindowSkin() {
 	if (fopen("config\\skin.ini", "r") == NULL) {
@@ -48,6 +51,60 @@ int WindowSkin() {
 	system("cls");
 	return 0;
 }
+int CreateConfig() {
+	printf("正在创建视频下载配置. . .\n\n");
+	Media_conf = fopen("config\\Media.conf", "w");
+	fprintf(Media_conf, "dir=Downloads\n");
+	fprintf(Media_conf, "continue=true\n");
+	fprintf(Media_conf, "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36\n");
+	fprintf(Media_conf, "max-concurrent-downloads=1\n");
+	fprintf(Media_conf, "max-connection-per-server=16\n");
+	fprintf(Media_conf, "min-split-size=2M\n");
+	fprintf(Media_conf, "disk-cache=128M\n");
+	fprintf(Media_conf, "split=16\n");
+	fprintf(Media_conf, "max-tries=0\n");
+	fprintf(Media_conf, "file-allocation=none\n");
+	fprintf(Media_conf, "enable-rpc=true\n");
+	fprintf(Media_conf, "rpc-secret=%s\n", rpctoken);
+	fprintf(Media_conf, "rpc-allow-origin-all=true\n");
+	fprintf(Media_conf, "rpc-listen-all=true\n");
+	fprintf(Media_conf, "rpc-listen-port=6800\n\n");
+	fclose(Media_conf);
+	printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
+	conf = fopen("config\\bt.conf", "w");
+	fprintf(conf, "bt-tracker=");
+	fclose(conf);
+	if (system("aria2c --dir=Downloads --allow-overwrite=true --timeout=5 --max-tries=3 --stop=15 https://trackerslist.com/best_aria2.txt") != 0) {
+		printf("\n更新失败，正在本地建立BT配置文件. . .\n");
+		if (fopen("Downloads\\best_aria2.txt", "r") != NULL) {
+			printf("\n检测到已有的trackerlist记录，正在读取配置文件. . .\n");
+			system("type Downloads\\best_aria2.txt>>config\\bt.conf");
+		}
+	}
+	else {
+		printf("\n更新成功，正在本地建立BT配置文件. . .\n");
+		system("type Downloads\\best_aria2.txt>>config\\bt.conf");
+	}
+	conf = fopen("config\\bt.conf", "a");
+	fprintf(conf, "\nlisten-port=20331\n");
+	fprintf(conf, "continue=true\n");
+	fprintf(conf, "max-concurrent-downloads=1\n");
+	fprintf(conf, "max-connection-per-server=16\n");
+	fprintf(conf, "bt-max-peers=999\n");
+	fprintf(conf, "min-split-size=1M\n");
+	fprintf(conf, "disk-cache=128M\n");
+	fprintf(conf, "split=16\n");;
+	fprintf(conf, "dir=Downloads/\n");
+	fprintf(conf, "max-tries=0\n");
+	fprintf(conf, "file-allocation=none\n");
+	fprintf(conf, "enable-peer-exchange=true\n");
+	fprintf(conf, "seed-ratio=0.0\n");
+	fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
+	fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
+	fprintf(conf, "peer-id-prefix=-qB4250-\n");
+	fclose(conf);
+	return 0;
+}
 
 int CreateFolder() {
 	if (fopen("Downloads\\dir.md", "r") == NULL){
@@ -74,38 +131,27 @@ int CreateFolder() {
 		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
 		fclose(dir_mark);
 	}
-		Media_conf = fopen("config\\Media.conf", "w");
-		fprintf(Media_conf, "dir=Downloads\n");
-		fprintf(Media_conf, "continue=true\n");
-		fprintf(Media_conf, "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36\n");
-		fprintf(Media_conf, "max-concurrent-downloads=1\n");
-		fprintf(Media_conf, "max-connection-per-server=16\n");
-		fprintf(Media_conf, "min-split-size=2M\n");
-		fprintf(Media_conf, "disk-cache=128M\n");
-		fprintf(Media_conf, "split=16\n");
-		fprintf(Media_conf, "max-tries=0\n");
-		fprintf(Media_conf, "file-allocation=none\n");
-		fprintf(Media_conf, "enable-rpc=true\n");
-		fprintf(Media_conf, "rpc-secret=%s\n",rpctoken);
-		fprintf(Media_conf, "rpc-allow-origin-all=true\n");
-		fprintf(Media_conf, "rpc-listen-all=true\n");
-		fprintf(Media_conf, "rpc-listen-port=6800\n\n");
-		fclose(Media_conf);
 		return 0;
 }
 
-int main() {
+int preload() {
 	redownload_result = 0;
 	filecheck = 0;
 	anti_shutdown = shutdown = 0;
 	system("title FreeDownloader");
 	CreateFolder();
+	TokenGenerate();
+	CreateConfig();
 	WindowSkin();
+	return 0;
+}
+int main() {
+	preload();
 p_3:system("cls");
 	printf("------------------------------------------------\n");
 	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
-	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.文件完整性测试\n7.分段视频拼合(待开发)\n8.Github上的软件帮助\n9.打开下载文件夹\n0.退出\n");
+	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.打开下载文件夹\n0.退出\n");
 	printf("------------------------------------------------\n");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
@@ -147,20 +193,16 @@ p_3:system("cls");
 		system("cls");
 		goto p_3;
 	}
-	else if (downloadmode == 8) {
+	else if (downloadmode == 7) {
 		printf("正在打开帮助界面. . .\n");
 		system("explorer.exe \"https://hxhgts.github.io/FreeDownloader/\"");
 		system("cls");
 		goto p_3;
 	}
-	else if (downloadmode == 9) {
+	else if (downloadmode == 8) {
 		system("explorer.exe Downloads");
 		system("cls");
 		goto p_3;
-	}
-	else if (downloadmode == 7) {
-		system("cls");
-		goto p_3;//分段视频拼合工具，待开发
 	}
 	else {
 		exit(0);
@@ -203,7 +245,6 @@ int NormalDownloader() {
 }
 
 int MagnetDownloader() {
-	int tracker_update;
 	printf("请选择下载模式：\n\n1.种子文件导入\n\n2.输入磁力链\n\n请输入：");
 	scanf("%d", &magnet_mode);
 	if (magnet_mode == 2) {
@@ -211,39 +252,6 @@ int MagnetDownloader() {
 	}
 	threader();
 	system("cls");
-	printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
-	conf = fopen("config\\bt.conf", "w");
-	fprintf(conf, "bt-tracker=");
-	fclose(conf);
-	if (system("aria2c --dir=Downloads --allow-overwrite=true --timeout=5 --max-tries=3 --stop=15 https://trackerslist.com/best_aria2.txt") != 0) {
-			printf("\n更新失败，正在本地建立BT配置文件. . .\n");
-			if (fopen("Downloads\\best_aria2.txt", "r") != NULL) {
-				printf("\n检测到已有的trackerlist记录，正在读取配置文件. . .\n");
-				system("type Downloads\\best_aria2.txt>>config\\bt.conf");
-			}
-	}
-	else {
-			printf("\n更新成功，正在本地建立BT配置文件. . .\n");
-			system("type Downloads\\best_aria2.txt>>config\\bt.conf");
-	}
-	conf = fopen("config\\bt.conf", "a");
-	fprintf(conf, "\nlisten-port=20331\n");
-	fprintf(conf, "continue=true\n");
-	fprintf(conf, "max-concurrent-downloads=1\n");
-	fprintf(conf, "max-connection-per-server=16\n");
-	fprintf(conf, "bt-max-peers=999\n");
-	fprintf(conf, "min-split-size=1M\n");
-	fprintf(conf, "disk-cache=128M\n");
-	fprintf(conf, "split=16\n");;
-	fprintf(conf, "dir=Downloads/\n");
-	fprintf(conf, "max-tries=0\n");
-	fprintf(conf, "file-allocation=none\n");
-	fprintf(conf, "enable-peer-exchange=true\n");
-	fprintf(conf, "seed-ratio=0.0\n");
-	fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
-	fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
-	fprintf(conf, "peer-id-prefix=-qB4250-\n");
-	fclose(conf);
 	printf("\n请在弹出窗口中修改BT配置文件. . .\n");
 	system("notepad config\\bt.conf");
 	BroswerMark();
@@ -266,25 +274,12 @@ int url() {
 		sprintf(config_url, "%s", "-i temp\\normal.download");
 	}
 	else if (downloadmode == 2) {
-		if (NetdiskShareLink == 1) {
-				if (fopen("temp\\netdisk.download", "r") == NULL) {
+		if (fopen("temp\\netdisk.download", "r") == NULL) {
 					url = fopen("temp\\netdisk.download", "w");
 					fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 					fclose(url);
-				}
-				printf("\n请在弹出页输入下载地址. . .\n\n");
 		}
-		else {
-			printf("\n请将百度网盘分享链粘贴至此，以%%结束，如\"链接:XXX 提取码:xxxx 复制这段内容后打开百度网盘手机App，操作更方便哦%%\":\n");
-			scanf("%[^%]", ShareLink);
-			bat = fopen("temp\\url.bat.1", "w");
-			fprintf(bat, "explorer \"http://pan.naifei.cc/?%s\"",ShareLink);
-			fclose(bat);
-			system("powershell \" -join((gc -LiteralPath 'temp\\url.bat.1'))\" > temp\\url.bat");
-			system("del temp\\url.bat.1");
-			system("temp\\url.bat");
-			printf("\n请在弹出的浏览器中复制转换的下载链接到弹出的记事本窗口中:\n");
-		}
+		printf("\n请在弹出页输入下载地址. . .\n\n");
 		system("notepad.exe temp\\netdisk.download");
 		sprintf(config_url, "%s", "-i temp\\netdisk.download");
 		system("del temp\\url.bat");
@@ -438,7 +433,7 @@ int proxyswitcher() {
 				sprintf(config_proxy, "%s", "");
 			}
 			else {
-				printf("\n请输入代理参数，如http://127.0.0.1:7890：");
+				printf("\n请输入代理参数，支持http/https，如http://127.0.0.1:7890：");
 				scanf("%s", proxy);
 				sprintf(config_proxy, "--all-proxy=%s", proxy);
 			}
@@ -448,12 +443,14 @@ int proxyswitcher() {
 				sprintf(config_proxy, "%s", "");
 			}
 			else {
-				printf("\n请输入代理参数，如http://127.0.0.1:7890：");
-				scanf("%s", proxy);
 				if (config_media == 1) {
+					printf("\n请输入代理参数，支持http/https/socks5，如http://127.0.0.1:7890：");
+					scanf("%s", proxy);
 					sprintf(config_proxy, "--proxy %s", proxy);
 				}
 				else {
+					printf("\n请输入代理参数，支持http/https/socks5，如http://127.0.0.1:7890：");
+					scanf("%s", proxy);
 					sprintf(config_proxy, "set HTTP_PROXY=\"%s/\" &", proxy);
 				}
 			}
@@ -553,9 +550,6 @@ int AdvanceDownloader() {
 int Netdisk() {
 	BroswerMark();
 	sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
-	printf("\n下载方式(1=直接下载(大文件可能触发限速机制) 0=分享链接导入下载(依赖第三方服务器，不触发限速)):");
-	scanf("%d", &NetdiskShareLink);
-	if (NetdiskShareLink == 1) {
 		printf("\n是否使用插件导入Cookie(1=插件手动导入 0=浏览器手动导入):");
 		scanf("%d", &cookie_mode);
 		if (cookie_mode != 0) {
@@ -582,10 +576,6 @@ int Netdisk() {
 			scanf("%s", BDUSS);
 			sprintf(config_cookie, "--header=\"Cookie: BDUSS=%s\"", BDUSS);
 		}
-	}
-	else {
-		
-	}
 	url();
 	dir();
 	proxyswitcher();
@@ -743,12 +733,7 @@ int downloadengine() {
 		sprintf(cmd, "%s -c -x%d -s%d -k%s --max-tries=0 --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread,config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 	}
 	else if (downloadmode == 2) {
-		if (NetdiskShareLink == 1) {
-			sprintf(cmd, "%s -c -x%d -s%d --max-tries=0 --log-level=error --file-allocation=none -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
-		}
-		else {
-			sprintf(cmd, "%s -c -x%d -s%d --max-tries=0 --log-level=error --file-allocation=none -k%s -j %d %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread, split, Download_Task, config_dir, config_proxy, config_url);
-		}
+		sprintf(cmd, "%s -c -x%d -s%d --max-tries=0 --log-level=error --file-allocation=none -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
