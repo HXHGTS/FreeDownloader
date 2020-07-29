@@ -199,6 +199,7 @@ int NormalDownloader() {
 	threader();
 	proxyswitcher();
 	BroswerMark();
+	return 0;
 }
 
 int MagnetDownloader() {
@@ -376,7 +377,7 @@ int threader() {
 		Download_Task = 1;//同时下载任务数
 		config_thread = 16;
 		sprintf(Downloader_Use, "%s", "aria2c");
-		sprintf(split, "1M");
+		sprintf(split, "2M");
 	}
 	else if (downloadmode == 2) {
 		config_thread = 2;
@@ -392,7 +393,7 @@ int threader() {
 		}
 		else {
 			sprintf(Downloader_Use, "%s", "youtube-dl");
-			config_thread = 1;//aria2调用出现bug，等待修复
+			config_thread = 16;//aria2调用bug已修复
 		}
 	}
 	else if (downloadmode == 5) {
@@ -437,7 +438,7 @@ int proxyswitcher() {
 				sprintf(config_proxy, "%s", "");
 			}
 			else {
-				printf("\n请输入代理参数，如http://127.0.0.1:1080：");
+				printf("\n请输入代理参数，如http://127.0.0.1:7890：");
 				scanf("%s", proxy);
 				sprintf(config_proxy, "--all-proxy=%s", proxy);
 			}
@@ -447,7 +448,7 @@ int proxyswitcher() {
 				sprintf(config_proxy, "%s", "");
 			}
 			else {
-				printf("\n请输入代理参数，如http://127.0.0.1:1080：");
+				printf("\n请输入代理参数，如http://127.0.0.1:7890：");
 				scanf("%s", proxy);
 				if (config_media == 1) {
 					sprintf(config_proxy, "--proxy %s", proxy);
@@ -753,7 +754,7 @@ int downloadengine() {
 		if (config_media == 1) {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
 			fprintf(ytb_Download, "@echo off\n");
-			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs %s --cookies cookies\\ytb_Cookies.txt %s %s %s\n", Downloader_Use, head,play_list, config_dir,config_url);//暂时不添加aria2c支持，待官方修复
+			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs %s %s --cookies cookies\\ytb_Cookies.txt %s %s %s --external-downloader aria2c --external-downloader-args \"-c -x16 -s16 -k2M --file-allocation=none\"\n", Downloader_Use,config_proxy, head,play_list, config_dir,config_url);//官方已修复，已添加aria2c支持
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
