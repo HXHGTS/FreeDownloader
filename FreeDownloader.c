@@ -124,7 +124,6 @@ int preload() {
 	system("title FreeDownloader");
 	CreateFolder();
 	TokenGenerate();
-	CreateConfig();
 	WindowSkin();
 	return 0;
 }
@@ -168,6 +167,7 @@ p_3:system("cls");
 		AdvanceDownloader();
 	}
 	else if (downloadmode == 5) {
+		CreateConfig();
 		MagnetDownloader();
 	}
 	else if (downloadmode == 6) {
