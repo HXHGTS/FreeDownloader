@@ -13,11 +13,11 @@ char rpctoken[65];//定义rpc密钥
 char BDUSS[193];
 char LocationInput, LocationOutput[300];
 FILE* url_output;
-FILE* conf,*save,*power_ini,*proxy_ini,*dic,*Media_conf,*dir_mark, *skin;//定义配置文件
+FILE* conf,*save,*power_ini,*proxy_ini,*dic,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat;
 
 int TokenGenerate() {
-	sprintf(rpctoken,"R8xpY:~y9HuF+i}?Fuqd~Hi2]ww@AN^Tw^8:c!JrQ@-A_9Kz1wKQpZc1GQCsDhLx");//后期考虑加入自生成密钥功能
+	sprintf(rpctoken,"uyxdfsfrqVVtgYGK73DNCJk8wp5vxA22uCcqD1mZoCZxbn1o98TmB4BsAzRMa1gK");//后期考虑加入自生成密钥功能
 	return 0;
 }
 
@@ -52,29 +52,11 @@ int WindowSkin() {
 	return 0;
 }
 int CreateConfig() {
-	printf("正在创建视频下载配置. . .\n\n");
-	Media_conf = fopen("config\\Media.conf", "w");
-	fprintf(Media_conf, "dir=Downloads\n");
-	fprintf(Media_conf, "continue=true\n");
-	fprintf(Media_conf, "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36\n");
-	fprintf(Media_conf, "max-concurrent-downloads=1\n");
-	fprintf(Media_conf, "max-connection-per-server=16\n");
-	fprintf(Media_conf, "min-split-size=2M\n");
-	fprintf(Media_conf, "disk-cache=128M\n");
-	fprintf(Media_conf, "split=16\n");
-	fprintf(Media_conf, "max-tries=0\n");
-	fprintf(Media_conf, "file-allocation=none\n");
-	fprintf(Media_conf, "enable-rpc=true\n");
-	fprintf(Media_conf, "rpc-secret=%s\n", rpctoken);
-	fprintf(Media_conf, "rpc-allow-origin-all=true\n");
-	fprintf(Media_conf, "rpc-listen-all=true\n");
-	fprintf(Media_conf, "rpc-listen-port=6800\n\n");
-	fclose(Media_conf);
 	printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	if (system("aria2c --dir=Downloads --allow-overwrite=true --timeout=5 --max-tries=3 --stop=15 https://trackerslist.com/best_aria2.txt") != 0) {
+	if (system("aria2c --dir=Downloads --allow-overwrite=true --timeout=5 --max-tries=1 https://trackerslist.com/best_aria2.txt") != 0) {
 		printf("\n更新失败，正在本地建立BT配置文件. . .\n");
 		if (fopen("Downloads\\best_aria2.txt", "r") != NULL) {
 			printf("\n检测到已有的trackerlist记录，正在读取配置文件. . .\n");
@@ -99,6 +81,7 @@ int CreateConfig() {
 	fprintf(conf, "file-allocation=none\n");
 	fprintf(conf, "enable-peer-exchange=true\n");
 	fprintf(conf, "seed-ratio=0.0\n");
+	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
 	fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
 	fprintf(conf, "peer-id-prefix=-qB4250-\n");
@@ -262,7 +245,6 @@ int MagnetDownloader() {
 
 int url() {
 	FILE* url;
-	int NetdiskURL_Import;
 	if (downloadmode == 1) {
 		if (fopen("temp\\normal.download", "r")==NULL) {
 			url = fopen("temp\\normal.download", "w");
@@ -384,7 +366,7 @@ int threader() {
 		Download_Task = 1;//同时下载任务数
 		if (config_media != 1) {
 			sprintf(Downloader_Use, "%s", "annie");
-			config_thread = 16;
+			config_thread = 1;
 		}
 		else {
 			sprintf(Downloader_Use, "%s", "youtube-dl");
@@ -468,8 +450,8 @@ int proxyswitcher() {
 int BroswerMark() {
 	char UserAgent_DIY[275];
 	if (downloadmode == 3) {
-		sprintf(head, "--user-agent %s", "\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36\"");//Yandex浏览器
-		sprintf(head_show, "Yandex浏览器");
+		sprintf(head, "--user-agent %s", "\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36\"");//Yandex浏览器
+		sprintf(head_show, "Chrome浏览器");
 	}
 	else if(downloadmode==2){
 		printf("\n请选择浏览器标识：\n\n1.Yandex浏览器\n\n2.外部导入\n\n请输入：");
@@ -745,28 +727,27 @@ int downloadengine() {
 		else if (config_media == 2) {
 			Bilibili_Download = fopen("temp\\Bilibili_Download.bat", "w");
 			fprintf(Bilibili_Download, "@echo off\n");
-			fprintf(Bilibili_Download, "%s %s -c cookies\\Bilibili_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url,rpctoken);
+			fprintf(Bilibili_Download, "%s %s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
 			fclose(Bilibili_Download);
 			
 		}
 		else if (config_media == 3) {
 			QQVideo_Download = fopen("temp\\QQVideo_Download.bat", "w");
 			fprintf(QQVideo_Download, "@echo off\n");
-			fprintf(QQVideo_Download, "%s %s -c cookies\\QQVideo_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
+			fprintf(QQVideo_Download, "%s %s -c cookies\\QQVideo_Cookies.txt %s %s %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
 			fclose(QQVideo_Download);
 
 		}
 		else if (config_media == 4) {
 			iqiyi_Download = fopen("temp\\iqiyi_Download.bat", "w");
 			fprintf(iqiyi_Download, "@echo off\n");
-			fprintf(iqiyi_Download, "%s %s -c cookies\\iqiyi_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
+			fprintf(iqiyi_Download, "%s %s -c cookies\\iqiyi_Cookies.txt %s %s %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
 			fclose(iqiyi_Download);
-
 		}
 		else {
 			Youku_Download = fopen("temp\\Youku_Download.bat", "w");
 			fprintf(Youku_Download, "@echo off\n");
-			fprintf(Youku_Download, "%s %s -c cookies\\Youku_Cookies.txt %s %s %s -aria2 -aria2token %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url, rpctoken);
+			fprintf(Youku_Download, "%s %s -c cookies\\Youku_Cookies.txt %s %s %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
 			fclose(Youku_Download);
 		}
 	}
@@ -791,31 +772,23 @@ int downloadengine() {
 	printf("-----------------------------------------------------\n");
 	printf("下载正在执行，希望中断下载建议按Ctrl+C以正常退出. . .\n");
 	printf("-----------------------------------------------------\n");
-	if (downloadmode == 3&& config_media != 1) {
-			printf("\n正在新建弹出窗口并发送下载任务. . .\n\n");
-			system("start aria2c --conf-path=config\\Media.conf");
-		if (config_media == 2) {
-			system("temp\\Bilibili_Download.bat");
+	if (downloadmode == 3) {
+		if (config_media == 1) {
+			download_result = system("temp\\ytb_Download.bat");
+		}
+		else if (config_media == 2) {
+			download_result = system("temp\\Bilibili_Download.bat");
 		}
 		else if (config_media == 3) {
-			system("temp\\QQVideo_Download.bat");
+			download_result = system("temp\\QQVideo_Download.bat");
 		}
 		else if (config_media == 4) {
-			system("temp\\iqiyi_Download.bat");
+			download_result = system("temp\\iqiyi_Download.bat");
 		}
 		else {
-			system("temp\\Youku_Download.bat");
+			download_result = system("temp\\Youku_Download.bat");
 		}
-			printf("\n由于系统限制，下载进程无法自动停止，若弹出窗口一直显示complete，或需停止下载，");
-			system("pause");
-			printf("\n\n");
-			system("taskkill /f /im aria2c.exe");
-		download_result = 0;
 	}
-	else {
-		if (downloadmode == 3 && config_media == 1) {
-			download_result = system("temp\\ytb_Download.bat");
-			}
 		else {
 			Download = fopen("temp\\Download.bat", "w");
 			fprintf(Download, "@echo off\n");
@@ -823,8 +796,7 @@ int downloadengine() {
 			fclose(Download);
 			download_result = system("temp\\Download.bat");
 		}
-	}
-	if (download_result == 0) {
+	if(download_result == 0) {
 		return 0;
 	}
 	else {
