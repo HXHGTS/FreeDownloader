@@ -211,9 +211,8 @@ p_2:redownload_result = downloadengine();
 		printf("-----------------------------------------------------\n");
 		printf("----------------------下载失败!----------------------\n");
 		printf("-----------------------------------------------------\n");
-		system("pause");
 		system("cls");
-		goto p_3;
+		goto p_2;
 	}
 	return 0;
 }//下载工具主程序
@@ -366,7 +365,7 @@ int threader() {
 		Download_Task = 1;//同时下载任务数
 		if (config_media != 1) {
 			sprintf(Downloader_Use, "%s", "annie");
-			config_thread = 1;
+			config_thread = 1;//4k视频状态下aria2调用出现bug
 		}
 		else {
 			sprintf(Downloader_Use, "%s", "youtube-dl");
@@ -450,8 +449,8 @@ int proxyswitcher() {
 int BroswerMark() {
 	char UserAgent_DIY[275];
 	if (downloadmode == 3) {
-		sprintf(head, "--user-agent %s", "\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36\"");//Yandex浏览器
-		sprintf(head_show, "Chrome浏览器");
+		sprintf(head, "--user-agent %s", "\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36\"");//Yandex浏览器
+		sprintf(head_show, "Yandex浏览器");
 	}
 	else if(downloadmode==2){
 		printf("\n请选择浏览器标识：\n\n1.Yandex浏览器\n\n2.外部导入\n\n请输入：");
@@ -623,21 +622,20 @@ int MediaDownloader() {
 		}
 	}
 	else {
-		printf("\n下载整个列表内所有音视频（哔哩哔哩仅支持选项1）？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
-		scanf("%d", &use_list);
 		if (config_media == 2) {
-			use_list = 1;
-		}
-		if (use_list == 2) {
-			sprintf(play_list, "");
-		}
-		else if (use_list == 1) {
-			sprintf(play_list, "-p");
+			sprintf(play_list, "");//b站暂时无法选集，待后期修复
 		}
 		else {
-			printf("\n请按照格式输入下载范围，如1-5,6,7,8-15：");
-			scanf("%s", chapter);
-			sprintf(play_list, "-p -items %s",chapter);
+			printf("\n下载整个列表内所有音视频？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
+			scanf("%d", &use_list);
+			if (use_list == 1) {
+				sprintf(play_list, "-p");
+			}
+			else {
+				printf("\n请按照格式输入下载范围，如1-5,6,7,8-15：");
+				scanf("%s", chapter);
+				sprintf(play_list, "-p -items %s", chapter);
+			}
 		}
 	}
 	if (config_media == 1) {
@@ -712,16 +710,16 @@ int downloadengine() {
 	FILE* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download,*Download;
 	int download_result;
 	if (downloadmode == 1) {
-		sprintf(cmd, "%s -c -x%d -s%d -k%s --max-tries=0 --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread,config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
+		sprintf(cmd, "%s -c -x%d -s%d -k%s --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread,config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
 	}
 	else if (downloadmode == 2) {
-		sprintf(cmd, "%s -c -x%d -s%d --max-tries=0 --log-level=error --file-allocation=none -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		sprintf(cmd, "%s -c -x%d -s%d --log-level=error --file-allocation=none -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
 			fprintf(ytb_Download, "@echo off\n");
-			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs %s %s --cookies cookies\\ytb_Cookies.txt %s %s %s --external-downloader aria2c --external-downloader-args \"-c -x16 -s16 -k2M --file-allocation=none\"\n", Downloader_Use,config_proxy, head,play_list, config_dir,config_url);//官方已修复，已添加aria2c支持
+			fprintf(ytb_Download, "%s -f bestvideo+bestaudio --write-sub --all-subs %s %s --cookies cookies\\ytb_Cookies.txt %s %s %s --external-downloader aria2c --external-downloader-args \"-c -x16 -s16 -k1M --file-allocation=none\"\n", Downloader_Use,config_proxy, head,play_list, config_dir,config_url);//官方已修复，已添加aria2c支持
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
