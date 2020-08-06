@@ -135,6 +135,10 @@ int preload() {
 	CreateFolder();
 	TokenGenerate();
 	WindowSkin();
+	printf("需要系统UAC权限读取代理服务器数据，请允许！\n\n");
+	if (system("GetProxyInfo.exe") != 0) {
+		printf("UAC授权失败，请自行导入计算机代理设置！\n\n");
+	}
 	return 0;
 }
 int main() {
@@ -411,9 +415,6 @@ int proxyswitcher() {
 		}
 	}
 	else {
-		printf("检测到代理设置,是否使用保存的代理设置(是=1,否=0):");
-		scanf("%d", &proxymode);
-		if (proxymode == 1) {
 			proxy_ini = fopen("config\\proxy.ini", "r");
 			fscanf(proxy_ini, "proxy=%s", proxy);
 			fclose(proxy_ini);
@@ -427,11 +428,7 @@ int proxyswitcher() {
 				else {
 					sprintf(config_proxy, "set HTTP_PROXY=\"%s/\" &", proxy);
 				}
-		}
-		}
-		else {
-			sprintf(config_proxy, "%s", "");
-		}
+			}
 	}
 	return 0;// /config/proxy.ini中proxy=0或此文件不存在为无代理状态，否则使用代理(仅支持http/https代理)
 }
