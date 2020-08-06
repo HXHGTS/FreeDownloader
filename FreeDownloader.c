@@ -4,7 +4,7 @@
 int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(),dir(),downloadengine(),ExportDownloader(),WindowSkin();
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
 int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
-int mark, proxymode, redownload_result, shutdown, filecheck, use_list, OpenDir;
+int mark, redownload_result, shutdown, filecheck, use_list, OpenDir;
 int cookie_import, cookie_mode,appid;
 char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[15];
 char reference[216], head[300], head_show[35];
@@ -135,7 +135,8 @@ int preload() {
 	CreateFolder();
 	TokenGenerate();
 	WindowSkin();
-	printf("需要系统UAC权限读取代理服务器数据，请允许！\n\n");
+	printf("需要系统UAC权限读取代理服务器数据，若需要使用代理服务器请先打开代理，然后");
+	system("pause");
 	if (system("GetProxyInfo.exe") != 0) {
 		printf("UAC授权失败，请自行导入计算机代理设置！\n\n");
 	}
@@ -194,7 +195,7 @@ p_3:system("cls");
 	else {
 		exit(0);
 	}
-p_2:redownload_result = downloadengine();
+	redownload_result = downloadengine();
 	if (redownload_result == 0) {
 		system("del /f /s /q temp\\*.bat");
 		system("cls");
@@ -406,13 +407,8 @@ int dir() {
 
 int proxyswitcher() {
 	char proxy[50];
-	if (system("type config\\proxy.ini | find \"proxy=0\"") == 0 || (fopen("config\\proxy.ini", "r") == NULL)) {
+	if (system("type config\\proxy.ini | find \"proxy=0\"") == 0) {
 		sprintf(config_proxy, "%s", "");
-		if (fopen("config\\proxy.ini", "r") == NULL) {
-			proxy_ini = fopen("config\\proxy.ini", "w");
-			fprintf(proxy_ini,"proxy=0");
-			fclose(proxy_ini);
-		}
 	}
 	else {
 			proxy_ini = fopen("config\\proxy.ini", "r");
