@@ -6,11 +6,12 @@ int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitc
 int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
 int mark, proxymode, redownload_result, shutdown, filecheck, use_list, OpenDir;
 int cookie_import, cookie_mode,appid;
-char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20],cmd[1500], Downloader_Use[15];
+char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[15];
 char reference[216], head[300], head_show[35];
 char location[200],split[7],torrent_loca[250],play_list[30], color[4];
 char rpctoken[65];//定义rpc密钥
 char BDUSS[193];
+char cmd[1500];
 char LocationInput, LocationOutput[300];
 FILE* url_output;
 FILE* conf,*save,*power_ini,*proxy_ini,*dic,*dir_mark, *skin;//定义配置文件
@@ -51,21 +52,23 @@ int WindowSkin() {
 	system("cls");
 	return 0;
 }
+
 int CreateConfig() {
 	printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	if (system("aria2c --dir=Downloads --allow-overwrite=true --timeout=5 --max-tries=1 https://trackerslist.com/best_aria2.txt") != 0) {
-		printf("\n更新失败，正在本地建立BT配置文件. . .\n");
-		if (fopen("Downloads\\best_aria2.txt", "r") != NULL) {
+	sprintf(cmd, "aria2c --dir=config --allow-overwrite=true %s --timeout=5 --max-tries=1 https://trackerslist.com/best_aria2.txt", config_proxy);
+	if (system(cmd) != 0) {
+		printf("\n更新失败，建议配合代理或VPN重新打开软件更新列表，正在本地建立BT配置文件. . .\n");
+		if (fopen("config\\best_aria2.txt", "r") != NULL) {
 			printf("\n检测到已有的trackerlist记录，正在读取配置文件. . .\n");
-			system("type Downloads\\best_aria2.txt>>config\\bt.conf");
+			system("type config\\best_aria2.txt>>config\\bt.conf");
 		}
 	}
 	else {
 		printf("\n更新成功，正在本地建立BT配置文件. . .\n");
-		system("type Downloads\\best_aria2.txt>>config\\bt.conf");
+		system("type config\\best_aria2.txt>>config\\bt.conf");
 	}
 	conf = fopen("config\\bt.conf", "a");
 	fprintf(conf, "\nlisten-port=20331\n");
@@ -86,34 +89,41 @@ int CreateConfig() {
 	fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
 	fprintf(conf, "peer-id-prefix=-qB4250-\n");
 	fclose(conf);
+	system("cls");
 	return 0;
 }
 
 int CreateFolder() {
-	if (fopen("Downloads\\dir.md", "r") == NULL){
+	if (system("type Downloads\\dir.md | find \"##This file is auto-created by FreeDownloader,don't move or delete!##\"") != 0) {
 		system("mkdir Downloads");
 		dir_mark = fopen("Downloads\\dir.md", "w");
 		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
+		fprintf(dir_mark, "##本文件夹存储下载数据\n");
 		fclose(dir_mark);
 	}
-	if (fopen("config\\dir.md", "r") == NULL) {
+	if (system("type config\\dir.md | find \"##This file is auto-created by FreeDownloader,don't move or delete!##\"")!=0) {
 		system("mkdir config");
 		dir_mark = fopen("config\\dir.md", "w");
 		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
+		fprintf(dir_mark, "##需要配置代理请修改proxy.ini文件，软件支持http/https代理\n");
+		fprintf(dir_mark, "##标准格式为proxy=http://127.0.0.1:1080，请根据实际情况设置代理！\n");
 		fclose(dir_mark);
 	}
-	if (fopen("cookies\\dir.md", "r") == NULL) {
+	if (system("type cookies\\dir.md | find \"##This file is auto-created by FreeDownloader,don't move or delete!##\"") != 0) {
 		system("mkdir cookies");
 		dir_mark = fopen("cookies\\dir.md", "w");
 		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
+		fprintf(dir_mark, "##本文件夹主要存放账号登录的Cookie信息\n");
 		fclose(dir_mark);
 	}
-	if (fopen("temp\\dir.md", "r") == NULL) {
+	if (system("type temp\\dir.md | find \"##This file is auto-created by FreeDownloader,don't move or delete!##\"") != 0) {
 		system("mkdir temp");
 		dir_mark = fopen("temp\\dir.md", "w");
 		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
+		fprintf(dir_mark, "##本文件夹为缓存信息文件夹\n");
 		fclose(dir_mark);
 	}
+	system("cls");
 		return 0;
 }
 
@@ -138,22 +148,13 @@ p_3:system("cls");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
 	system("cls");
-	if (fopen("config\\power.ini", "r") == NULL) {
-		if (downloadmode != 7 && downloadmode != 8 && downloadmode != 9 && downloadmode != 0) {
-			printf("\n是否设置下载完成自动关机（是=1，否=0）：");
-			scanf("%d", &shutdown);
-			if (shutdown == 0) {
-				power_ini = fopen("config\\power.ini", "w");
-				fprintf(power_ini, "##如果需要在程序中设置下载完成后自动关机请删除本文件##\n");
-				fprintf(power_ini, "power=0\n");
-				fclose(power_ini);
-			}
-		}
+	if (system("type config\\power.ini | find \"power=1\"") == 0) {
+		shutdown = 1;
+		system("echo \"power=0\" config\\power.ini"); //设置后只生效一次，自动还原状态，避免每次都自动关机
 	}
 	else {
 		shutdown = 0;
 	}
-	system("cls");
 	if (downloadmode == 1) {
 		NormalDownloader();
 	}
@@ -167,7 +168,6 @@ p_3:system("cls");
 		AdvanceDownloader();
 	}
 	else if (downloadmode == 5) {
-		CreateConfig();
 		MagnetDownloader();
 	}
 	else if (downloadmode == 6) {
@@ -212,7 +212,7 @@ p_2:redownload_result = downloadengine();
 		printf("----------------------下载失败!----------------------\n");
 		printf("-----------------------------------------------------\n");
 		system("cls");
-		goto p_2;
+		goto p_3;
 	}
 	return 0;
 }//下载工具主程序
@@ -227,6 +227,8 @@ int NormalDownloader() {
 }
 
 int MagnetDownloader() {
+	proxyswitcher();
+	CreateConfig();
 	printf("请选择下载模式：\n\n1.种子文件导入\n\n2.输入磁力链\n\n请输入：");
 	scanf("%d", &magnet_mode);
 	if (magnet_mode == 2) {
@@ -237,7 +239,6 @@ int MagnetDownloader() {
 	printf("\n请在弹出窗口中修改BT配置文件. . .\n");
 	system("notepad config\\bt.conf");
 	BroswerMark();
-	proxyswitcher();
 	url();
 	return 0;
 }
@@ -401,49 +402,38 @@ int dir() {
 
 int proxyswitcher() {
 	char proxy[50];
-	if ((fopen("config\\proxy.ini", "r")) != NULL) {
+	if (system("type config\\proxy.ini | find \"proxy=0\"") == 0 || (fopen("config\\proxy.ini", "r") == NULL)) {
 		sprintf(config_proxy, "%s", "");
-	}
-	else {
-		if (downloadmode == 1 || downloadmode == 2 || downloadmode == 3 || downloadmode == 4 || downloadmode == 5) {
-			printf("\n是否设置网络代理（是=1，否=0）：");
-			scanf("%d", &proxymode);
-		}
-		if (downloadmode != 3) {
-			if (proxymode == 0) {
-				sprintf(config_proxy, "%s", "");
-			}
-			else {
-				printf("\n请输入代理参数，支持http/https，如http://127.0.0.1:7890：");
-				scanf("%s", proxy);
-				sprintf(config_proxy, "--all-proxy=%s", proxy);
-			}
-		}
-		else {
-			if (proxymode == 0) {
-				sprintf(config_proxy, "%s", "");
-			}
-			else {
-				if (config_media == 1) {
-					printf("\n请输入代理参数，支持http/https/socks5，如http://127.0.0.1:7890：");
-					scanf("%s", proxy);
-					sprintf(config_proxy, "--proxy %s", proxy);
-				}
-				else {
-					printf("\n请输入代理参数，支持http/https/socks5，如http://127.0.0.1:7890：");
-					scanf("%s", proxy);
-					sprintf(config_proxy, "set HTTP_PROXY=\"%s/\" &", proxy);
-				}
-			}
-		}
-		if (proxymode == 0) {
+		if (fopen("config\\proxy.ini", "r") == NULL) {
 			proxy_ini = fopen("config\\proxy.ini", "w");
-			fprintf(proxy_ini, "##如果需要在程序中自定义代理请删除本文件##\n");
-			fprintf(proxy_ini, "proxy=0\n");
+			fprintf(proxy_ini,"proxy=0");
 			fclose(proxy_ini);
 		}
 	}
-	return 0;
+	else {
+		printf("检测到代理设置,是否使用保存的代理设置(是=1,否=0):");
+		scanf("%d", &proxymode);
+		if (proxymode == 1) {
+			proxy_ini = fopen("config\\proxy.ini", "r");
+			fscanf(proxy_ini, "proxy=%s", proxy);
+			fclose(proxy_ini);
+			if (downloadmode == 1 || downloadmode == 2 || downloadmode == 4 || downloadmode == 5) {
+				sprintf(config_proxy, "--all-proxy=%s", proxy);
+			}
+			else {
+				if (config_media == 1) {
+					sprintf(config_proxy, "--proxy %s", proxy);
+				}
+				else {
+					sprintf(config_proxy, "set HTTP_PROXY=\"%s/\" &", proxy);
+				}
+		}
+		}
+		else {
+			sprintf(config_proxy, "%s", "");
+		}
+	}
+	return 0;// /config/proxy.ini中proxy=0或此文件不存在为无代理状态，否则使用代理(仅支持http/https代理)
 }
 
 int BroswerMark() {
