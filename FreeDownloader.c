@@ -7,7 +7,7 @@ int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Downlo
 int mark, redownload_result, shutdown, filecheck, use_list, OpenDir;
 int cookie_import, cookie_mode,appid;
 char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[15];
-char reference[216], head[300], head_show[35];
+char reference[216], head[300], head_show[35], pre_proxy[56];
 char location[200],split[7],torrent_loca[250],play_list[30], color[4];
 char rpctoken[65];//定义rpc密钥
 char BDUSS[193];
@@ -58,12 +58,16 @@ int CreateConfig() {
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	sprintf(cmd, "aria2c --dir=config --allow-overwrite=true %s --timeout=5 --max-tries=1 https://trackerslist.com/best_aria2.txt", config_proxy);
+	sprintf(cmd, "curl %s https://trackerslist.com/best_aria2.txt > config\\best_aria2.txt", pre_proxy);
 	if (system(cmd) != 0) {
 		printf("\n更新失败，建议配合代理或VPN重新打开软件更新列表，正在本地建立BT配置文件. . .\n");
 		if (fopen("config\\best_aria2.txt", "r") != NULL) {
 			printf("\n检测到已有的trackerlist记录，正在读取配置文件. . .\n");
 			system("type config\\best_aria2.txt>>config\\bt.conf");
+		}
+		else {
+			printf("\n请在弹出窗口中修改BT配置文件. . .\n");
+			system("notepad config\\bt.conf");
 		}
 	}
 	else {
@@ -71,7 +75,6 @@ int CreateConfig() {
 		system("type config\\best_aria2.txt>>config\\bt.conf");
 	}
 	conf = fopen("config\\bt.conf", "a");
-	fprintf(conf, "\nlisten-port=20331\n");
 	fprintf(conf, "continue=true\n");
 	fprintf(conf, "max-concurrent-downloads=1\n");
 	fprintf(conf, "max-connection-per-server=16\n");
@@ -101,6 +104,7 @@ int CreateFolder() {
 		fprintf(dir_mark, "##本文件夹存储下载数据\n");
 		fclose(dir_mark);
 	}
+	system("cls");
 	if (system("type config\\dir.md | find \"##This file is auto-created by FreeDownloader,don't move or delete!##\"")!=0) {
 		system("mkdir config");
 		dir_mark = fopen("config\\dir.md", "w");
@@ -109,6 +113,7 @@ int CreateFolder() {
 		fprintf(dir_mark, "##标准格式为proxy=http://127.0.0.1:1080，请根据实际情况设置代理！\n");
 		fclose(dir_mark);
 	}
+	system("cls");
 	if (system("type cookies\\dir.md | find \"##This file is auto-created by FreeDownloader,don't move or delete!##\"") != 0) {
 		system("mkdir cookies");
 		dir_mark = fopen("cookies\\dir.md", "w");
@@ -116,6 +121,7 @@ int CreateFolder() {
 		fprintf(dir_mark, "##本文件夹主要存放账号登录的Cookie信息\n");
 		fclose(dir_mark);
 	}
+	system("cls");
 	if (system("type temp\\dir.md | find \"##This file is auto-created by FreeDownloader,don't move or delete!##\"") != 0) {
 		system("mkdir temp");
 		dir_mark = fopen("temp\\dir.md", "w");
@@ -135,10 +141,12 @@ int preload() {
 	CreateFolder();
 	TokenGenerate();
 	WindowSkin();
-	printf("需要系统UAC权限读取代理服务器数据，若需要使用代理服务器请先打开代理，然后");
-	system("pause");
+	printf("需要系统UAC权限读取代理服务器数据，若需要使用代理服务器请先打开代理. . .\n");
+	system("Timeout /T 5");
 	if (system("GetProxyInfo.exe") != 0) {
 		printf("UAC授权失败，请自行导入计算机代理设置！\n\n");
+		system("echo proxy=0 > config\\proxy.ini");
+		system("notepad config\\proxy.ini");
 	}
 	return 0;
 }
@@ -197,8 +205,6 @@ p_3:system("cls");
 	}
 	redownload_result = downloadengine();
 	if (redownload_result == 0) {
-		system("del /f /s /q temp\\*.bat");
-		system("cls");
 		printf("-----------------------------------------------------\n");
 		printf("----------------------下载成功!----------------------\n");
 		printf("-----------------------------------------------------\n");
@@ -241,8 +247,6 @@ int MagnetDownloader() {
 	}
 	threader();
 	system("cls");
-	printf("\n请在弹出窗口中修改BT配置文件. . .\n");
-	system("notepad config\\bt.conf");
 	BroswerMark();
 	url();
 	return 0;
@@ -340,12 +344,12 @@ int url() {
 				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
+			printf("请在弹出页输入下载地址. . .\n\n");
 			system("notepad.exe temp\\magnet.download");
 			sprintf(config_url, "%s", "-i temp\\magnet.download");
 		}
 		else {
-			printf("\n若种子文件名过长建议重命名成简单字母或数字再拖入窗口，否则可能报错！\n\n");
+			printf("若种子文件名过长建议重命名成简单字母或数字再拖入窗口，否则可能报错！\n\n");
 			printf("请将种子文件以拖拽至本窗口中：");
 			scanf("%s", torrent_loca);
 			sprintf(config_url, "\"%s\"",torrent_loca);
@@ -414,16 +418,20 @@ int proxyswitcher() {
 			proxy_ini = fopen("config\\proxy.ini", "r");
 			fscanf(proxy_ini, "proxy=%s", proxy);
 			fclose(proxy_ini);
-			if (downloadmode == 1 || downloadmode == 2 || downloadmode == 4 || downloadmode == 5) {
+			if (downloadmode == 1 || downloadmode == 2 || downloadmode == 4) {
 				sprintf(config_proxy, "--all-proxy=%s", proxy);
 			}
-			else {
+			else if(downloadmode==3){
 				if (config_media == 1) {
 					sprintf(config_proxy, "--proxy %s", proxy);
 				}
 				else {
 					sprintf(config_proxy, "set HTTP_PROXY=\"%s/\" &", proxy);
 				}
+			}
+			else if (downloadmode == 5) {
+				sprintf(pre_proxy, "-x %s", proxy);//curl proxy
+				sprintf(config_proxy, "--all-proxy=%s", proxy);//magnet proxy
 			}
 	}
 	return 0;// /config/proxy.ini中proxy=0或此文件不存在为无代理状态，否则使用代理(仅支持http/https代理)
@@ -737,10 +745,10 @@ int downloadengine() {
 	}
 	else if (downloadmode == 5) {
 		if (magnet_mode == 2) {
-			sprintf(cmd, "%s --conf-path=config\\bt.conf %s", Downloader_Use,config_url);
+			sprintf(cmd, "%s --conf-path=config\\bt.conf %s %s", Downloader_Use,config_proxy,config_url);
 		}
 		else {
-			sprintf(cmd, "%s --conf-path=config\\bt.conf %s", Downloader_Use,config_url);
+			sprintf(cmd, "%s --conf-path=config\\bt.conf %s %s", Downloader_Use,config_proxy,config_url);
 		}
 	}
 	system("cls");
@@ -778,6 +786,8 @@ int downloadengine() {
 			download_result = system("temp\\Download.bat");
 		}
 	if(download_result == 0) {
+		system("del /f /s /q temp\\*.bat");
+		system("cls");
 		return 0;
 	}
 	else {
