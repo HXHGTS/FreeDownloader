@@ -141,8 +141,8 @@ int preload() {
 	CreateFolder();
 	TokenGenerate();
 	WindowSkin();
-	printf("需要系统UAC权限读取代理服务器数据，若需要使用代理服务器请先打开代理. . .\n");
-	system("Timeout /T 5");
+	printf("需要系统UAC权限读取代理服务器数据，若需要使用代理服务器请在打开本软件前打开代理. . .\n");
+	system("Timeout /T 3");
 	if (system("GetProxyInfo.exe") != 0) {
 		printf("UAC授权失败，请自行导入计算机代理设置！\n\n");
 		system("echo proxy=0 > config\\proxy.ini");
