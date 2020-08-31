@@ -47,8 +47,6 @@ int WindowSkin() {
 		fread(color, 1, 2, skin);
 		fclose(skin);
 	}
-	sprintf(smallcmd, "color %s", color);
-	system(smallcmd);
 	system("cls");
 	return 0;
 }
@@ -130,7 +128,7 @@ int CreateFolder() {
 		fclose(dir_mark);
 	}
 	system("cls");
-		return 0;
+	return 0;
 }
 
 int preload() {
@@ -142,6 +140,7 @@ int preload() {
 	TokenGenerate();
 	WindowSkin();
 	printf("需要系统UAC权限读取代理服务器数据，若需要使用代理服务器请在打开本软件前打开代理. . .\n");
+	printf("已知对Clash(R)代理支持不足，若使用Clash(R)，请切换到Tap模式路由全局流量！\n");
 	system("Timeout /T 3");
 	if (system("GetProxyInfo.exe") != 0) {
 		printf("UAC授权失败，请自行导入计算机代理设置！\n\n");
@@ -152,7 +151,9 @@ int preload() {
 }
 int main() {
 	preload();
-p_3:system("cls");
+p_3:sprintf(smallcmd, "color %s", color);
+	system(smallcmd);
+	system("cls");
 	printf("------------------------------------------------\n");
 	printf("---------------- FreeDownloader ----------------\n");
 	printf("------------------------------------------------\n");
@@ -160,7 +161,6 @@ p_3:system("cls");
 	printf("------------------------------------------------\n");
 	printf("请输入：");
 	scanf("%d", &downloadmode);
-	system("cls");
 	if (system("type config\\power.ini | find \"power=1\"") == 0) {
 		shutdown = 1;
 		system("echo \"power=0\" config\\power.ini"); //设置后只生效一次，自动还原状态，避免每次都自动关机
@@ -168,6 +168,7 @@ p_3:system("cls");
 	else {
 		shutdown = 0;
 	}
+	system("cls");
 	if (downloadmode == 1) {
 		NormalDownloader();
 	}
@@ -423,10 +424,10 @@ int proxyswitcher() {
 			}
 			else if(downloadmode==3){
 				if (config_media == 1) {
-					sprintf(config_proxy, "--proxy %s", proxy);
+					sprintf(config_proxy, "--proxy http://%s", proxy);
 				}
 				else {
-					sprintf(config_proxy, "set HTTP_PROXY=\"%s/\" &", proxy);
+					sprintf(config_proxy, "set HTTP_PROXY=\"http://%s/\" &", proxy);
 				}
 			}
 			else if (downloadmode == 5) {
@@ -613,21 +614,19 @@ int MediaDownloader() {
 		}
 	}
 	else {
-		if (config_media == 2) {
-			sprintf(play_list, "");//b站暂时无法选集，待后期修复
-		}
-		else {
 			printf("\n下载整个列表内所有音视频？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
 			scanf("%d", &use_list);
 			if (use_list == 1) {
 				sprintf(play_list, "-p");
+			}
+			else if (use_list == 2) {
+				sprintf(play_list, "");
 			}
 			else {
 				printf("\n请按照格式输入下载范围，如1-5,6,7,8-15：");
 				scanf("%s", chapter);
 				sprintf(play_list, "-p -items %s", chapter);
 			}
-		}
 	}
 	if (config_media == 1) {
 		if (fopen("cookies\\ytb_Cookies.txt", "r") == NULL) {
