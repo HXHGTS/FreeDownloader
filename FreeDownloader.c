@@ -1,21 +1,19 @@
 ﻿#include<stdio.h>
 #include<stdlib.h>
 
-int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(),dir(),downloadengine(),ExportDownloader(),WindowSkin();
+int AdvanceDownloader(),AutoShutdown(int mode),BroswerMark(),CheckSum(int mode),dir(),downloadengine(),WindowSkin();
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
-int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
-int mark, redownload_result, shutdown, filecheck, use_list, OpenDir;
+int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Task, IsCheckSum;
+int mark, redownload_result, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode,appid;
-int scan_return;
-char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[15];
+int scan_return;//接收返回值，暂时没用
+char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[12];
 char reference[216], head[300], head_show[35], pre_proxy[56];
 char location[200],split[7],torrent_loca[250],play_list[30], color[4];
 char rpctoken[65];//定义rpc密钥
 char BDUSS[193];
-char cmd[1500];
-char LocationInput, LocationOutput[300];
-FILE* url_output;
-FILE* conf,*save,*power_ini,*proxy_ini,*dic,*dir_mark, *skin;//定义配置文件
+char cmd[100];
+FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat;
 
 int TokenGenerate() {
@@ -99,14 +97,12 @@ int CreateFolder() {
 	if (fopen("Downloads\\dir.md", "r")==NULL) {
 		system("mkdir Downloads");
 		dir_mark = fopen("Downloads\\dir.md", "w");
-		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
 		fprintf(dir_mark, "##本文件夹存储下载数据\n");
 		fclose(dir_mark);
 	}
 	if (fopen("config\\dir.md", "r") == NULL) {
 		system("mkdir config");
 		dir_mark = fopen("config\\dir.md", "w");
-		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
 		fprintf(dir_mark, "##需要配置代理请修改proxy.ini文件，软件支持http/https代理\n");
 		fprintf(dir_mark, "##标准格式为proxy=http://127.0.0.1:1080，请根据实际情况设置代理！\n");
 		fclose(dir_mark);
@@ -114,14 +110,12 @@ int CreateFolder() {
 	if (fopen("cookies\\dir.md", "r") == NULL) {
 		system("mkdir cookies");
 		dir_mark = fopen("cookies\\dir.md", "w");
-		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
 		fprintf(dir_mark, "##本文件夹主要存放账号登录的Cookie信息\n");
 		fclose(dir_mark);
 	}
 	if (fopen("temp\\dir.md", "r") == NULL) {
 		system("mkdir temp");
 		dir_mark = fopen("temp\\dir.md", "w");
-		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
 		fprintf(dir_mark, "##本文件夹为缓存信息文件夹\n");
 		fclose(dir_mark);
 	}
@@ -257,20 +251,18 @@ int url() {
 	if (downloadmode == 1) {
 		if (fopen("temp\\normal.download", "r")==NULL) {
 			url = fopen("temp\\normal.download", "w");
-			fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 			fclose(url);
 		}
-		printf("\n请在弹出页输入下载地址. . .\n\n");
+		printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
 		system("notepad.exe temp\\normal.download");
 		sprintf(config_url, "%s", "-i temp\\normal.download");
 	}
 	else if (downloadmode == 2) {
 		if (fopen("temp\\netdisk.download", "r") == NULL) {
 					url = fopen("temp\\netdisk.download", "w");
-					fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 					fclose(url);
 		}
-		printf("\n请在弹出页输入下载地址. . .\n\n");
+		printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
 		system("notepad.exe temp\\netdisk.download");
 		sprintf(config_url, "%s", "-i temp\\netdisk.download");
 		system("del temp\\url.bat");
@@ -279,50 +271,45 @@ int url() {
 		if (config_media == 1) {
 			if (fopen("temp\\ytb.download", "r") == NULL) {
 				url = fopen("temp\\ytb.download", "w");
-				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
+			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
 			system("notepad.exe temp\\ytb.download");
 			sprintf(config_url, "%s", "-a temp\\ytb.download");
 		}
 		else if (config_media == 2) {
 			if (fopen("temp\\Bilibili.download", "r") == NULL) {
 				url = fopen("temp\\Bilibili.download", "w");
-				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
+			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
 			system("notepad.exe temp\\Bilibili.download");
 			sprintf(config_url, "%s", "-F temp\\Bilibili.download");
 		}
 		else if (config_media == 3) {
 			if (fopen("temp\\QQVideo.download", "r") == NULL) {
 				url = fopen("temp\\QQVideo.download", "w");
-				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
+			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
 			system("notepad.exe temp\\QQVideo.download");
 			sprintf(config_url, "%s", "-F temp\\QQVideo.download");
 		}
 		else if (config_media == 4) {
 			if (fopen("temp\\iqiyi.download", "r") == NULL) {
 				url = fopen("temp\\iqiyi.download", "w");
-				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
+			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
 			system("notepad.exe temp\\iqiyi.download");
 			sprintf(config_url, "%s", "-F temp\\iqiyi.download");
 		}
 		else {
 			if (fopen("temp\\Youku.download", "r") == NULL) {
 				url = fopen("temp\\Youku.download", "w");
-				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
-			printf("\n请在弹出页输入下载地址. . .\n\n");
+			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
 			system("notepad.exe temp\\Youku.download");
 			sprintf(config_url, "%s", "-F temp\\Youku.download");
 		}
@@ -330,10 +317,9 @@ int url() {
 	else if (downloadmode == 4) {
 		if (fopen("temp\\advance.download", "r") == NULL) {
 			url = fopen("temp\\advance.download", "w");
-			fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 			fclose(url);
 		}
-		printf("\n请在弹出页输入下载地址. . .\n\n");
+		printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
 		system("notepad.exe temp\\advance.download");
 		sprintf(config_url, "%s", "-i temp\\advance.download");
 	}
@@ -341,10 +327,9 @@ int url() {
 		if (magnet_mode == 2) {
 			if (fopen("temp\\magnet.download", "r") == NULL) {
 				url = fopen("temp\\magnet.download", "w");
-				fprintf(url, "%s", "## Input URL below (Don't delete this line)##\n");
 				fclose(url);
 			}
-			printf("请在弹出页输入下载地址. . .\n\n");
+			printf("请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
 			system("notepad.exe temp\\magnet.download");
 			sprintf(config_url, "%s", "-i temp\\magnet.download");
 		}
@@ -360,7 +345,7 @@ int url() {
 
 int threader() {
 	if (downloadmode == 1 || downloadmode == 4) {
-		Download_Task = 1;//同时下载任务数
+		Task = 1;//同时下载任务数
 		config_thread = 16;
 		sprintf(Downloader_Use, "%s", "aria2c");
 		sprintf(split, "2M");
@@ -369,10 +354,10 @@ int threader() {
 		config_thread = 2;
 		sprintf(split, "1M");
 		sprintf(Downloader_Use, "%s", "aria2c");
-		Download_Task = 1;//同时下载任务数
+		Task = 1;//同时下载任务数
 	}
 	else if (downloadmode == 3) {
-		Download_Task = 1;//同时下载任务数
+		Task = 1;//同时下载任务数
 		if (config_media != 1) {
 			sprintf(Downloader_Use, "%s", "annie");
 			config_thread = 1;//4k视频状态下aria2调用出现bug
@@ -383,7 +368,7 @@ int threader() {
 		}
 	}
 	else if (downloadmode == 5) {
-		Download_Task = 1;//同时下载任务数
+		Task = 1;//同时下载任务数
 		sprintf(Downloader_Use, "%s", "aria2c");
 		config_thread = 16;
 		if (magnet_mode == 2)sprintf(split, "1M");
@@ -599,8 +584,8 @@ int MediaDownloader() {
 	scan_return=scanf("%d", &config_media);
 	if (config_media == 1) {
 		printf("\n下载整个列表内所有音视频？\n\n1.是\n\n0.否\n\n请输入：");
-		scan_return=scanf("%d", &use_list);
-		if (use_list == 0) {
+		scan_return=scanf("%d", &DownloadList);
+		if (DownloadList == 0) {
 			sprintf(play_list, "--no-playlist");
 		}
 		else {
@@ -609,11 +594,11 @@ int MediaDownloader() {
 	}
 	else {
 			printf("\n下载整个列表内所有音视频？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
-			scan_return=scanf("%d", &use_list);
-			if (use_list == 1) {
+			scan_return=scanf("%d", &DownloadList);
+			if (DownloadList == 1) {
 				sprintf(play_list, "-p");
 			}
-			else if (use_list == 2) {
+			else if (DownloadList == 2) {
 				sprintf(play_list, "");
 			}
 			else {
@@ -691,13 +676,19 @@ int MediaDownloader() {
 }
 
 int downloadengine() {
-	FILE* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download,*Download;
+	FILE*Download,* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download;
 	int download_result;
 	if (downloadmode == 1) {
-		sprintf(cmd, "%s -c -x%d -s%d -k%s --file-allocation=none -j %d %s %s %s %s", Downloader_Use, config_thread,config_thread, split, Download_Task, config_dir, config_proxy, head, config_url);
+		Download= fopen("temp\\Download.bat", "w");
+		fprintf(Download, "@echo off\n");
+		fprintf(Download, "%s -c -x%d -s%d -k%s --file-allocation=none -j %d %s %s %s %s\n", Downloader_Use, config_thread,config_thread, split, Task, config_dir, config_proxy, head, config_url);
+		fclose(Download);
 	}
 	else if (downloadmode == 2) {
-		sprintf(cmd, "%s -c -x%d -s%d --log-level=error --file-allocation=none -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread, split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		Download = fopen("temp\\Download.bat", "w");
+		fprintf(Download, "@echo off\n");
+		fprintf(Download, "%s -c -x%d -s%d --log-level=error --file-allocation=none -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s\n", Downloader_Use, config_thread, config_thread, split, Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		fclose(Download);
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
@@ -734,14 +725,23 @@ int downloadengine() {
 		}
 	}
 	else if (downloadmode == 4) {
-		sprintf(cmd, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --max-tries=0 --file-allocation=none --content-disposition-default-utf8=true %s", Downloader_Use, config_thread, config_thread,split, Download_Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		Download = fopen("temp\\Download.bat", "w");
+		fprintf(Download, "@echo off\n");
+		fprintf(Download, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --max-tries=0 --file-allocation=none --content-disposition-default-utf8=true %s\n", Downloader_Use, config_thread, config_thread, split, Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		fclose(Download);
 	}
 	else if (downloadmode == 5) {
 		if (magnet_mode == 2) {
-			sprintf(cmd, "%s --conf-path=config\\bt.conf %s %s", Downloader_Use,config_proxy,config_url);
+			Download = fopen("temp\\Download.bat", "w");
+			fprintf(Download, "@echo off\n");
+			fprintf(Download, "%s --conf-path=config\\bt.conf %s %s\n", Downloader_Use, config_proxy, config_url);
+			fclose(Download);
 		}
 		else {
-			sprintf(cmd, "%s --conf-path=config\\bt.conf %s %s", Downloader_Use,config_proxy,config_url);
+			Download = fopen("temp\\Download.bat", "w");
+			fprintf(Download, "@echo off\n");
+			fprintf(Download, "%s --conf-path=config\\bt.conf %s %s\n", Downloader_Use, config_proxy, config_url);
+			fclose(Download);
 		}
 	}
 	system("cls");
@@ -771,13 +771,9 @@ int downloadengine() {
 			download_result = system("temp\\Youku_Download.bat");
 		}
 	}
-		else {
-			Download = fopen("temp\\Download.bat", "w");
-			fprintf(Download, "@echo off\n");
-			fprintf(Download, "%s\n", cmd);
-			fclose(Download);
-			download_result = system("temp\\Download.bat");
-		}
+	else {
+		download_result = system("temp\\Download.bat");
+	}
 	if(download_result == 0) {
 		system("del /f /s /q temp\\*.bat");
 		system("cls");
