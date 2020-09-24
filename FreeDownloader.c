@@ -95,15 +95,14 @@ int CreateConfig() {
 }
 
 int CreateFolder() {
-	if (system("type Downloads\\dir.md | find \"##This file is auto-created by FreeDownloader,don't move or delete!##\"") != 0) {
+	if (fopen("Downloads\\dir.md", "r")==NULL) {
 		system("mkdir Downloads");
 		dir_mark = fopen("Downloads\\dir.md", "w");
 		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
 		fprintf(dir_mark, "##本文件夹存储下载数据\n");
 		fclose(dir_mark);
 	}
-	system("cls");
-	if (system("type config\\dir.md | find \"##This file is auto-created by FreeDownloader,don't move or delete!##\"")!=0) {
+	if (fopen("config\\dir.md", "r") == NULL) {
 		system("mkdir config");
 		dir_mark = fopen("config\\dir.md", "w");
 		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
@@ -111,23 +110,20 @@ int CreateFolder() {
 		fprintf(dir_mark, "##标准格式为proxy=http://127.0.0.1:1080，请根据实际情况设置代理！\n");
 		fclose(dir_mark);
 	}
-	system("cls");
-	if (system("type cookies\\dir.md | find \"##This file is auto-created by FreeDownloader,don't move or delete!##\"") != 0) {
+	if (fopen("cookies\\dir.md", "r") == NULL) {
 		system("mkdir cookies");
 		dir_mark = fopen("cookies\\dir.md", "w");
 		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
 		fprintf(dir_mark, "##本文件夹主要存放账号登录的Cookie信息\n");
 		fclose(dir_mark);
 	}
-	system("cls");
-	if (system("type temp\\dir.md | find \"##This file is auto-created by FreeDownloader,don't move or delete!##\"") != 0) {
+	if (fopen("temp\\dir.md", "r") == NULL) {
 		system("mkdir temp");
 		dir_mark = fopen("temp\\dir.md", "w");
 		fprintf(dir_mark, "##This file is auto-created by FreeDownloader,don't move or delete!##\n");
 		fprintf(dir_mark, "##本文件夹为缓存信息文件夹\n");
 		fclose(dir_mark);
 	}
-	system("cls");
 	return 0;
 }
 
@@ -139,8 +135,10 @@ int preload() {
 	CreateFolder();
 	TokenGenerate();
 	WindowSkin();
-	printf("需要系统UAC权限读取代理服务器数据，若需要使用代理服务器请在打开本软件前打开代理. . .\n");
-	printf("已知对Clash(R)代理支持不足，若使用Clash(R)，请切换到Tap模式路由全局流量！\n");
+	sprintf(smallcmd, "color %s", color);
+	system(smallcmd);
+	printf("需要系统UAC权限读取代理服务器数据，若需要使用代理服务器请在打开本软件前打开代理. . .\n\n");
+	printf("已知对Clash(R)代理支持不足，若使用Clash(R)，请切换到Tap模式路由全局流量！\n\n");
 	system("Timeout /T 3");
 	if (system("GetProxyInfo.exe") != 0) {
 		printf("UAC授权失败，请自行导入计算机代理设置！\n\n");
