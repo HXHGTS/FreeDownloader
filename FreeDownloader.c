@@ -144,13 +144,12 @@ int preload() {
 }
 int main() {
 	preload();
-p_3:sprintf(smallcmd, "color %s", color);
-	system(smallcmd);
+p_3:system(smallcmd);
 	system("cls");
 	printf("------------------------------------------------------------------\n");
 	printf("--------------------------FreeDownloader--------------------------\n");
 	printf("------------------------------------------------------------------\n");
-	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.打开下载文件夹\n0.退出\n");
+	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.删除保存的账号登录信息与下载历史\n9.打开下载文件夹\n0.退出\n");
 	printf("------------------------------------------------------------------\n");
 	printf("请输入：");
 	scan_return=scanf("%d", &downloadmode);
@@ -185,11 +184,25 @@ p_3:sprintf(smallcmd, "color %s", color);
 	}
 	else if (downloadmode == 7) {
 		printf("正在打开帮助界面. . .\n");
+		system("echo 185.199.110.153 hxhgts.github.io > C:\\Windows\\System32\\drivers\\etc\\hosts");
 		system("explorer.exe \"https://hxhgts.github.io/FreeDownloader/\"");
+		system("echo 127.0.0.1 localhost > C:\\Windows\\System32\\drivers\\etc\\hosts");
 		system("cls");
 		goto p_3;
 	}
 	else if (downloadmode == 8) {
+		printf("警告：此操作将删除软件保存的所有登录信息，确定请按任意键继续，取消请直接关闭软件窗口！！！\n");
+		system("pause");
+		printf("正在删除历史记录. . .\n");
+		system("del /f /s /q temp\\*.bat");
+		system("del /f /s /q temp\\*.download");
+		printf("正在删除登录信息. . .\n");
+		system("del /f /s /q cookies\\*.txt");
+		printf("删除操作执行完成！\n");
+		system("cls");
+		goto p_3;
+	}
+	else if (downloadmode == 9) {
 		system("explorer.exe Downloads");
 		system("cls");
 		goto p_3;
