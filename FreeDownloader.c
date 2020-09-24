@@ -6,6 +6,7 @@ int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitc
 int downloadmode, magnet_mode,config_thread, config_media, anti_shutdown, Download_Task, IsCheckSum;
 int mark, redownload_result, shutdown, filecheck, use_list, OpenDir;
 int cookie_import, cookie_mode,appid;
+int scan_return;
 char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[15];
 char reference[216], head[300], head_show[35], pre_proxy[56];
 char location[200],split[7],torrent_loca[250],play_list[30], color[4];
@@ -26,7 +27,7 @@ int WindowSkin() {
 	if (fopen("config\\skin.ini", "r") == NULL) {
 		printf("重置窗体与字体颜色请直接删除config目录下skin.ini文件！\n");
 		printf("请按照\"窗口颜色+字体颜色\"的格式设置皮肤，对应关系如下：\n");
-		printf("---------------------------------------\n");
+		printf("------------------------------------------------------------------\n");
 		printf("0=黑色   8=灰色\n");
 		printf("1=蓝色   9=淡蓝色\n");
 		printf("2=绿色   A=淡绿色\n");
@@ -35,9 +36,9 @@ int WindowSkin() {
 		printf("5=紫色   D=淡紫色\n");
 		printf("6=黄色   E=淡黄色\n");
 		printf("7=白色   F=亮白色\n");
-		printf("---------------------------------------\n");
+		printf("------------------------------------------------------------------\n");
 		printf("请输入以配置界面与字体颜色，如0A：");
-		scanf("%s", color);
+		scan_return=scanf("%s", color);
 		skin = fopen("config\\skin.ini", "w");
 		fprintf(skin,"%s",color);
 		fclose(skin);
@@ -152,13 +153,13 @@ int main() {
 p_3:sprintf(smallcmd, "color %s", color);
 	system(smallcmd);
 	system("cls");
-	printf("------------------------------------------------\n");
-	printf("---------------- FreeDownloader ----------------\n");
-	printf("------------------------------------------------\n");
+	printf("------------------------------------------------------------------\n");
+	printf("--------------------------FreeDownloader--------------------------\n");
+	printf("------------------------------------------------------------------\n");
 	printf("请选择下载功能：\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.打开下载文件夹\n0.退出\n");
-	printf("------------------------------------------------\n");
+	printf("------------------------------------------------------------------\n");
 	printf("请输入：");
-	scanf("%d", &downloadmode);
+	scan_return=scanf("%d", &downloadmode);
 	if (system("type config\\power.ini | find \"power=1\"") == 0) {
 		shutdown = 1;
 		system("echo \"power=0\" config\\power.ini"); //设置后只生效一次，自动还原状态，避免每次都自动关机
@@ -204,12 +205,12 @@ p_3:sprintf(smallcmd, "color %s", color);
 	}
 	redownload_result = downloadengine();
 	if (redownload_result == 0) {
-		printf("-----------------------------------------------------\n");
-		printf("----------------------下载成功!----------------------\n");
-		printf("-----------------------------------------------------\n");
+		printf("------------------------------------------------------------------\n");
+		printf("-----------------------------下载成功!----------------------------\n");
+		printf("------------------------------------------------------------------\n");
 		AutoShutdown(shutdown);
 		printf("\n是否打开下载文件夹：\n\n1.是\n\n0.否\n\n请输入：");
-		scanf("%d", &OpenDir);
+		scan_return=scanf("%d", &OpenDir);
 		if (OpenDir != 0) {
 			system("explorer Downloads");
 		}
@@ -218,9 +219,9 @@ p_3:sprintf(smallcmd, "color %s", color);
 	}
 	else {
 		system("cls");
-		printf("-----------------------------------------------------\n");
-		printf("----------------------下载失败!----------------------\n");
-		printf("-----------------------------------------------------\n");
+		printf("------------------------------------------------------------------\n");
+		printf("-----------------------------下载失败!----------------------------\n");
+		printf("------------------------------------------------------------------\n");
 		system("cls");
 		goto p_3;
 	}
@@ -240,7 +241,7 @@ int MagnetDownloader() {
 	proxyswitcher();
 	CreateConfig();
 	printf("请选择下载模式：\n\n1.种子文件导入\n\n2.输入磁力链\n\n请输入：");
-	scanf("%d", &magnet_mode);
+	scan_return=scanf("%d", &magnet_mode);
 	if (magnet_mode == 2) {
 		dir();
 	}
@@ -350,7 +351,7 @@ int url() {
 		else {
 			printf("若种子文件名过长建议重命名成简单字母或数字再拖入窗口，否则可能报错！\n\n");
 			printf("请将种子文件以拖拽至本窗口中：");
-			scanf("%s", torrent_loca);
+			scan_return=scanf("%s", torrent_loca);
 			sprintf(config_url, "\"%s\"",torrent_loca);
 		}
 	}
@@ -415,7 +416,7 @@ int proxyswitcher() {
 	}
 	else {
 			proxy_ini = fopen("config\\proxy.ini", "r");
-			fscanf(proxy_ini, "proxy=%s", proxy);
+			scan_return=fscanf(proxy_ini, "proxy=%s", proxy);
 			fclose(proxy_ini);
 			if (downloadmode == 1 || downloadmode == 2 || downloadmode == 4) {
 				sprintf(config_proxy, "--all-proxy=%s", proxy);
@@ -438,47 +439,42 @@ int proxyswitcher() {
 
 int BroswerMark() {
 	char UserAgent_DIY[275];
-	if (downloadmode == 3) {
-		sprintf(head, "--user-agent %s", "\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36\"");//Yandex浏览器
+	if (downloadmode == 1) {
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 Edg/85.0.564.63");//Edge浏览器
 		sprintf(head_show, "Yandex浏览器");
 	}
-	else if(downloadmode==2){
-		printf("\n请选择浏览器标识：\n\n1.Yandex浏览器\n\n2.外部导入\n\n请输入：");
-		scanf("%d", &mark);
-		if (mark == 1) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36");//Yandex浏览器
-			sprintf(head_show, "Yandex浏览器");
+	else if (downloadmode == 2) {
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 YaBrowser/20.8.2.90.00 Safari/537.36");//Yandex浏览器
+		sprintf(head_show, "Yandex浏览器");
+	}
+	else if (downloadmode == 3) {
+		if (config_media == 1) {
+			sprintf(head, "--user-agent \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 Edg/85.0.564.63");//Edge浏览器
 		}
 		else {
-			printf("请输入useragent值:\n");
-			scanf("%s", UserAgent_DIY);
-			sprintf(head, "--header=\"User-Agent:%s\"", UserAgent_DIY);//外部导入
-			sprintf(head_show, "外部导入");
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 Edg/85.0.564.63");//Edge浏览器
 		}
-		}
-	else if(downloadmode==1){
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36");//Yandex浏览器
-		sprintf(head_show, "Yandex浏览器");
+		sprintf(head_show, "Edge浏览器");
 	}
 	else if (downloadmode == 4) {
-		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Windows版Chrome浏览器\n\n3.Yandex浏览器\n\n请输入：");
-		scanf("%d", &mark);
+		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Edge浏览器\n\n3.Yandex浏览器\n\n请输入：");
+		scan_return=scanf("%d", &mark);
 		if (mark == 1) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E)");//IE浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");//IE浏览器
 			sprintf(head_show, "IE浏览器");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36");//Windows版Chrome
-			sprintf(head_show, "Windows版Chrome浏览器");
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 Edg/85.0.564.63");//Edge浏览器
+			sprintf(head_show, "Edge浏览器");
 		}
 		else if (mark == 3) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36");//Yandex浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 YaBrowser/20.8.2.90.00 Safari/537.36");//Yandex浏览器
 			sprintf(head_show, "Yandex浏览器");
 		}
 		else {
 			mark = 3;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 YaBrowser/20.6.3.54.00 Safari/537.36");//Yandex浏览器
-			sprintf(head_show, "Yandex浏览器");
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 Edg/85.0.564.63");//Edge浏览器
+			sprintf(head_show, "Edge浏览器");
 		}
 	}
 	else if (downloadmode == 5) {
@@ -493,7 +489,7 @@ int AdvanceDownloader() {
 	FILE* cookie;
 	BroswerMark();
 	printf("\n请输入下载引用页地址：\n");
-	scanf("%s", reference_input);
+	scan_return=scanf("%s", reference_input);
 	sprintf(reference, "--referer=\"%s\"", reference_input);
 	if (fopen("cookies\\Cookies.txt", "r") == NULL) {
 	p_4:cookie = fopen("cookies\\Cookies.txt", "w");
@@ -505,7 +501,7 @@ int AdvanceDownloader() {
 	}
 	else {
 		printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
-		scanf("%d", &cookie_import);
+		scan_return=scanf("%d", &cookie_import);
 		if (cookie_import != 1) {
 			goto p_4;
 		}
@@ -522,7 +518,7 @@ int Netdisk() {
 	BroswerMark();
 	sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
 		printf("\n是否使用插件导入Cookie(1=插件手动导入 0=浏览器手动导入):");
-		scanf("%d", &cookie_mode);
+		scan_return=scanf("%d", &cookie_mode);
 		if (cookie_mode != 0) {
 			if (fopen("cookies\\Netdisk_Cookies.txt", "r") == NULL) {
 			p_4:cookie = fopen("temp\\Netdisk_Cookies_tmp.txt", "w");
@@ -535,7 +531,7 @@ int Netdisk() {
 			}
 			else {
 				printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
-				scanf("%d", &cookie_import);
+				scan_return=scanf("%d", &cookie_import);
 				if (cookie_import != 1) {
 					goto p_4;
 				}
@@ -544,7 +540,7 @@ int Netdisk() {
 		}
 		else {
 			printf("\n请输入BDUSS值:\n");
-			scanf("%s", BDUSS);
+			scan_return=scanf("%s", BDUSS);
 			sprintf(config_cookie, "--header=\"Cookie: BDUSS=%s\"", BDUSS);
 		}
 	url();
@@ -558,7 +554,7 @@ int CheckSum(int mode) {
 	if (mode == 1) {
 		printf("\n如果需要检测文件完整性，可以将文件拖拽至本窗口内！建议先将文件名称最简化并移至磁盘根目录下再检测！\n");
 		printf("\n文件名称中不允许空格！若md5不一致，则文件损坏，需重新下载！\n\n文件路径：");
-		scanf("%s", location);
+		scan_return=scanf("%s", location);
 		sprintf(cmd, "CertUtil -hashfile \"%s\" MD5", location);
 		printf("\n\n正在计算MD5值. . .\n");
 		printf("---------------------------------------------\n");
@@ -588,7 +584,7 @@ int AutoShutdown(int mode) {
 	if (mode == 1) {
 		system("shutdown -s -t 60");
 		printf("是否阻止系统关机(是=1)：");
-		scanf("%d", &anti_shutdown);
+		scan_return=scanf("%d", &anti_shutdown);
 		if (anti_shutdown == 1) {
 			system("shutdown -a");
 		}
@@ -600,10 +596,10 @@ int MediaDownloader() {
 	FILE* Bilibili_Cookies,*ytb_Cookies,* QQVideo_Cookies,*iqiyi_Cookies,*Youku_Cookies;
 	char chapter[14];
 	printf("下载音视频来源：\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n请输入：");
-	scanf("%d", &config_media);
+	scan_return=scanf("%d", &config_media);
 	if (config_media == 1) {
 		printf("\n下载整个列表内所有音视频？\n\n1.是\n\n0.否\n\n请输入：");
-		scanf("%d", &use_list);
+		scan_return=scanf("%d", &use_list);
 		if (use_list == 0) {
 			sprintf(play_list, "--no-playlist");
 		}
@@ -613,7 +609,7 @@ int MediaDownloader() {
 	}
 	else {
 			printf("\n下载整个列表内所有音视频？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
-			scanf("%d", &use_list);
+			scan_return=scanf("%d", &use_list);
 			if (use_list == 1) {
 				sprintf(play_list, "-p");
 			}
@@ -622,7 +618,7 @@ int MediaDownloader() {
 			}
 			else {
 				printf("\n请按照格式输入下载范围，如1-5,6,7,8-15：");
-				scanf("%s", chapter);
+				scan_return=scanf("%s", chapter);
 				sprintf(play_list, "-p -items %s", chapter);
 			}
 	}
@@ -749,15 +745,15 @@ int downloadengine() {
 		}
 	}
 	system("cls");
-	printf("-----------------------------------------------------\n");
+	printf("------------------------------------------------------------------\n");
 	printf("代理地址：%s(为空代表没有设置代理)\n", config_proxy);
 	printf("下载线程数：%d\n", config_thread);
 	printf("下载引擎：%s\n", Downloader_Use);
 	printf("浏览器标识：%s\n", head_show);
 	printf("下载过程中出现的红色ERROR报错可忽略，对下载没有影响！\n");
-	printf("-----------------------------------------------------\n");
+	printf("------------------------------------------------------------------\n");
 	printf("下载正在执行，希望中断下载建议按Ctrl+C以正常退出. . .\n");
-	printf("-----------------------------------------------------\n");
+	printf("------------------------------------------------------------------\n");
 	if (downloadmode == 3) {
 		if (config_media == 1) {
 			download_result = system("temp\\ytb_Download.bat");
