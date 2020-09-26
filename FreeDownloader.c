@@ -282,30 +282,36 @@ int url() {
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
-			if (fopen("temp\\ytb.download", "r") == NULL) {
-				url = fopen("temp\\ytb.download", "w");
+			if (fopen("temp\\ytb.download.1", "r") == NULL) {
+				url = fopen("temp\\ytb.download.1", "w");
 				fclose(url);
 			}
+			system("echo ----------------------URL--------------------- > temp\\ytb.download");
 			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
-			system("notepad.exe temp\\ytb.download");
+			system("notepad.exe temp\\ytb.download.1");
+			system("type temp\\ytb.download.1 >> temp\\ytb.download");
 			sprintf(config_url, "%s", "-a temp\\ytb.download");
 		}
 		else if (config_media == 2) {
-			if (fopen("temp\\Bilibili.download", "r") == NULL) {
-				url = fopen("temp\\Bilibili.download", "w");
+			if (fopen("temp\\Bilibili.download.1", "r") == NULL) {
+				url = fopen("temp\\Bilibili.download.1", "w");
 				fclose(url);
 			}
+			system("echo ----------------------URL--------------------- > temp\\Bilibili.download");
 			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
-			system("notepad.exe temp\\Bilibili.download");
+			system("notepad.exe temp\\Bilibili.download.1");
+			system("type temp\\Bilibili.download.1 >> temp\\Bilibili.download");
 			sprintf(config_url, "%s", "-F temp\\Bilibili.download");
 		}
 		else if (config_media == 3) {
-			if (fopen("temp\\QQVideo.download", "r") == NULL) {
-				url = fopen("temp\\QQVideo.download", "w");
+			if (fopen("temp\\QQVideo.download.1", "r") == NULL) {
+				url = fopen("temp\\QQVideo.download.1", "w");
 				fclose(url);
 			}
+			system("echo ----------------------URL--------------------- > temp\\QQVideo.download");
 			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
-			system("notepad.exe temp\\QQVideo.download");
+			system("notepad.exe temp\\QQVideo.download.1");
+			system("type temp\\QQVideo.download.1 >> temp\\QQVideo.download");
 			sprintf(config_url, "%s", "-F temp\\QQVideo.download");
 		}
 		else if (config_media == 4) {
@@ -313,8 +319,10 @@ int url() {
 				url = fopen("temp\\iqiyi.download", "w");
 				fclose(url);
 			}
+			system("echo ----------------------URL--------------------- > temp\\iqiyi.download");
 			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
-			system("notepad.exe temp\\iqiyi.download");
+			system("notepad.exe temp\\iqiyi.download.1");
+			system("type temp\\iqiyi.download.1 >> temp\\iqiyi.download");
 			sprintf(config_url, "%s", "-F temp\\iqiyi.download");
 		}
 		else {
@@ -322,8 +330,10 @@ int url() {
 				url = fopen("temp\\Youku.download", "w");
 				fclose(url);
 			}
+			system("echo ----------------------URL--------------------- > temp\\Youku.download");
 			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
-			system("notepad.exe temp\\Youku.download");
+			system("notepad.exe temp\\Youku.download.1");
+			system("type temp\\Youku.download.1 >> temp\\Youku.download");
 			sprintf(config_url, "%s", "-F temp\\Youku.download");
 		}
 		}
