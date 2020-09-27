@@ -281,15 +281,10 @@ int url() {
 		system("del temp\\url.bat");
 	}
 	else if (downloadmode == 3) {
-		if (config_media == 1) {
-			if (fopen("temp\\ytb.download.1", "r") == NULL) {
-				url = fopen("temp\\ytb.download.1", "w");
-				fclose(url);
-			}
-			system("echo ----------------------URL--------------------- > temp\\ytb.download");
+		if(config_media == 1){
+			system("echo. >> temp\\ytb.download");
 			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
-			system("notepad.exe temp\\ytb.download.1");
-			system("type temp\\ytb.download.1 >> temp\\ytb.download");
+			system("notepad.exe temp\\ytb.download");
 			sprintf(config_url, "%s", "-a temp\\ytb.download");
 		}
 		else if (config_media == 2) {
@@ -448,41 +443,37 @@ int proxyswitcher() {
 int BroswerMark() {
 	char UserAgent_DIY[275];
 	if (downloadmode == 1) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 Edg/85.0.564.63");//Edge浏览器
-		sprintf(head_show, "Yandex浏览器");
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");//Chrome浏览器
+		sprintf(head_show, "Chrome浏览器");
 	}
 	else if (downloadmode == 2) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 YaBrowser/20.8.2.90.00 Safari/537.36");//Yandex浏览器
-		sprintf(head_show, "Yandex浏览器");
+		sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;7.0.5.9;PC;PC-Windows;10.0.19041;WindowsBaiduYunGuanJia");//百度网盘
+		sprintf(head_show, "百度网盘");
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
-			sprintf(head, "--user-agent \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 Edg/85.0.564.63");//Edge浏览器
+			sprintf(head, "--user-agent \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");//Chrome浏览器
 		}
 		else {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 Edg/85.0.564.63");//Edge浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");//Chrome浏览器
 		}
-		sprintf(head_show, "Edge浏览器");
+		sprintf(head_show, "Chrome浏览器");
 	}
 	else if (downloadmode == 4) {
-		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Edge浏览器\n\n3.Yandex浏览器\n\n请输入：");
+		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Edge浏览器\n\n请输入：");
 		scan_return=scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");//IE浏览器
 			sprintf(head_show, "IE浏览器");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 Edg/85.0.564.63");//Edge浏览器
-			sprintf(head_show, "Edge浏览器");
-		}
-		else if (mark == 3) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 YaBrowser/20.8.2.90.00 Safari/537.36");//Yandex浏览器
-			sprintf(head_show, "Yandex浏览器");
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");//Chrome浏览器
+			sprintf(head_show, "Chrome浏览器");
 		}
 		else {
-			mark = 3;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 Edg/85.0.564.63");//Edge浏览器
-			sprintf(head_show, "Edge浏览器");
+			mark = 2;
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");//Chrome浏览器
+			sprintf(head_show, "Chrome浏览器");
 		}
 	}
 	else if (downloadmode == 5) {
