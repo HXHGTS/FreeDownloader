@@ -9,10 +9,4 @@
 
 若第三方引擎过旧可以去对应官网链接链接下载:
 
-[aria2](https://github.com/aria2/aria2/releases)
-
-[youtube-dl](https://github.com/ytdl-org/youtube-dl/releases)
-
-[annie](https://github.com/iawia002/annie/releases)
-
-[ffmpeg](https://github.com/BtbN/FFmpeg-Builds/releases)
+[aria2](https://github.com/aria2/aria2/releases) [youtube-dl](https://github.com/ytdl-org/youtube-dl/releases) [annie](https://github.com/iawia002/annie/releases) [ffmpeg](https://github.com/BtbN/FFmpeg-Builds/releases)
