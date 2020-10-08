@@ -1,7 +1,9 @@
 ## FreeDownloader
 
 
-![Image](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591516856861&di=cf4424b94f910a9a13be0e12bf77a018&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F115c59c5f292336d52e40f21e9ade30ab39ed15c72ac-tEMn6b_fw658)
+<h1 align="center">
+  <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591516856861&di=cf4424b94f910a9a13be0e12bf77a018&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F115c59c5f292336d52e40f21e9ade30ab39ed15c72ac-tEMn6b_fw658">
+</h1>
 
 
 ### 一、安装方法
@@ -26,14 +28,16 @@
 
 1.打开FreeDownloader，按提示操作
 
-2.复制视频所在网址，可以下载油管（该功能也支持老鼠台）、哔哩哔哩（支持番剧）、腾讯视频、爱奇艺、优酷视频
+2.复制视频所在网址，可以下载油管（该功能也支持Twitch直播）、哔哩哔哩（支持番剧下载）、腾讯视频、爱奇艺、优酷视频
 
 3.下载普通视频只需登录网站并导出自己的Cookies到FreeDownloader，如果需要下载会员专享高清或独播视频，则需要导入会员账号Cookies信息，可在浏览器中先用会员账号登录，再仿照百度网盘的Cookies导出方式导出当前页面Cookies信息
 
 
 ### 四、关于BT种子与磁力链下载
 
-本软件支持种子与磁力链下载功能，并内置tracker服务器列表帮助加速下载（感谢[trackerslist.com](https://trackerslist.com/#/zh)公开tracker列表），若因网络问题更新失败需要自行导入
+1.本软件支持种子与磁力链下载功能，并在每次启用BT下载时自动更新tracker服务器列表帮助加速下载（感谢[trackerslist.com](https://trackerslist.com/#/zh)公开tracker列表），若因网络问题更新失败需要自行导入
+
+2.如果需要加速BT下载，需要使用全局加速工具，普通http与socks5代理对BT下载加速无效！推荐使用Clash的Tap模式或SStap或Netch等
 
 ### 五、关于文件校验
 
