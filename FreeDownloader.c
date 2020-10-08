@@ -10,14 +10,20 @@ int scan_return;//接收返回值，暂时没用
 char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[12];
 char reference[216], head[300], head_show[35], pre_proxy[56];
 char location[200],split[7],torrent_loca[250],play_list[30], color[4];
-char rpctoken[65];//定义rpc密钥
+char rpctoken[40];//定义rpc密钥
 char BDUSS[193];
 char cmd[100];
 FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat;
 
 int TokenGenerate() {
-	sprintf(rpctoken,"uyxdfsfrqVVtgYGK73DNCJk8wp5vxA22uCcqD1mZoCZxbn1o98TmB4BsAzRMa1gK");//后期考虑加入自生成密钥功能
+	system("powershell [guid]::NewGuid() | find /v \"Guid\" | find /v \"--\" > config\\uuid.ret");
+	system("type config\\uuid.ret | find \"-\" > config\\uuid.txt");
+	system("del /F /S /Q config\\uuid.ret");
+	system("cls");
+	conf = fopen("config\\uuid.txt", "r");
+	scan_return=fscanf(conf,"%s", rpctoken);
+	fclose(conf);
 	return 0;
 }
 
@@ -55,7 +61,7 @@ int CreateConfig() {
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	sprintf(cmd, "curl %s https://trackerslist.com/best_aria2.txt > config\\best_aria2.txt", pre_proxy);
+	sprintf(cmd, "curl %s https://trackerslist.com/best_aria2.txt -# > config\\best_aria2.txt", pre_proxy);
 	if (system(cmd) != 0) {
 		printf("\n更新失败，建议配合代理或VPN重新打开软件更新列表，正在本地建立BT配置文件. . .\n");
 		if (fopen("config\\best_aria2.txt", "r") != NULL) {
@@ -369,7 +375,7 @@ int threader() {
 		sprintf(split, "2M");
 	}
 	else if (downloadmode == 2) {
-		config_thread = 2;
+		config_thread = 4;
 		sprintf(split, "1M");
 		sprintf(Downloader_Use, "%s", "aria2c");
 		Task = 1;//同时下载任务数
@@ -443,36 +449,36 @@ int proxyswitcher() {
 int BroswerMark() {
 	char UserAgent_DIY[275];
 	if (downloadmode == 1) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");//Chrome浏览器
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome浏览器");
 	}
 	else if (downloadmode == 2) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;7.0.5.9;PC;PC-Windows;10.0.19041;WindowsBaiduYunGuanJia");//百度网盘
+		sprintf(head, "--header=\"User-Agent:%s\"", "LogStatistic");//百度网盘
 		sprintf(head_show, "百度网盘");
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
-			sprintf(head, "--user-agent \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--user-agent \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");//Chrome浏览器
 		}
 		else {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");//Chrome浏览器
 		}
 		sprintf(head_show, "Chrome浏览器");
 	}
 	else if (downloadmode == 4) {
-		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Edge浏览器\n\n请输入：");
+		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Chrome浏览器\n\n请输入：");
 		scan_return=scanf("%d", &mark);
 		if (mark == 1) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");//IE浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729)");//IE浏览器
 			sprintf(head_show, "IE浏览器");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome浏览器");
 		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome浏览器");
 		}
 	}
@@ -515,7 +521,7 @@ int AdvanceDownloader() {
 
 int Netdisk() {
 	BroswerMark();
-	sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list\"");
+	sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/wap/home#/\"");
 		printf("\n是否使用插件导入Cookie(1=插件手动导入 0=浏览器手动导入):");
 		scan_return=scanf("%d", &cookie_mode);
 		if (cookie_mode != 0) {
