@@ -17,10 +17,7 @@ FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat;
 
 int TokenGenerate() {
-	system("powershell [guid]::NewGuid() | find /v \"Guid\" | find /v \"--\" > config\\uuid.ret");
-	system("type config\\uuid.ret | find \"-\" > config\\uuid.txt");
-	system("del /F /S /Q config\\uuid.ret");
-	system("cls");
+	system("powershell [guid]::NewGuid() | find /v \"Guid\" | find /v \"--\" | find \"-\" > config\\uuid.txt");
 	conf = fopen("config\\uuid.txt", "r");
 	scan_return=fscanf(conf,"%s", rpctoken);
 	fclose(conf);
