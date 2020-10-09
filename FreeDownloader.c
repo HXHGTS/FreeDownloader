@@ -58,12 +58,12 @@ int CreateConfig() {
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	sprintf(cmd, "curl %s https://trackerslist.com/best_aria2.txt -# > config\\best_aria2.txt", pre_proxy);
+	sprintf(cmd, "curl %s https://trackerslist.com/all_aria2.txt -# > config\\all_aria2.txt", pre_proxy);
 	if (system(cmd) != 0) {
 		printf("\n更新失败，建议配合代理或VPN重新打开软件更新列表，正在本地建立BT配置文件. . .\n");
-		if (fopen("config\\best_aria2.txt", "r") != NULL) {
+		if (fopen("config\\all_aria2.txt", "r") != NULL) {
 			printf("\n检测到已有的trackerlist记录，正在读取配置文件. . .\n");
-			system("type config\\best_aria2.txt>>config\\bt.conf");
+			system("type config\\all_aria2.txt>>config\\bt.conf");
 		}
 		else {
 			printf("\n请在弹出窗口中修改BT配置文件. . .\n");
@@ -72,10 +72,11 @@ int CreateConfig() {
 	}
 	else {
 		printf("\n更新成功，正在本地建立BT配置文件. . .\n");
-		system("type config\\best_aria2.txt>>config\\bt.conf");
+		system("type config\\all_aria2.txt >> config\\bt.conf");
 	}
+
 	conf = fopen("config\\bt.conf", "a");
-	fprintf(conf, "continue=true\n");
+	fprintf(conf, "\ncontinue=true\n");
 	fprintf(conf, "max-concurrent-downloads=1\n");
 	fprintf(conf, "max-connection-per-server=16\n");
 	fprintf(conf, "bt-max-peers=999\n");
@@ -147,7 +148,7 @@ int preload() {
 }
 int main() {
 	preload();
-p_3:system(smallcmd);
+MainMenu:system(smallcmd);
 	system("cls");
 	printf("------------------------------------------------------------------\n");
 	printf("--------------------------FreeDownloader--------------------------\n");
@@ -183,7 +184,7 @@ p_3:system(smallcmd);
 		IsCheckSum = 1;
 		CheckSum(IsCheckSum);
 		system("cls");
-		goto p_3;
+		goto MainMenu;
 	}
 	else if (downloadmode == 7) {
 		printf("正在打开帮助界面. . .\n");
@@ -191,7 +192,7 @@ p_3:system(smallcmd);
 		system("explorer.exe \"https://hxhgts.github.io/FreeDownloader/\"");
 		system("echo 127.0.0.1 localhost > C:\\Windows\\System32\\drivers\\etc\\hosts");
 		system("cls");
-		goto p_3;
+		goto MainMenu;
 	}
 	else if (downloadmode == 8) {
 		printf("警告：此操作将删除软件保存的所有登录信息，确定请按任意键继续，取消请直接关闭软件窗口！！！\n");
@@ -203,17 +204,17 @@ p_3:system(smallcmd);
 		system("del /f /s /q cookies\\*.txt");
 		printf("删除操作执行完成！\n");
 		system("cls");
-		goto p_3;
+		goto MainMenu;
 	}
 	else if (downloadmode == 9) {
 		system("explorer.exe Downloads");
 		system("cls");
-		goto p_3;
+		goto MainMenu;
 	}
 	else {
 		exit(0);
 	}
-	redownload_result = downloadengine();
+	Downloading:redownload_result = downloadengine();
 	if (redownload_result == 0) {
 		printf("------------------------------------------------------------------\n");
 		printf("-----------------------------下载成功!----------------------------\n");
@@ -225,7 +226,7 @@ p_3:system(smallcmd);
 			system("explorer Downloads");
 		}
 		system("cls");
-		goto p_3;
+		goto MainMenu;
 	}
 	else {
 		system("cls");
@@ -233,7 +234,7 @@ p_3:system(smallcmd);
 		printf("-----------------------------下载失败!----------------------------\n");
 		printf("------------------------------------------------------------------\n");
 		system("cls");
-		goto p_3;
+		goto Downloading;
 	}
 	return 0;
 }//下载工具主程序
@@ -767,8 +768,8 @@ int downloadengine() {
 	printf("下载线程数：%d\n", config_thread);
 	printf("下载引擎：%s\n", Downloader_Use);
 	printf("浏览器标识：%s\n", head_show);
-	printf("下载过程中出现的红色ERROR报错可忽略，对下载没有影响！\n");
 	printf("------------------------------------------------------------------\n");
+	printf("下载过程中出现的红色ERROR报错可忽略，对下载没有影响！\n");
 	printf("下载正在执行，希望中断下载建议按Ctrl+C以正常退出. . .\n");
 	printf("------------------------------------------------------------------\n");
 	if (downloadmode == 3) {
