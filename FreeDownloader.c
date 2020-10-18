@@ -17,7 +17,7 @@ FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat;
 
 int TokenGenerate() {
-	system("powershell [guid]::NewGuid() | find /v \"Guid\" | find /v \"--\" | find \"-\" > config\\uuid.txt");
+	system("powershell [guid]::NewGuid() | find /v \"Guid\" | find /v \"--\" | find \"-\" > config\\uuid.txt");//随机GUID作为密码，提高RPC功能安全性
 	conf = fopen("config\\uuid.txt", "r");
 	scan_return=fscanf(conf,"%s", rpctoken);
 	fclose(conf);
@@ -130,8 +130,8 @@ int preload() {
 	sprintf(smallcmd, "color %s", color);
 	system(smallcmd);
 	printf("需要系统UAC权限读取代理服务器数据，若需要使用代理服务器请在打开本软件前打开代理. . .\n\n");
-	printf("已知对Clash代理支持不足，若使用Clash请切换到Tap模式并关闭Syatem Proxy以路由全局流量！\n\n");
-	system("Timeout /T 3");
+	printf("已知对Clash代理支持不足，若使用Clash请切换到Tap模式并关闭System Proxy以路由全局流量！\n\n");
+	system("Timeout /T 2");
 	if (system("GetProxyInfo.exe") != 0) {
 		printf("UAC授权失败，无法检测计算机代理设置！\n\n");
 		conf = fopen("config\\proxy.ini", "w");
@@ -234,6 +234,7 @@ int NormalDownloader() {
 }
 
 int ListenRPC() {
+	TokenGenerate();
 	printf("正在本地建立RPC配置文件. . .\n");
 	conf = fopen("config\\rpc.conf", "w");
 	fprintf(conf, "continue=true\n");
@@ -247,21 +248,26 @@ int ListenRPC() {
 	fprintf(conf, "enable-rpc=true\n");
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n",rpctoken);
 	fclose(conf);
 	conf = fopen("temp\\rpc.bat", "w");
 	fprintf(conf, "@echo off\n");
-	fprintf(conf, "aria2c --conf-path=config\\rpc.conf\n");
+	fprintf(conf, "start /min aria2c --conf-path=config\\rpc.conf\n");
 	fclose(conf);
 	system("cls");
 	printf("------------------------------------------------------------------\n");
-	printf("RPC监听ip:0.0.0.0（本地全局，允许远程接入）\nRPC监听端口:6800\nRPC密码:%s\n",rpctoken);
+	printf("----------------------------RPC监听模式---------------------------\n");
+	printf("------------------------------------------------------------------\n");
+	printf("RPC监听:允许远程接入\nRPC监听端口:6800\nRPC密码:%s\n",rpctoken);
 	printf("------------------------------------------------------------------\n\n");
-	printf("RPC监听已启动!\n");
+	printf("RPC监听已启动!\n\n");
 	system("temp\\rpc.bat");
+	printf("退出");
+	system("pause");
+	system("taskkill /f /im aria2c.exe");
 	return 0;
 }
 
@@ -305,12 +311,11 @@ int url() {
 		if(config_media == 1){
 			if (fopen("temp\\ytb.download", "r") == NULL) {
 				url = fopen("temp\\ytb.download", "w");
-				fprintf(url, "---Input URL(Don't delete this line)---\n");
 				fclose(url);
 			}
 			printf("\n请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
 			system("notepad.exe temp\\ytb.download");
-			sprintf(config_url, "%s", "-F temp\\ytb.download");
+			sprintf(config_url, "%s", "-a temp\\ytb.download");
 		}
 		else if (config_media == 2) {
 			if (fopen("temp\\Bilibili.download", "r") == NULL) {
@@ -397,7 +402,12 @@ int threader() {
 	}
 	else if (downloadmode == 3) {
 		Task = 1;//同时下载任务数
-		sprintf(Downloader_Use, "%s", "annie");
+		if (config_media == 1) {
+			sprintf(Downloader_Use, "%s", "youtube-dl");
+		}
+		else {
+			sprintf(Downloader_Use, "%s", "annie");
+		}
 		config_thread = 1;//4k视频状态下aria2调用出现bug
 	}
 	else if (downloadmode == 5) {
@@ -411,7 +421,12 @@ int threader() {
 
 int dir() {
 	if (downloadmode == 3) {
-		sprintf(config_dir, "%s", "-o Downloads");
+		if (config_media == 1) {
+			sprintf(config_dir, "%s", "-o Downloads\\%%(title)s.%%(ext)s");
+		}
+		else {
+			sprintf(config_dir, "%s", "-o Downloads");
+		}
 	}
 	else {
 		if (downloadmode == 5 && magnet_mode == 1) {
@@ -436,7 +451,7 @@ int proxyswitcher() {
 				sprintf(config_proxy, "--all-proxy=%s", proxy);
 			}
 			else if(downloadmode==3){
-					sprintf(config_proxy, "set HTTP_PROXY=\"http://%s/\" &", proxy);
+				sprintf(config_proxy, "set HTTP_PROXY=http://%s/", proxy);
 			}
 			else if (downloadmode == 5) {
 				sprintf(config_proxy, "--all-proxy=%s", proxy);//magnet proxy
@@ -448,31 +463,35 @@ int proxyswitcher() {
 int BroswerMark() {
 	char UserAgent_DIY[275];
 	if (downloadmode == 1) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");//Chrome浏览器
-		sprintf(head_show, "Chrome浏览器");
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36");//Chrome浏览器
+		sprintf(head_show, "Chrome浏览器(计算机)");
 	}
 	else if (downloadmode == 2) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "LogStatistic");//百度网盘
-		sprintf(head_show, "百度网盘");
+		sprintf(head, "--header=\"User-Agent:%s\"", "Opera/9.43. Presto/2.9.181 Version/12.00");//Opera浏览器
+		sprintf(head_show, "Opera浏览器");
 	}
 	else if (downloadmode == 3) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");//Chrome浏览器
-		sprintf(head_show, "Chrome浏览器");
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36");//Chrome浏览器
+		sprintf(head_show, "Chrome浏览器(计算机)");
 	}
 	else if (downloadmode == 4) {
-		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Chrome浏览器\n\n请输入：");
+		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Chrome浏览器(计算机)\n\n3.Chrome浏览器(手机)\n\n请输入：");
 		scan_return=scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729)");//IE浏览器
 			sprintf(head_show, "IE浏览器");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");//Chrome浏览器
-			sprintf(head_show, "Chrome浏览器");
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36");//Chrome浏览器
+			sprintf(head_show, "Chrome浏览器(计算机)");
+		}
+		else if (mark == 3) {
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36");//Chrome浏览器
+			sprintf(head_show, "Chrome浏览器(手机)");
 		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome浏览器");
 		}
 	}
@@ -515,7 +534,7 @@ int AdvanceDownloader() {
 
 int Netdisk() {
 	BroswerMark();
-	sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/wap/home#/\"");
+	sprintf(reference, "%s", "--referer=\"http://pan.baidu.com/disk/home?errmsg=Auth+Login+Sucess&errno=0&ssnerror=0&#/category?type=1&vmode=list/\"");
 		printf("\n是否使用插件导入Cookie(1=插件手动导入 0=浏览器手动导入):");
 		scan_return=scanf("%d", &cookie_mode);
 		if (cookie_mode != 0) {
@@ -598,16 +617,31 @@ int MediaDownloader() {
 	scan_return=scanf("%d", &config_media);
 	printf("\n下载整个列表内所有音视频？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
 	scan_return=scanf("%d", &DownloadList);
-	if (DownloadList == 1) {
-		sprintf(play_list, "-p");
-	}
-	else if (DownloadList == 2) {
-		sprintf(play_list, "");
+	if (config_media != 1) {
+		if (DownloadList == 1) {
+			sprintf(play_list, "-p");
+		}
+		else if (DownloadList == 2) {
+			sprintf(play_list, "");
+		}
+		else {
+			printf("\n请按照格式输入下载范围，如1-5,6,7,8-15：");
+			scan_return = scanf("%s", chapter);
+			sprintf(play_list, "-p -items %s", chapter);
+		}
 	}
 	else {
-		printf("\n请按照格式输入下载范围，如1-5,6,7,8-15：");
-		scan_return=scanf("%s", chapter);
-		sprintf(play_list, "-p -items %s", chapter);
+		if (DownloadList == 1) {
+			sprintf(play_list, "--yes-playlist");
+		}
+		else if (DownloadList == 2) {
+			sprintf(play_list, "--no-playlist");
+		}
+		else {
+			printf("\n请按照格式输入下载范围，如1-5,6,7,8-15：");
+			scan_return = scanf("%s", chapter);
+			sprintf(play_list, "--playlist-items %s", chapter);
+		}
 	}
 	if (config_media == 1) {
 		if (fopen("cookies\\ytb_Cookies.txt", "r") == NULL) {
@@ -681,33 +715,35 @@ int downloadengine() {
 		if (config_media == 1) {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
 			fprintf(ytb_Download, "@echo off\n");
-			fprintf(ytb_Download, "%s %s -c cookies\\ytb_Cookies.txt %s %s %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
+			fprintf(ytb_Download, "%s\n", config_proxy);
+			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
 			Bilibili_Download = fopen("temp\\Bilibili_Download.bat", "w");
 			fprintf(Bilibili_Download, "@echo off\n");
-			fprintf(Bilibili_Download, "%s %s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
+			fprintf(Bilibili_Download, "%s\n", config_proxy);
+			fprintf(Bilibili_Download, "%s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 			fclose(Bilibili_Download);
 			
 		}
 		else if (config_media == 3) {
 			QQVideo_Download = fopen("temp\\QQVideo_Download.bat", "w");
 			fprintf(QQVideo_Download, "@echo off\n");
-			fprintf(QQVideo_Download, "%s %s -c cookies\\QQVideo_Cookies.txt %s %s %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
+			fprintf(QQVideo_Download, "%s -c cookies\\QQVideo_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 			fclose(QQVideo_Download);
 
 		}
 		else if (config_media == 4) {
 			iqiyi_Download = fopen("temp\\iqiyi_Download.bat", "w");
 			fprintf(iqiyi_Download, "@echo off\n");
-			fprintf(iqiyi_Download, "%s %s -c cookies\\iqiyi_Cookies.txt %s %s %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
+			fprintf(iqiyi_Download, "%s -c cookies\\iqiyi_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 			fclose(iqiyi_Download);
 		}
 		else {
 			Youku_Download = fopen("temp\\Youku_Download.bat", "w");
 			fprintf(Youku_Download, "@echo off\n");
-			fprintf(Youku_Download, "%s %s -c cookies\\Youku_Cookies.txt %s %s %s\n", config_proxy, Downloader_Use, play_list, config_dir, config_url);
+			fprintf(Youku_Download, "%s -c cookies\\Youku_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 			fclose(Youku_Download);
 		}
 	}
