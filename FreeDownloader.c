@@ -182,7 +182,7 @@ MainMenu:system(smallcmd);
 	}
 	else if (downloadmode == 7) {
 		printf("正在打开帮助界面. . .\n");
-		system("explorer.exe \"https://hxhgts.icu/FreeDownloader/\"");
+		system("explorer.exe \"https://hxhgts.ml/FreeDownloader/\"");
 		system("cls");
 		goto MainMenu;
 	}
