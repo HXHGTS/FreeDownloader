@@ -82,6 +82,7 @@ int CreateConfig() {
 	fprintf(conf, "enable-peer-exchange=true\n");
 	fprintf(conf, "seed-ratio=0.0\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
+	fprintf(conf, "disable-ipv6=true\n");
 	fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
 	fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
 	fprintf(conf, "peer-id-prefix=-qB4250-\n");
@@ -248,6 +249,7 @@ int ListenRPC() {
 	fprintf(conf, "enable-rpc=true\n");
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
+	fprintf(conf, "disable-ipv6=true\n");
 	fprintf(conf, "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
@@ -451,7 +453,7 @@ int proxyswitcher() {
 				sprintf(config_proxy, "--all-proxy=%s", proxy);
 			}
 			else if(downloadmode==3){
-				sprintf(config_proxy, "set HTTP_PROXY=http://%s/", proxy);
+				sprintf(config_proxy, "set http_proxy=%s & set https_proxy=%s", proxy,proxy);
 			}
 			else if (downloadmode == 5) {
 				sprintf(config_proxy, "--all-proxy=%s", proxy);//magnet proxy
