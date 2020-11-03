@@ -17,10 +17,11 @@ FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat;
 
 int TokenGenerate() {
-	system("powershell [guid]::NewGuid() | find /v \"Guid\" | find /v \"--\" | find \"-\" > config\\uuid.txt");//随机GUID作为密码，提高RPC功能安全性
-	conf = fopen("config\\uuid.txt", "r");
+	system("powershell [guid]::NewGuid() | find /v \"Guid\" | find /v \"--\" | find \"-\" > config\\uuid");//随机GUID作为密码，提高RPC功能安全性
+	conf = fopen("config\\uuid", "r");
 	scan_return=fscanf(conf,"%s", rpctoken);
 	fclose(conf);
+	system("del config\\uuid");
 	return 0;
 }
 
