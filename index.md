@@ -8,9 +8,9 @@
 
 ### 一、安装方法
 
-1.下载压缩包[Windows64位](https://wwa.lanzous.com/iRzxyg84mqb)  [Windows32位](https://wwa.lanzous.com/iVU36g8565a)并解压
+1.下载压缩包[Windows64位](https://github.com/HXHGTS/FreeDownloader/releases/latest)并解压
 
-2.在chrome浏览器[Chrome国内离线安装包](https://www.lanzous.com/i9r1beh)中安装EditThisCookie插件与油猴脚本(国内网盘集合包安装方法：[下载插件](https://www.lanzous.com/i9mqftg)并解压，打开chrome浏览器更多工具-扩展程序，打开开发者模式后加载已解压的扩展程序）（谷歌商店安装方法：[Chrome扩展商店EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN) [Chrome扩展商店油猴插件](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)）（ps:火狐与Chromium核心的大部分浏览器也可以安装，但需要自己百度下载插件)
+2.在chrome浏览器[Chrome国内下载地址](https://www.google.cn/chrome/)中安装EditThisCookie插件与油猴脚本(国内网盘集合包安装方法：[下载插件](https://www.lanzous.com/i9mqftg)并解压，打开chrome浏览器更多工具-扩展程序，打开开发者模式后加载已解压的扩展程序）（谷歌商店安装方法：[Chrome扩展商店EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN) [Chrome扩展商店油猴插件](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)）（ps:火狐与Chromium核心的大部分浏览器也可以安装，但需要自己百度下载插件)
 
 3.[安装网盘助手](https://greasyfork.org/scripts/378301-%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/code/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B.user.js)(务必先安装油猴脚本再安装这个！！！)
 
@@ -28,7 +28,7 @@
 
 1.打开FreeDownloader，按提示操作
 
-2.复制视频所在网址，可以下载油管（该功能也支持Twitch直播）、哔哩哔哩（支持番剧下载）、腾讯视频、爱奇艺、优酷视频
+2.复制视频所在网址，可以下载油管、哔哩哔哩、腾讯视频、爱奇艺、优酷视频
 
 3.下载普通视频只需登录网站并导出自己的Cookies到FreeDownloader，如果需要下载会员专享高清或独播视频，则需要导入会员账号Cookies信息，可在浏览器中先用会员账号登录，再仿照百度网盘的Cookies导出方式导出当前页面Cookies信息
 
