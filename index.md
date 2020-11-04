@@ -2,7 +2,7 @@
 
 
 <h1 align="center">
-  <img src="https://github.com/HXHGTS/FreeDownloader/raw/master/icon.ico">
+<img src="https://github.com/HXHGTS/FreeDownloader/raw/master/icon.ico">
 </h1>
 
 
