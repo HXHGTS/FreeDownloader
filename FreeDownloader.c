@@ -134,7 +134,7 @@ int preload() {
 	printf("需要系统UAC权限读取代理服务器数据，若需要使用代理服务器请在打开本软件前打开代理. . .\n\n");
 	printf("BT下载请切换到Tap模式路由全局流量！\n\n");
 	system("Timeout /T 2");
-	if (system("GetProxyInfo.exe") != 0) {
+	if (system("start /min GetProxyInfo.exe") != 0) {
 		printf("UAC授权失败，无法检测计算机代理设置！\n\n");
 		conf = fopen("config\\proxy.ini", "w");
 		fprintf(conf, "proxy=0");
