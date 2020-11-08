@@ -59,15 +59,15 @@ int CreateConfig() {
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	sprintf(cmd, "curl %s https://trackerslist.com/all_aria2.txt -# > config\\all_aria2.txt", pre_proxy);
+	sprintf(cmd, "curl %s https://trackerslist.com/best_aria2.txt -# > config\\best_aria2.txt", pre_proxy);
 	if (system(cmd) != 0) {
 		printf("\n更新失败，建议配合代理或VPN重新打开软件更新列表，正在本地建立BT配置文件. . .\n");
 		system("notepad config\\bt.conf");
 	}
 	else {
 		printf("\n更新成功，正在本地建立BT配置文件. . .\n");
-		system("type config\\all_aria2.txt >> config\\bt.conf");
-		system("del /F /S /Q config\\all_aria2.txt");
+		system("type config\\best_aria2.txt >> config\\bt.conf");
+		system("del /F /S /Q config\\best_aria2.txt");
 	}
 	conf = fopen("config\\bt.conf", "a");
 	fprintf(conf, "\ncontinue=true\n");
@@ -84,9 +84,9 @@ int CreateConfig() {
 	fprintf(conf, "seed-ratio=0.0\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=true\n");
-	fprintf(conf, "user-agent=qBittorrent/4.2.5\n");
-	fprintf(conf, "peer-agent=qBittorrent/4.2.5\n");
-	fprintf(conf, "peer-id-prefix=-qB4250-\n");
+	fprintf(conf, "user-agent=qBittorrent/4.3.0.1\n");
+	fprintf(conf, "peer-agent=qBittorrent/4.3.0.1\n");
+	fprintf(conf, "peer-id-prefix=-qB4301-\n");
 	fclose(conf);
 	system("cls");
 	return 0;
@@ -251,7 +251,7 @@ int ListenRPC() {
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=true\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (Linux; Android 8.0.0; DUK-AL20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.185 Mobile Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n",rpctoken);
@@ -460,13 +460,14 @@ int proxyswitcher() {
 				sprintf(config_proxy, "--all-proxy=%s", proxy);//magnet proxy
 			}
 	}
+	system("cls");
 	return 0;// /config/proxy.ini中proxy=0或此文件不存在为无代理状态，否则使用代理(仅支持http/https代理)
 }
 
 int BroswerMark() {
 	char UserAgent_DIY[275];
 	if (downloadmode == 1) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36");//Chrome浏览器
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 8.0.0; DUK-AL20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.185 Mobile Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome浏览器(计算机)");
 	}
 	else if (downloadmode == 2) {
@@ -474,7 +475,7 @@ int BroswerMark() {
 		sprintf(head_show, "Opera浏览器");
 	}
 	else if (downloadmode == 3) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36");//Chrome浏览器
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 8.0.0; DUK-AL20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.185 Mobile Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome浏览器(计算机)");
 	}
 	else if (downloadmode == 4) {
@@ -485,21 +486,21 @@ int BroswerMark() {
 			sprintf(head_show, "IE浏览器");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 8.0.0; DUK-AL20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.185 Mobile Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome浏览器(计算机)");
 		}
 		else if (mark == 3) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 8.0.0; DUK-AL20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.185 Mobile Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome浏览器(手机)");
 		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 8.0.0; DUK-AL20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.185 Mobile Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome浏览器");
 		}
 	}
 	else if (downloadmode == 5) {
-		sprintf(head_show, "qBittorrent/4.2.5");
+		sprintf(head_show, "qBittorrent/4.3.0.1");
 	}
 	return 0;
 }
