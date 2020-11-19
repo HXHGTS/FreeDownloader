@@ -1,5 +1,7 @@
 ﻿#include<stdio.h>
 #include<stdlib.h>
+#include<io.h>
+
 
 int AdvanceDownloader(),AutoShutdown(int mode),BroswerMark(),CheckSum(int mode),dir(),downloadengine(),WindowSkin();
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
@@ -93,26 +95,26 @@ int CreateConfig() {
 }
 
 int CreateFolder() {
-	if (fopen("Downloads\\dir.md", "r")==NULL) {
+	if (_access("Downloads", 0)) {
 		system("mkdir Downloads");
 		dir_mark = fopen("Downloads\\dir.md", "w");
 		fprintf(dir_mark, "##本文件夹存储下载数据\n");
 		fclose(dir_mark);
 	}
-	if (fopen("config\\dir.md", "r") == NULL) {
+	if (_access("config", 0)) {
 		system("mkdir config");
 		dir_mark = fopen("config\\dir.md", "w");
 		fprintf(dir_mark, "##需要配置代理请修改proxy.ini文件，软件支持http/https代理\n");
 		fprintf(dir_mark, "##标准格式为proxy=http://127.0.0.1:1080，请根据实际情况设置代理！\n");
 		fclose(dir_mark);
 	}
-	if (fopen("cookies\\dir.md", "r") == NULL) {
+	if (_access("cookies", 0)) {
 		system("mkdir cookies");
 		dir_mark = fopen("cookies\\dir.md", "w");
 		fprintf(dir_mark, "##本文件夹主要存放账号登录的Cookie信息\n");
 		fclose(dir_mark);
 	}
-	if (fopen("temp\\dir.md", "r") == NULL) {
+	if (_access("temp", 0)) {
 		system("mkdir temp");
 		dir_mark = fopen("temp\\dir.md", "w");
 		fprintf(dir_mark, "##本文件夹为缓存信息文件夹\n");
@@ -251,7 +253,7 @@ int ListenRPC() {
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=true\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n",rpctoken);
@@ -467,7 +469,7 @@ int proxyswitcher() {
 int BroswerMark() {
 	char UserAgent_DIY[275];
 	if (downloadmode == 1) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36");//Chrome浏览器
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome浏览器(计算机)");
 	}
 	else if (downloadmode == 2) {
@@ -475,7 +477,7 @@ int BroswerMark() {
 		sprintf(head_show, "百度网盘客户端");
 	}
 	else if (downloadmode == 3) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36");//Chrome浏览器
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome浏览器(计算机)");
 	}
 	else if (downloadmode == 4) {
@@ -486,7 +488,7 @@ int BroswerMark() {
 			sprintf(head_show, "IE浏览器");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome浏览器(计算机)");
 		}
 		else if (mark == 3) {
@@ -495,7 +497,7 @@ int BroswerMark() {
 		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome浏览器");
 		}
 	}
