@@ -8,7 +8,7 @@
 
 ### 一、安装方法
 
-1.下载压缩包[Windows64位](https://github.com/HXHGTS/FreeDownloader/releases/latest)并解压
+1.下载压缩包[Windows64位](https://github.com/HXHGTS/FreeDownloader/releases/latest/download/FreeDownloader.X64.zip)并解压
 
 2.在chrome浏览器[Chrome国内下载地址](https://www.google.cn/chrome/)中安装EditThisCookie插件与油猴脚本(国内网盘集合包安装方法：[下载插件](https://www.lanzous.com/i9mqftg)并解压，打开chrome浏览器更多工具-扩展程序，打开开发者模式后加载已解压的扩展程序）（谷歌商店安装方法：[Chrome扩展商店EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN) [Chrome扩展商店油猴插件](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)）（ps:火狐与Chromium核心的大部分浏览器也可以安装，但需要自己百度下载插件)
 
