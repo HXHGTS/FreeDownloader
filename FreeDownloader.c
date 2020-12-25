@@ -204,7 +204,8 @@ MainMenu:system(smallcmd);
 	else {
 		exit(0);
 	}
-	Downloading:redownload_result = downloadengine();
+Downloading:redownload_result = downloadengine();
+	system("cls");
 	if (redownload_result == 0) {
 		printf("------------------------------------------------------------------\n");
 		printf("-----------------------------下载成功!----------------------------\n");
@@ -219,7 +220,6 @@ MainMenu:system(smallcmd);
 		goto MainMenu;
 	}
 	else {
-		system("cls");
 		printf("------------------------------------------------------------------\n");
 		printf("-----------------------------下载失败!----------------------------\n");
 		printf("------------------------------------------------------------------\n");
@@ -476,7 +476,7 @@ int BroswerMark() {
 		sprintf(head_show, "Chrome浏览器(计算机)");
 	}
 	else if (downloadmode == 2) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "LogStatistic");//百度网盘客户端
+		sprintf(head, "--header=\"User-Agent:%s\"", "netdisk");//百度网盘客户端
 		sprintf(head_show, "百度网盘客户端");
 	}
 	else if (downloadmode == 3) {
@@ -554,7 +554,6 @@ int Netdisk() {
 				printf("\n请在弹出窗口中导入百度网盘Cookies信息 . . .\n");
 				system("notepad temp\\Netdisk_Cookies_tmp.txt");
 				system("type temp\\Netdisk_Cookies_tmp.txt | find \"BDUSS\" > cookies\\Netdisk_Cookies.txt");
-				system("type temp\\Netdisk_Cookies_tmp.txt | find \"pcsett\" >> cookies\\Netdisk_Cookies.txt");
 				system("del temp\\Netdisk_Cookies_tmp.txt");
 			}
 			else {
