@@ -86,10 +86,10 @@ int CreateConfig() {
 	fprintf(conf, "enable-peer-exchange=true\n");
 	fprintf(conf, "seed-ratio=0.0\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
-	fprintf(conf, "disable-ipv6=false\n");
-	fprintf(conf, "user-agent=qBittorrent/4.3.0.1\n");
-	fprintf(conf, "peer-agent=qBittorrent/4.3.0.1\n");
-	fprintf(conf, "peer-id-prefix=-qB4301-\n");
+	fprintf(conf, "disable-ipv6=true\n");
+	fprintf(conf, "user-agent=qBittorrent/4.3.1.0\n");
+	fprintf(conf, "peer-agent=qBittorrent/4.3.1.0\n");
+	fprintf(conf, "peer-id-prefix=-qB4310-\n");
 	fclose(conf);
 	system("cls");
 	return 0;
@@ -505,7 +505,7 @@ int BroswerMark() {
 		}
 	}
 	else if (downloadmode == 5) {
-		sprintf(head_show, "qBittorrent/4.3.0.1");
+		sprintf(head_show, "qBittorrent/4.3.1.0");
 	}
 	return 0;
 }
