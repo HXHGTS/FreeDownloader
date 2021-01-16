@@ -6,15 +6,15 @@
 
 1.下载压缩包[Windows64位](https://github.com/HXHGTS/FreeDownloader/releases/latest/download/FreeDownloader.X64.zip)并解压
 
-2.在chrome浏览器[Chrome国内下载地址](https://www.google.cn/chrome/)中[安装EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN)[安装Aria2 for Chrome](https://chrome.google.com/webstore/detail/aria2-for-chrome/mpkodccbngfoacfalldjimigbofkhgjn))(ps:火狐与Chromium核心的大部分浏览器也可以安装，但需要自己百度下载插件)[安装网盘助手](https://chrome.google.com/webstore/detail/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/cfaglmggimoleoclaghmmboppofffdda)
+2.在chrome浏览器[Chrome下载](https://chrome.google.com)中[安装EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN)[安装Aria2 for Chrome](https://chrome.google.com/webstore/detail/aria2-for-chrome/mpkodccbngfoacfalldjimigbofkhgjn))[安装网盘助手](https://chrome.google.com/webstore/detail/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/cfaglmggimoleoclaghmmboppofffdda) (注意:需要科学上网)
 
-4.鼠标右击EditThisCookie插件(饼干🍪图标)，单击“选项”-“选择Cookies的导出格式”，将格式改为“Netscape HTTP Cookie File”
+4.鼠标右击EditThisCookie插件(饼干🍪图标)，单击"选项"-"选择Cookies的导出格式"，将格式改为"Netscape HTTP Cookie File"
 
 ### 二、百度网盘功能使用方法
 
 1.打开FreeDownloader，不用代理，按提示操作，当程序弹窗要求导入Cookies信息时，开始第2步操作(夜间挂机下载可以将自动关机功能打开)(程序默认屏蔽自动关机功能，如果需要，请在进入软件前删除config\power.ini(屏蔽自动关机)文件)
 
-2.在chrome浏览器中登录[百度网盘](https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list)，点击右上角饼干图标(EditThisCookie插件)，点击“导出Cookies”，复制粘贴填入FreeDownloader弹出的文本文件中(只用导入1次，之后如果不再切换百度账号或修改密码可直接使用第一次导入的数据)，或者直接点击网址输入框旁边的锁🔒，找到"Cookie"，打开，找到BDUSS的值，粘贴到软件输入框中亦可(不推荐，这种方法每次需要重新导入)
+2.在chrome浏览器中登录[百度网盘](https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list)，点击右上角饼干图标(EditThisCookie插件)，点击"导出Cookies"，复制粘贴填入FreeDownloader弹出的文本文件中(只用导入1次，之后如果不再切换百度账号或修改密码可直接使用第一次导入的数据)，或者直接点击网址输入框旁边的锁🔒，找到"Cookie"，打开，找到BDUSS的值，粘贴到软件输入框中亦可(不推荐，这种方法每次需要重新导入)
 
 3.选择你要下载的一个或多个文件，单击生成链接，替换应用id为778750(必须!!!)，将生成的链接复制粘贴到FreeDownloader弹出的文本输入框内，多个链接间回车隔开，保存
 
