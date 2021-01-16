@@ -1,18 +1,14 @@
 ## FreeDownloader
 
-
-<h1 align="center">
-<img src="https://github.com/HXHGTS/FreeDownloader/raw/master/icon.ico">
-</h1>
-
+一款个人使用的轻量下载工具
 
 ### 一、安装方法
 
 1.下载压缩包[Windows64位](https://github.com/HXHGTS/FreeDownloader/releases/latest/download/FreeDownloader.X64.zip)并解压
 
-2.在chrome浏览器[Chrome国内下载地址](https://www.google.cn/chrome/)中安装EditThisCookie插件与油猴脚本(国内网盘集合包安装方法：[下载插件](https://www.lanzoui.com/i9mqftg)并解压，打开chrome浏览器更多工具-扩展程序，打开开发者模式后加载已解压的扩展程序）（谷歌商店安装方法：[EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN) [油猴插件](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)）（ps:火狐与Chromium核心的大部分浏览器也可以安装，但需要自己百度下载插件)
+2.在chrome浏览器[Chrome国内下载地址](https://www.google.cn/chrome/)中安装EditThisCookie插件与油猴脚本(国内网盘集合包安装方法：[下载插件](https://www.lanzoui.com/i9mqftg)并解压，打开chrome浏览器更多工具-扩展程序，打开开发者模式后加载已解压的扩展程序）（谷歌商店安装方法：[EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN) [Aria2 for Chrome](https://chrome.google.com/webstore/detail/aria2-for-chrome/mpkodccbngfoacfalldjimigbofkhgjn)）（ps:火狐与Chromium核心的大部分浏览器也可以安装，但需要自己百度下载插件)
 
-3.[安装网盘助手](https://greasyfork.org/scripts/378301-%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/code/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B.user.js)(务必先安装油猴脚本再安装这个！！！)
+3.[安装网盘助手](https://chrome.google.com/webstore/detail/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/cfaglmggimoleoclaghmmboppofffdda)
 
 4.鼠标右击EditThisCookie插件（饼干🍪图标），单击“选项”-“选择Cookies的导出格式”，将格式改为“Netscape HTTP Cookie File”
 
@@ -31,7 +27,6 @@
 2.复制视频所在网址，可以下载油管、哔哩哔哩、腾讯视频、爱奇艺、优酷视频
 
 3.下载普通视频只需登录网站并导出自己的Cookies到FreeDownloader，如果需要下载会员专享高清或独播视频，则需要导入会员账号Cookies信息，可在浏览器中先用会员账号登录，再仿照百度网盘的Cookies导出方式导出当前页面Cookies信息
-
 
 ### 四、关于BT种子与磁力链下载
 
