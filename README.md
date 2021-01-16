@@ -6,7 +6,7 @@
 
 1.下载压缩包[Windows64位](https://github.com/HXHGTS/FreeDownloader/releases/latest/download/FreeDownloader.X64.zip)并解压
 
-2.在chrome浏览器[Chrome下载](https://chrome.google.com)中[安装EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN)[安装Aria2 for Chrome](https://chrome.google.com/webstore/detail/aria2-for-chrome/mpkodccbngfoacfalldjimigbofkhgjn))[安装网盘助手](https://chrome.google.com/webstore/detail/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/cfaglmggimoleoclaghmmboppofffdda) (注意:需要科学上网)
+2.在chrome浏览器[Chrome下载](https://chrome.google.com)中[安装EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN)[安装Aria2 for Chrome](https://chrome.google.com/webstore/detail/aria2-for-chrome/mpkodccbngfoacfalldjimigbofkhgjn)[安装网盘助手](https://chrome.google.com/webstore/detail/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/cfaglmggimoleoclaghmmboppofffdda) (注意:需要科学上网)
 
 4.鼠标右击EditThisCookie插件(饼干🍪图标)，单击"选项"-"选择Cookies的导出格式"，将格式改为"Netscape HTTP Cookie File"
 
