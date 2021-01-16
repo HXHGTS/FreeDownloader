@@ -30,7 +30,7 @@
 
 1.本软件支持种子与磁力链下载功能,并在每次启用BT下载时自动更新tracker服务器列表帮助加速下载(感谢[trackerslist.com](https://trackerslist.com/#/zh)公开tracker列表),若因网络问题更新失败需要自行导入
 
-2.如果需要加速BT下载,需要使用全局加速工具,普通http与socks5代理对BT下载加速无效!推荐使用Clash的Tap模式或SStap或Netch等
+2.如果需要加速BT下载,需要使用全局加速工具,普通http与socks5代理对BT下载加速无效!推荐使用Clash的Tap/Tun模式
 
 ### 五、关于文件校验
 
