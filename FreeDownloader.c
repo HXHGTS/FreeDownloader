@@ -11,7 +11,7 @@ int cookie_import, cookie_mode,appid;
 int scan_return;//接收返回值，暂时没用
 char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[12];
 char reference[216], head[300], head_show[35], pre_proxy[56];
-char location[200],split[7],torrent_loca[250],play_list[30], color[4];
+char location[200],split[7],torrent_loca[250],play_list[40], color[4];
 char proxy[50];
 char rpctoken[40];//定义rpc密钥
 char BDUSS[193];
@@ -625,23 +625,20 @@ int MediaDownloader() {
 	char chapter[14];
 	printf("下载音视频来源：\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n请输入：");
 	scan_return=scanf("%d", &config_media);
-	printf("\n下载整个列表内所有音视频？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
-	scan_return=scanf("%d", &DownloadList);
 	proxyswitcher();
 	if (config_media != 1) {
+		printf("\n下载整个列表内所有音视频？\n\n1.是\n\n2.只下载当前视频\n\n请输入：");
+		scan_return = scanf("%d", &DownloadList);
 		if (DownloadList == 1) {
 			sprintf(play_list, "-p");
 		}
 		else if (DownloadList == 2) {
 			sprintf(play_list, "");
 		}
-		else {
-			printf("\n请按照格式输入下载范围，如1-5,6,7,8-15：");
-			scan_return = scanf("%s", chapter);
-			sprintf(play_list, "-p -items %s", chapter);
-		}
 	}
 	else {
+		printf("\n下载整个列表内所有音视频？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
+		scan_return = scanf("%d", &DownloadList);
 		if (DownloadList == 1) {
 			sprintf(play_list, "--yes-playlist");
 		}
