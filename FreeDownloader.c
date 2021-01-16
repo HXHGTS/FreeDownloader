@@ -85,12 +85,11 @@ int CreateConfig() {
 	fprintf(conf, "max-tries=0\n");
 	fprintf(conf, "file-allocation=none\n");
 	fprintf(conf, "enable-peer-exchange=true\n");
-	fprintf(conf, "seed-ratio=0.0\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=true\n");
-	fprintf(conf, "user-agent=qBittorrent/4.3.1.0\n");
-	fprintf(conf, "peer-agent=qBittorrent/4.3.1.0\n");
-	fprintf(conf, "peer-id-prefix=-qB4310-\n");
+	fprintf(conf, "user-agent=qBittorrent/4.3.2.0\n");
+	fprintf(conf, "peer-agent=qBittorrent/4.3.2.0\n");
+	fprintf(conf, "peer-id-prefix=-qB4320-\n");
 	fclose(conf);
 	system("cls");
 	return 0;
@@ -474,18 +473,18 @@ int BroswerMark() {
 	char UserAgent_DIY[275];
 	if (downloadmode == 1) {
 		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 Edg/87.0.664.75");//Chrome浏览器
-		sprintf(head_show, "Chrome浏览器(计算机)");
+		sprintf(head_show, "Chrome浏览器");
 	}
 	else if (downloadmode == 2) {
 		sprintf(head, "--header=\"User-Agent:%s\"", "netdisk");//百度网盘客户端
-		sprintf(head_show, "百度网盘客户端");
+		sprintf(head_show, "百度网盘");
 	}
 	else if (downloadmode == 3) {
 		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 Edg/87.0.664.75");//Chrome浏览器
-		sprintf(head_show, "Chrome浏览器(计算机)");
+		sprintf(head_show, "Chrome浏览器");
 	}
 	else if (downloadmode == 4) {
-		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Chrome浏览器(计算机)\n\n3.Chrome浏览器(手机)\n\n请输入：");
+		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Chrome浏览器\n\n3.Chrome浏览器(Mobile)\n\n请输入：");
 		scan_return=scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729)");//IE浏览器
@@ -493,11 +492,11 @@ int BroswerMark() {
 		}
 		else if (mark == 2) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 Edg/87.0.664.75");//Chrome浏览器
-			sprintf(head_show, "Chrome浏览器(计算机)");
+			sprintf(head_show, "Chrome浏览器");
 		}
 		else if (mark == 3) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 9; DUK-AL20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.116 Mobile Safari/537.36 EdgA/45.12.4.5121");//Chrome浏览器
-			sprintf(head_show, "Chrome浏览器(手机)");
+			sprintf(head_show, "Chrome浏览器(Mobile)");
 		}
 		else {
 			mark = 2;
@@ -506,7 +505,7 @@ int BroswerMark() {
 		}
 	}
 	else if (downloadmode == 5) {
-		sprintf(head_show, "qBittorrent/4.3.1.0");
+		sprintf(head_show, "qBittorrent/4.3.2.0");
 	}
 	return 0;
 }
