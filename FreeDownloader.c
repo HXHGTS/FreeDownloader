@@ -60,7 +60,8 @@ int WindowSkin() {
 
 int CreateConfig() {
 	printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
-	conf = fopen("config\\bt.conf", "w");
+	proxyswitcher();
+	conf = fopen("config\\bt.conf", "a");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
 	sprintf(cmd, "curl %s https://trackerslist.com/best_aria2.txt -# > config\\best_aria2.txt", pre_proxy);
@@ -98,28 +99,15 @@ int CreateConfig() {
 int CreateFolder() {
 	if (_access("Downloads", 0)) {
 		system("mkdir Downloads");
-		dir_mark = fopen("Downloads\\dir.md", "w");
-		fprintf(dir_mark, "##本文件夹存储下载数据\n");
-		fclose(dir_mark);
 	}
 	if (_access("config", 0)) {
 		system("mkdir config");
-		dir_mark = fopen("config\\dir.md", "w");
-		fprintf(dir_mark, "##需要配置代理请修改proxy.ini文件，软件支持http/https代理\n");
-		fprintf(dir_mark, "##标准格式为proxy=http://127.0.0.1:1080，请根据实际情况设置代理！\n");
-		fclose(dir_mark);
 	}
 	if (_access("cookies", 0)) {
 		system("mkdir cookies");
-		dir_mark = fopen("cookies\\dir.md", "w");
-		fprintf(dir_mark, "##本文件夹主要存放账号登录的Cookie信息\n");
-		fclose(dir_mark);
 	}
 	if (_access("temp", 0)) {
 		system("mkdir temp");
-		dir_mark = fopen("temp\\dir.md", "w");
-		fprintf(dir_mark, "##本文件夹为缓存信息文件夹\n");
-		fclose(dir_mark);
 	}
 	return 0;
 }
@@ -135,7 +123,6 @@ int preload() {
 	sprintf(smallcmd, "color %s", color);
 	system(smallcmd);
 	printf("需要系统UAC权限读取代理服务器数据，若需要使用代理服务器请在打开本软件前打开代理. . .\n\n");
-	printf("BT下载请切换到Tap模式路由全局流量！\n\n");
 	system("Timeout /T 2");
 	if (system("start /min GetProxyInfo.exe") != 0) {
 		printf("UAC授权失败，无法检测计算机代理设置！\n\n");
@@ -259,6 +246,7 @@ int ListenRPC() {
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n",rpctoken);
 	fclose(conf);
+	proxyswitcher();
 	conf = fopen("temp\\rpc.bat", "w");
 	fprintf(conf, "@echo off\n");
 	fprintf(conf, "start /min aria2c --conf-path=config\\rpc.conf\n");
@@ -278,9 +266,8 @@ int ListenRPC() {
 }
 
 int MagnetDownloader() {
-	proxyswitcher();
 	CreateConfig();
-	printf("请选择下载模式：\n\n1.种子文件导入\n\n2.输入磁力链\n\n请输入：");
+	printf("请选择下载模式：\n\n1.*.torrent文件\n\n2.Magnet://链接\n\n请输入：");
 	scan_return=scanf("%d", &magnet_mode);
 	if (magnet_mode == 2) {
 		dir();
@@ -462,8 +449,17 @@ int proxyswitcher() {
 				sprintf(config_proxy, "set http_proxy=%s & set https_proxy=%s", proxy,proxy);
 			}
 			else if (downloadmode == 5) {
-				sprintf(config_proxy, "--all-proxy=%s", proxy);//magnet proxy
+				sprintf(config_proxy, "%s", proxy);
+				conf = fopen("config\\bt.conf", "w");
+				fprintf(conf, "all-proxy=%s\n", proxy);
+				fclose(conf);//magnet proxy
 			}
+			else if (downloadmode == 8) {
+				conf = fopen("config\\rpc.conf", "a");
+				fprintf(conf, "all-proxy=%s\n", proxy);
+				fclose(conf);//RPC proxy
+			}
+			
 	}
 	system("cls");
 	return 0;// /config/proxy.ini中proxy=0或此文件不存在为无代理状态，否则使用代理(仅支持http/https代理)
@@ -723,7 +719,7 @@ int downloadengine() {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
 			fprintf(ytb_Download, "@echo off\n");
 			fprintf(ytb_Download, "%s\n", config_proxy);
-			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
@@ -762,13 +758,13 @@ int downloadengine() {
 		if (magnet_mode == 2) {
 			Download = fopen("temp\\Download.bat", "w");
 			fprintf(Download, "@echo off\n");
-			fprintf(Download, "%s --conf-path=config\\bt.conf %s %s\n", Downloader_Use, config_proxy, config_url);
+			fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);
 			fclose(Download);
 		}
 		else {
 			Download = fopen("temp\\Download.bat", "w");
 			fprintf(Download, "@echo off\n");
-			fprintf(Download, "%s --conf-path=config\\bt.conf %s %s\n", Downloader_Use, config_proxy, config_url);
+			fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);
 			fclose(Download);
 		}
 	}
