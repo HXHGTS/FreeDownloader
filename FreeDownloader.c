@@ -719,7 +719,7 @@ int downloadengine() {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
 			fprintf(ytb_Download, "@echo off\n");
 			fprintf(ytb_Download, "%s\n", config_proxy);
-			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
+			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M --file-allocation=none\"\n", Downloader_Use, play_list, config_dir, config_url);
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
