@@ -389,8 +389,8 @@ int threader() {
 		sprintf(split, "2M");
 	}
 	else if (downloadmode == 2) {
-		ConnectionNum = 10;
-		ProcessNum = 64;
+		ConnectionNum = 2;
+		ProcessNum = 4;
 		sprintf(split, "1M");
 		sprintf(Downloader_Use, "%s", "aria2c");
 		Task = 1;//同时下载任务数
@@ -469,35 +469,35 @@ int BroswerMark() {
 	char UserAgent_DIY[275];
 	if (downloadmode == 1) {
 		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 Edg/87.0.664.75");//Chrome浏览器
-		sprintf(head_show, "Chrome浏览器");
+		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 2) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "netdisk");//百度网盘客户端
-		sprintf(head_show, "百度网盘");
+		sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;7.0.10.2;PC;PC-Windows;10.0.14393;WindowsBaiduYunGuanJia");//百度网盘客户端
+		sprintf(head_show, "Netdisk");
 	}
 	else if (downloadmode == 3) {
 		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 Edg/87.0.664.75");//Chrome浏览器
-		sprintf(head_show, "Chrome浏览器");
+		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 4) {
-		printf("\n请选择浏览器标识：\n\n1.IE浏览器\n\n2.Chrome浏览器\n\n3.Chrome浏览器(Mobile)\n\n请输入：");
+		printf("\n请选择浏览器标识：\n\n1.IE\n\n2.Chrome\n\n3.Chrome(Mobile)\n\n请输入：");
 		scan_return=scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729)");//IE浏览器
-			sprintf(head_show, "IE浏览器");
+			sprintf(head_show, "IE");
 		}
 		else if (mark == 2) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 Edg/87.0.664.75");//Chrome浏览器
-			sprintf(head_show, "Chrome浏览器");
+			sprintf(head_show, "Chrome");
 		}
 		else if (mark == 3) {
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 9; DUK-AL20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.116 Mobile Safari/537.36 EdgA/45.12.4.5121");//Chrome浏览器
-			sprintf(head_show, "Chrome浏览器(Mobile)");
+			sprintf(head_show, "Chrome(Mobile)");
 		}
 		else {
 			mark = 2;
 			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 Edg/87.0.664.75");//Chrome浏览器
-			sprintf(head_show, "Chrome浏览器");
+			sprintf(head_show, "Chrome");
 		}
 	}
 	else if (downloadmode == 5) {
@@ -562,8 +562,23 @@ int Netdisk() {
 			sprintf(config_cookie, "--load-cookies=\"cookies\\Netdisk_Cookies.txt\"");
 		}
 		else {
-			printf("\n请输入BDUSS值:\n");
-			scan_return=scanf("%s", BDUSS);
+			if (fopen("cookies\\BDUSS.txt", "r") == NULL) {
+				p_5:printf("\n请输入BDUSS值:\n");
+				scan_return = scanf("%s", BDUSS);
+				cookie = fopen("cookies\\BDUSS.txt", "w");
+				fprintf(cookie, "%s", BDUSS);
+				fclose(cookie);
+			}
+			else {
+				printf("\n检测到存在Cookies信息，是否继续使用上次的信息登录（是=1 否=0）：");
+				scan_return = scanf("%d", &cookie_import);
+				if (cookie_import != 1) {
+					goto p_5;
+				}
+			}
+			cookie = fopen("cookies\\BDUSS.txt", "r");
+			scan_return = fscanf(cookie, "%s", BDUSS);
+			fclose(cookie);
 			sprintf(config_cookie, "--header=\"Cookie: BDUSS=%s\"", BDUSS);
 		}
 	url();
