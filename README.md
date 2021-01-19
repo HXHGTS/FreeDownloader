@@ -14,7 +14,7 @@
 
 1.打开FreeDownloader,不用代理,按提示操作,当程序弹窗要求导入Cookies信息时,开始第2步操作(夜间挂机下载可以将自动关机功能打开)(程序默认屏蔽自动关机功能,如果需要,请在进入软件前删除config\power.ini(屏蔽自动关机)文件)
 
-2.在chrome浏览器中登录[百度网盘](https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list),点击右上角饼干图标(EditThisCookie插件),点击"导出Cookies",复制粘贴填入FreeDownloader弹出的文本文件中(只用导入1次,之后如果不再切换百度账号或修改密码可直接使用第一次导入的数据),或者直接点击网址输入框旁边的锁🔒,找到"Cookie",打开,找到BDUSS的值,粘贴到软件输入框中亦可(不推荐,这种方法每次需要重新导入)
+2.在chrome浏览器中登录[百度网盘](https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list),点击右上角饼干图标(EditThisCookie插件),点击"导出Cookies",复制粘贴填入FreeDownloader弹出的文本文件中(只用导入1次,之后如果不再切换百度账号或修改密码可直接使用第一次导入的数据),或者直接点击网址输入框旁边的锁🔒,找到"Cookie",打开,找到BDUSS的值,粘贴到软件输入框中亦可(只用导入1次,之后如果不再切换百度账号或修改密码可直接使用第一次导入的数据)
 
 3.选择你要下载的一个或多个文件,单击生成链接,替换应用id为778750(必须!!!),将生成的链接复制粘贴到FreeDownloader弹出的文本输入框内,多个链接间回车隔开,保存
 
