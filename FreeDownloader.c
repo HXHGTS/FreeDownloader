@@ -472,7 +472,7 @@ int BroswerMark() {
 		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 2) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;7.0.10.2;PC;PC-Windows;10.0.14393;WindowsBaiduYunGuanJia");//百度网盘客户端
+		sprintf(head, "--header=\"User-Agent:%s\"", "LogStatistic");//百度网盘客户端
 		sprintf(head_show, "Netdisk");
 	}
 	else if (downloadmode == 3) {
