@@ -38,7 +38,7 @@
 
 ### 六、第三方软件
 
-本软件使用了[aria2](https://aria2.github.io/)、[youtube-dl](https://github.com/ytdl-org/youtube-dl/)、[annie](https://github.com/iawia002/annie)、[ffmpeg](https://ffmpeg.org/)等开源工具作为下载或解码工具,在此向以上开源软件开发者致谢!
+本软件采用[aria2](https://aria2.github.io/)、[youtube-dl](https://github.com/ytdl-org/youtube-dl/)、[annie](https://github.com/iawia002/annie)、[ffmpeg](https://ffmpeg.org/)等开源工具作为下载或合成工具,在此向以上开源软件开发者致谢!
 
 ### 七、其它事项
 
