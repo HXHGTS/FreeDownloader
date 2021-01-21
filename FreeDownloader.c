@@ -267,6 +267,9 @@ int ListenRPC() {
 
 int MagnetDownloader() {
 	CreateConfig();
+	printf("----------------------------------------------------------------------------------\n");
+	printf("注意:本模式下代理在下载阶段不起作用，若需要使用代理请配合Tap/Tun工具强制接管流量！\n");
+	printf("----------------------------------------------------------------------------------\n");
 	printf("请选择下载模式：\n\n1.*.torrent文件\n\n2.Magnet://链接\n\n请输入：");
 	scan_return=scanf("%d", &magnet_mode);
 	if (magnet_mode == 2) {
