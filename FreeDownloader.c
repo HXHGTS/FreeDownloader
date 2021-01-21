@@ -61,18 +61,18 @@ int WindowSkin() {
 int CreateConfig() {
 	printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
 	proxyswitcher();
-	conf = fopen("config\\bt.conf", "a");
+	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	sprintf(cmd, "curl %s https://trackerslist.com/best_aria2.txt -# > config\\best_aria2.txt", pre_proxy);
+	sprintf(cmd, "curl %s https://trackerslist.com/all_aria2.txt -# > config\\all_aria2.txt", pre_proxy);
 	if (system(cmd) != 0) {
 		printf("\n更新失败，建议配合代理或VPN重新打开软件更新列表，正在本地建立BT配置文件. . .\n");
 		system("notepad config\\bt.conf");
 	}
 	else {
 		printf("\n更新成功，正在本地建立BT配置文件. . .\n");
-		system("type config\\best_aria2.txt >> config\\bt.conf");
-		system("del /F /S /Q config\\best_aria2.txt");
+		system("type config\\all_aria2.txt >> config\\bt.conf");
+		system("del /F /S /Q config\\all_aria2.txt");
 	}
 	conf = fopen("config\\bt.conf", "a");
 	fprintf(conf, "\ncontinue=true\n");
@@ -384,13 +384,13 @@ int threader() {
 	if (downloadmode == 1 || downloadmode == 4) {
 		Task = 1;//同时下载任务数
 		ConnectionNum = 16;
-		ProcessNum = 128;
+		ProcessNum = 16;
 		sprintf(Downloader_Use, "%s", "aria2c");
-		sprintf(split, "2M");
+		sprintf(split, "1M");
 	}
 	else if (downloadmode == 2) {
-		ConnectionNum = 2;
-		ProcessNum = 4;
+		ConnectionNum = 1;
+		ProcessNum = 2;
 		sprintf(split, "1M");
 		sprintf(Downloader_Use, "%s", "aria2c");
 		Task = 1;//同时下载任务数
@@ -449,15 +449,10 @@ int proxyswitcher() {
 				sprintf(config_proxy, "set http_proxy=%s & set https_proxy=%s", proxy,proxy);
 			}
 			else if (downloadmode == 5) {
-				sprintf(config_proxy, "%s", proxy);
-				conf = fopen("config\\bt.conf", "w");
-				fprintf(conf, "all-proxy=%s\n", proxy);
-				fclose(conf);//magnet proxy
+				sprintf(config_proxy, "");
 			}
 			else if (downloadmode == 8) {
-				conf = fopen("config\\rpc.conf", "a");
-				fprintf(conf, "all-proxy=%s\n", proxy);
-				fclose(conf);//RPC proxy
+				sprintf(config_proxy, "");
 			}
 			
 	}
