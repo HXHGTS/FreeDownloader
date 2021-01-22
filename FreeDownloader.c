@@ -59,8 +59,14 @@ int WindowSkin() {
 }
 
 int CreateConfig() {
-	printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
 	proxyswitcher();
+	system("cls");
+	printf("正在优化dht链路. . .\n\n");
+	if (fopen("%UserProfile%\\.cache\\aria2\\dht.dat", "r") == NULL) {
+		sprintf(cmd, "curl %s https://hxhgts.ml/FreeDownloader/dht.dat -# > %UserProfile%\\.cache\\aria2\\dht.dat", pre_proxy);
+		system(cmd);
+	}
+	printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
