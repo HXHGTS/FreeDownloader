@@ -62,11 +62,10 @@ int CreateConfig() {
 	proxyswitcher();
 	system("cls");
 	printf("正在优化dht链路. . .\n\n");
-	if (fopen("%UserProfile%\\.cache\\aria2\\dht.dat", "r") == NULL) {
-		sprintf(cmd, "curl %s https://hxhgts.ml/FreeDownloader/dht.dat -# > %UserProfile%\\.cache\\aria2\\dht.dat", pre_proxy);
-		system(cmd);
+	if (fopen("%%UserProfile%%\\.cache\\aria2\\dht.dat", "r") == NULL) {
+		system("curl https://hxhgts.ml/FreeDownloader/dht.dat -# > %UserProfile%\\.cache\\aria2\\dht.dat");
 	}
-	printf("正在尝试连接到trackerslist.com服务器. . .\n\n");
+	printf("\n正在尝试连接到trackerslist.com服务器. . .\n\n");
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
@@ -115,7 +114,7 @@ int CreateFolder() {
 	if (_access("temp", 0)) {
 		system("mkdir temp");
 	}
-	if (fopen("%UserProfile%\\.cache\\aria2\\dht.dat","r")==NULL) {
+	if (fopen("%%UserProfile%%\\.cache\\aria2\\dht.dat","r")==NULL) {
 		system("mkdir %UserProfile%\\.cache\\aria2");
 	}
 	system("cls");
