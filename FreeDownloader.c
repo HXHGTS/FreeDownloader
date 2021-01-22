@@ -64,15 +64,15 @@ int CreateConfig() {
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	sprintf(cmd, "curl %s https://trackerslist.com/all_aria2.txt -# > config\\all_aria2.txt", pre_proxy);
+	sprintf(cmd, "curl %s https://trackerslist.com/best_aria2.txt -# > config\\best_aria2.txt", pre_proxy);
 	if (system(cmd) != 0) {
 		printf("\n更新失败，建议配合代理或VPN重新打开软件更新列表，正在本地建立BT配置文件. . .\n");
 		system("notepad config\\bt.conf");
 	}
 	else {
 		printf("\n更新成功，正在本地建立BT配置文件. . .\n");
-		system("type config\\all_aria2.txt >> config\\bt.conf");
-		system("del /F /S /Q config\\all_aria2.txt");
+		system("type config\\best_aria2.txt >> config\\bt.conf");
+		system("del /F /S /Q config\\best_aria2.txt");
 	}
 	conf = fopen("config\\bt.conf", "a");
 	fprintf(conf, "\ncontinue=true\n");
