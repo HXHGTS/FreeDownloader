@@ -115,6 +115,10 @@ int CreateFolder() {
 	if (_access("temp", 0)) {
 		system("mkdir temp");
 	}
+	if (fopen("%UserProfile%\\.cache\\aria2\\dht.dat","r")==NULL) {
+		system("mkdir %UserProfile%\\.cache\\aria2");
+	}
+	system("cls");
 	return 0;
 }
 
