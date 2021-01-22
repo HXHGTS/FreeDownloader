@@ -64,6 +64,8 @@ int CreateConfig() {
 	printf("正在优化dht链路. . .\n\n");
 	if (fopen("config\\dht.dat", "r") == NULL) {
 		system("curl https://hxhgts.ml/FreeDownloader/dht.dat -# > config\\dht.dat");
+		conf = fopen("config\\dht.dat", "a");
+		fclose(conf);
 	}
 	printf("\n正在尝试连接到trackerslist.com服务器. . .\n\n");
 	conf = fopen("config\\bt.conf", "w");
