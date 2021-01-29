@@ -10,7 +10,7 @@ int mark, redownload_result, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode,appid;
 int scan_return;//接收返回值，暂时没用
 char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[12];
-char reference[216], head[300], head_show[35], pre_proxy[56];
+char reference[216], head[300], head_show[35];
 char location[200],split[7],torrent_loca[250],play_list[40], color[4];
 char proxy[50];
 char rpctoken[40];//定义rpc密钥
@@ -71,7 +71,7 @@ int CreateConfig() {
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	sprintf(cmd, "curl %s https://trackerslist.com/best_aria2.txt -# > config\\best_aria2.txt", pre_proxy);
+	sprintf(cmd, "curl https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/best_aria2.txt -# > config\\best_aria2.txt");
 	if (system(cmd) != 0) {
 		printf("\n更新失败，建议配合代理或VPN重新打开软件更新列表，正在本地建立BT配置文件. . .\n");
 		system("notepad config\\bt.conf");
@@ -446,13 +446,11 @@ int dir() {
 int proxyswitcher() {
 	if (system("type config\\proxy.ini | find \"proxy=0\"") == 0) {
 		sprintf(config_proxy, "%s", "");
-		sprintf(pre_proxy, "");
 	}
 	else {
 			proxy_ini = fopen("config\\proxy.ini", "r");
 			scan_return=fscanf(proxy_ini, "proxy=%s", proxy);
 			fclose(proxy_ini);
-			sprintf(pre_proxy, "-x %s", proxy);//curl proxy
 			if (downloadmode == 1 || downloadmode == 2 || downloadmode == 4) {
 				sprintf(config_proxy, "--all-proxy=%s", proxy);
 			}
