@@ -17,7 +17,7 @@ char rpctoken[40];//定义rpc密钥
 char BDUSS[193];
 char cmd[300];
 FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
-FILE* cookie,*bat;
+FILE* cookie,*bat,*dht;
 
 int TokenGenerate() {
 	if (fopen("config\\uuid", "r") == NULL) {
@@ -59,9 +59,10 @@ int WindowSkin() {
 }
 
 int CreateConfig() {
-	proxyswitcher();
 	system("cls");
 	printf("正在优化dht链路. . .\n\n");
+	system("copy /y config\\dht.dat__temp config\\dht.dat");
+	system("del config\\dht.dat__temp");
 	if (fopen("config\\dht.dat", "r") == NULL) {
 		system("curl https://hxhgts.ml/FreeDownloader/dht.dat -# > config\\dht.dat");
 		system("dht链路优化完成，重启软件生效!\n");
@@ -73,7 +74,7 @@ int CreateConfig() {
 	fclose(conf);
 	sprintf(cmd, "curl https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/best_aria2.txt -# > config\\best_aria2.txt");
 	if (system(cmd) != 0) {
-		printf("\n更新失败，建议配合代理或VPN重新打开软件更新列表，正在本地建立BT配置文件. . .\n");
+		printf("\n更新失败，正在本地建立BT配置文件. . .\n");
 		system("notepad config\\bt.conf");
 	}
 	else {
@@ -375,6 +376,7 @@ int url() {
 		if (magnet_mode == 2) {
 			if (fopen("temp\\magnet.download", "r") == NULL) {
 				url = fopen("temp\\magnet.download", "w");
+				fprintf(url, "magnet:?xt=urn:btih:");
 				fclose(url);
 			}
 			printf("请在弹出页输入下载地址，多个地址可以用回车隔开. . .\n\n");
