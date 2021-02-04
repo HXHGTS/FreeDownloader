@@ -20,7 +20,7 @@ FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat,*dht;
 
 int TokenGenerate() {
-	if (fopen("config\\uuid", "r") == NULL) {
+	if (_access("config\\uuid", 0)) {
 		system("powershell [guid]::NewGuid() | find /v \"Guid\" | find /v \"--\" | find \"-\" > config\\uuid");//随机GUID作为密码，提高RPC功能安全性
 	}
 	conf = fopen("config\\uuid", "r");
@@ -30,7 +30,7 @@ int TokenGenerate() {
 }
 
 int WindowSkin() {
-	if (fopen("config\\skin.ini", "r") == NULL) {
+	if (_access("config\\skin.ini", 0)) {
 		printf("重置窗体与字体颜色请直接删除config目录下skin.ini文件！\n");
 		printf("请按照\"窗口颜色+字体颜色\"的格式设置皮肤，对应关系如下：\n");
 		printf("------------------------------------------------------------------\n");
@@ -63,7 +63,7 @@ int CreateConfig() {
 	printf("正在优化dht链路. . .\n\n");
 	system("copy /y config\\dht.dat__temp config\\dht.dat");
 	system("del config\\dht.dat__temp");
-	if (fopen("config\\dht.dat", "r") == NULL) {
+	if (_access("config\\dht.dat", 0)) {
 		system("curl https://hxhgts.ml/FreeDownloader/dht.dat -# > config\\dht.dat");
 		system("dht链路优化完成，重启软件生效!\n");
 		exit(0);
