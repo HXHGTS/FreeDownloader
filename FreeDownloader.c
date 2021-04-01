@@ -408,13 +408,13 @@ int threader() {
 	if (downloadmode == 1 || downloadmode == 4) {
 		Task = 1;//同时下载任务数
 		ConnectionNum = 16;
-		ProcessNum = 16;
+		ProcessNum = 4;
 		sprintf(Downloader_Use, "%s", "aria2c");
 		sprintf(split, "1M");
 	}
 	else if (downloadmode == 2) {
-		ConnectionNum = 4;
-		ProcessNum = 4;
+		ConnectionNum = 6;
+		ProcessNum = 6;
 		sprintf(split, "1M");
 		sprintf(Downloader_Use, "%s", "aria2c");
 		Task = 1;//同时下载任务数
@@ -835,9 +835,7 @@ int downloadengine() {
 		download_result = system("temp\\Download.bat");
 	}
 	if(download_result == 0) {
-	//	system("del /f /s /q temp\\*.bat");
-	//	system("cls");
-	//	return 0;
+		return 0;
 	}
 	else {
 		return 1;
