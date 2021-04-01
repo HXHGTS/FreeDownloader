@@ -169,13 +169,19 @@ MainMenu:system(smallcmd);
 		Netdisk();
 	}
 	else if (downloadmode == 3) {
-		MediaDownloader();
+		if (MediaDownloader() == 2) {
+			system("cls");
+			goto MainMenu;
+		}
 	}
 	else if (downloadmode == 4) {
 		AdvanceDownloader();
 	}
 	else if (downloadmode == 5) {
-		MagnetDownloader();
+		if (MagnetDownloader() == 2) {
+			system("cls");
+			goto MainMenu;
+		}
 	}
 	else if (downloadmode == 6) {
 		IsCheckSum = 1;
@@ -252,7 +258,7 @@ int ListenRPC() {
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=true\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.72 Safari/537.36\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n",rpctoken);
@@ -281,10 +287,13 @@ int MagnetDownloader() {
 	printf("----------------------------------------------------------------------------------\n");
 	printf("注意:本模式下代理在下载阶段不起作用，若需要使用代理请配合Tap/Tun工具强制接管流量！\n");
 	printf("----------------------------------------------------------------------------------\n");
-	printf("请选择下载模式：\n\n1.*.torrent文件\n\n2.Magnet://链接\n\n请输入：");
+	printf("请选择下载模式：\n\n1.*.torrent文件\n\n2.Magnet://链接\n\n0.返回\n\n请输入：");
 	scan_return=scanf("%d", &magnet_mode);
 	if (magnet_mode == 2) {
 		dir();
+	}
+	else if (magnet_mode == 0) {
+		return 2;
 	}
 	threader();
 	system("cls");
@@ -476,7 +485,7 @@ int proxyswitcher() {
 int BroswerMark() {
 	char UserAgent_DIY[275];
 	if (downloadmode == 1) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.72 Safari/537.36");//Chrome浏览器
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 2) {
@@ -484,7 +493,7 @@ int BroswerMark() {
 		sprintf(head_show, "Netdisk");
 	}
 	else if (downloadmode == 3) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.72 Safari/537.36");//Chrome浏览器
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 4) {
@@ -495,7 +504,7 @@ int BroswerMark() {
 			sprintf(head_show, "IE");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.72 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 		else if (mark == 3) {
@@ -504,7 +513,7 @@ int BroswerMark() {
 		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.72 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -641,10 +650,10 @@ int AutoShutdown(int mode) {
 int MediaDownloader() {
 	FILE* Bilibili_Cookies,*ytb_Cookies,* QQVideo_Cookies,*iqiyi_Cookies,*Youku_Cookies;
 	char chapter[14];
-	printf("下载音视频来源：\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n请输入：");
+	printf("下载音视频来源：\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n0.返回\n\n请输入：");
 	scan_return=scanf("%d", &config_media);
 	proxyswitcher();
-	if (config_media != 1) {
+	if (config_media != 1&&config_media!=0) {
 		printf("\n下载整个列表内所有音视频？\n\n1.是\n\n2.只下载当前视频\n\n请输入：");
 		scan_return = scanf("%d", &DownloadList);
 		if (DownloadList == 1) {
@@ -654,7 +663,7 @@ int MediaDownloader() {
 			sprintf(play_list, "");
 		}
 	}
-	else {
+	else if(config_media!=0){
 		printf("\n下载整个列表内所有音视频？\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入：");
 		scan_return = scanf("%d", &DownloadList);
 		if (DownloadList == 1) {
@@ -668,6 +677,9 @@ int MediaDownloader() {
 			scan_return = scanf("%s", chapter);
 			sprintf(play_list, "--playlist-items %s", chapter);
 		}
+	}
+	else {
+		return 2;
 	}
 	if (config_media == 1) {
 			if (fopen("cookies\\ytb_Cookies.txt", "r") == NULL) {
@@ -705,7 +717,7 @@ int MediaDownloader() {
 			system("notepad cookies\\iqiyi_Cookies.txt");
 			printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
 	}
-	else {
+	else if (config_media == 5) {
 			if (fopen("cookies\\Youku_Cookies.txt", "r") == NULL) {
 				Youku_Cookies = fopen("cookies\\Youku_Cookies.txt", "w");
 				fprintf(Youku_Cookies, "# Input Cookie below#\n");
@@ -714,6 +726,7 @@ int MediaDownloader() {
 			system("notepad cookies\\Youku_Cookies.txt");
 			printf("\n请在弹出窗口中导入Cookies，同一账号可以反复使用\n\n");
 	}
+	
 	url();
 	threader();
 	dir();
