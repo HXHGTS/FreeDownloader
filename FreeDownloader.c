@@ -20,7 +20,7 @@ FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat,*dht;
 
 int TokenGenerate() {
-	if (_access("config\\uuid", 0)) {
+	if ((_access("config\\uuid", 0))==-1) {
 		system("powershell [guid]::NewGuid() | find /v \"Guid\" | find /v \"--\" | find \"-\" > config\\uuid");//随机GUID作为密码，提高RPC功能安全性
 	}
 	conf = fopen("config\\uuid", "r");
@@ -30,7 +30,7 @@ int TokenGenerate() {
 }
 
 int WindowSkin() {
-	if (_access("config\\skin.ini", 0)) {
+	if ((_access("config\\skin.ini", 0))==-1) {
 		printf("重置窗体与字体颜色请直接删除config目录下skin.ini文件！\n");
 		printf("请按照\"窗口颜色+字体颜色\"的格式设置皮肤，对应关系如下：\n");
 		printf("------------------------------------------------------------------\n");
@@ -61,9 +61,11 @@ int WindowSkin() {
 int CreateConfig() {
 	system("cls");
 	printf("正在优化dht链路. . .\n\n");
-	system("copy /y config\\dht.dat__temp config\\dht.dat");
-	system("del config\\dht.dat__temp");
-	if (_access("config\\dht.dat", 0)) {
+	if ((_access("config\\dht.dat__temp", 0))==0) {
+		system("copy /y config\\dht.dat__temp config\\dht.dat");
+		system("del /F /S /Q config\\dht.dat__temp");
+	}
+	if ((_access("config\\dht.dat", 0))==-1) {
 		system("curl https://hxhgts.ml/FreeDownloader/dht.dat -# > config\\dht.dat");
 		system("dht链路优化完成，重启软件生效!\n");
 		exit(0);
@@ -97,9 +99,9 @@ int CreateConfig() {
 	fprintf(conf, "enable-peer-exchange=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=true\n");
-	fprintf(conf, "user-agent=qBittorrent/4.3.2.0\n");
-	fprintf(conf, "peer-agent=qBittorrent/4.3.2.0\n");
-	fprintf(conf, "peer-id-prefix=-qB4320-\n");
+	fprintf(conf, "user-agent=qBittorrent/4.3.4.1\n");
+	fprintf(conf, "peer-agent=qBittorrent/4.3.4.1\n");
+	fprintf(conf, "peer-id-prefix=-qB4341-\n");
 	fclose(conf);
 	system("cls");
 	return 0;
@@ -507,7 +509,7 @@ int BroswerMark() {
 		}
 	}
 	else if (downloadmode == 5) {
-		sprintf(head_show, "qBittorrent/4.3.2.0");
+		sprintf(head_show, "qBittorrent/4.3.4.1");
 	}
 	return 0;
 }
