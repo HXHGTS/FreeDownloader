@@ -99,9 +99,9 @@ int CreateConfig() {
 	fprintf(conf, "enable-peer-exchange=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=true\n");
-	fprintf(conf, "user-agent=qBittorrent/4.3.4.1\n");
-	fprintf(conf, "peer-agent=qBittorrent/4.3.4.1\n");
-	fprintf(conf, "peer-id-prefix=-qB4341-\n");
+	fprintf(conf, "user-agent=qBittorrent/4.3.5.0\n");
+	fprintf(conf, "peer-agent=qBittorrent/4.3.5.0\n");
+	fprintf(conf, "peer-id-prefix=-qB4350-\n");
 	fclose(conf);
 	system("cls");
 	return 0;
@@ -508,7 +508,7 @@ int BroswerMark() {
 			sprintf(head_show, "Chrome");
 		}
 		else if (mark == 3) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 9; DUK-AL20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.181 Mobile Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 9; DUK-AL20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome(Mobile)");
 		}
 		else {
@@ -518,7 +518,7 @@ int BroswerMark() {
 		}
 	}
 	else if (downloadmode == 5) {
-		sprintf(head_show, "qBittorrent/4.3.4.1");
+		sprintf(head_show, "qBittorrent/4.3.5.0");
 	}
 	return 0;
 }
