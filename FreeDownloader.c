@@ -97,7 +97,6 @@ int CreateConfig() {
 	fprintf(conf, "split=16\n");;
 	fprintf(conf, "dir=Downloads/\n");
 	fprintf(conf, "max-tries=0\n");
-	fprintf(conf, "file-allocation=none\n");
 	fprintf(conf, "enable-peer-exchange=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=true\n");
