@@ -99,7 +99,7 @@ int CreateConfig() {
 	fprintf(conf, "max-tries=0\n");
 	fprintf(conf, "enable-peer-exchange=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
-	fprintf(conf, "disable-ipv6=true\n");
+	fprintf(conf, "disable-ipv6=false\n");
 	fprintf(conf, "%s\n",head);
 	fclose(conf);
 	system("cls");
@@ -516,28 +516,27 @@ int BroswerMark() {
 	}
 	else if (downloadmode == 5) {
 		printf("\n请选择BT下载工具标识：\n\n1.qBittorrent\n\n2.Transmission\n\n3.uTorrent\n\n4.BitComet\n\n请输入：");
-		sprintf(head_show, "qBittorrent/4.3.5.0");
 		scan_return = scanf("%d", &mark);
 		if (mark == 1) {
 			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.3.5.0", "qBittorrent/4.3.5.0", "-qB4350-");//qBittorrent
-			sprintf(head_show, "qBittorrent");
+			sprintf(head_show, "qBittorrent/4.3.5.0");
 		}
 		else if (mark == 2) {
 			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/3.00", "Transmission/3.00", "-TR3000-");//Transmission
-			sprintf(head_show, "Transmission");
+			sprintf(head_show, "Transmission/3.00");
 		}
 		else if (mark == 3) {
 			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "uTorrent/3550(45988)", "uTorrent/3550(45988)", "-UT3550-");//uTorrent
-			sprintf(head_show, "uTorrent");
+			sprintf(head_show, "uTorrent/3550(45988)");
 		}
 		else if (mark == 4) {
 			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "BitComet/1.76.4.8", "BitComet/1.76.4.8", "-BC0176-");//BitComet
-			sprintf(head_show, "BitComet");
+			sprintf(head_show, "BitComet/1.76.4.8");
 		}
 		else {
 			mark = 1;
 			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.3.5.0", "qBittorrent/4.3.5.0", "-qB4350-");//qBittorrent
-			sprintf(head_show, "qBittorrent");
+			sprintf(head_show, "qBittorrent/4.3.5.0");
 		}
 	}
 	return 0;
