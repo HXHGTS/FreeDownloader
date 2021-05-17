@@ -416,8 +416,8 @@ int threader() {
 		sprintf(split, "1M");
 	}
 	else if (downloadmode == 2) {
-		ConnectionNum = 6;
-		ProcessNum = 6;
+		ConnectionNum = 16;
+		ProcessNum = 16;
 		sprintf(split, "1M");
 		sprintf(Downloader_Use, "%s", "bin\\aria2c");
 		Task = 1;//同时下载任务数
