@@ -317,7 +317,6 @@ int url() {
 		printf("请在弹出页输入下载地址,多个地址可以用回车隔开. . .\n\n");
 		system("notepad.exe temp\\netdisk.download");
 		sprintf(config_url, "%s", "-i temp\\netdisk.download");
-		system("del temp\\url.bat");
 	}
 	else if (downloadmode == 3) {
 		if(config_media == 1){
@@ -492,7 +491,7 @@ int BroswerMark() {
 		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 2) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;7.2.1.1;PC;PC-Windows;10.0.19042;WindowsBaiduYunGuanJia");//百度网盘客户端
+		sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;7.3.1.10;PC;PC-Windows;10.0.19042;WindowsBaiduYunGuanJia");//百度网盘客户端
 		sprintf(head_show, "Netdisk");
 	}
 	else if (downloadmode == 3) {
@@ -625,7 +624,6 @@ int Netdisk() {
 		}
 	url();
 	dir();
-	proxyswitcher();
 	threader();
 	return 0;
 }
@@ -772,13 +770,6 @@ int MediaDownloader() {
 int downloadengine() {
 	FILE*Download,* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download;
 	int download_result;
-	printf("下载完成是否自动关机?(是=1,否=0):");
-	scanf("%d", &shutdown);
-	if (shutdown == 1) {
-		power_ini = fopen("config\\power.ini", "w");
-		fprintf(power_ini, "1\n");
-		fclose(power_ini);
-	}
 	if (downloadmode == 1) {
 		Download= fopen("temp\\Download.bat", "w");
 		fprintf(Download, "@echo off\n");
@@ -788,7 +779,7 @@ int downloadengine() {
 	else if (downloadmode == 2) {
 		Download = fopen("temp\\Download.bat", "w");
 		fprintf(Download, "@echo off\n");
-		fprintf(Download, "%s -c -x%d -s%d --follow-torrent=false -k%s -j %d %s %s %s %s %s --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		fprintf(Download, "%s -c -x%d -s%d --follow-torrent=false -k%s -j %d %s %s %s %s --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, reference, head, config_cookie, config_url);
 		fclose(Download);
 	}
 	else if (downloadmode == 3) {
