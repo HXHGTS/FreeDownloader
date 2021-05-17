@@ -43,15 +43,15 @@
 
 2.在自动关机被执行一次后，该文件会被自动删除，需要请重新创建
 
-### 五、关于文件校验
+### 六、关于文件校验
 
 由于网络波动因素的存在,有时候下载下来的文件(尤其是百度网盘)可能会存在文件错误,此功能通过计算文件校验和(包括MD5、SHA1、SHA256、SHA512)帮助用户判断文件完整性,可结合网页提供的信息判断
 
-### 六、第三方软件
+### 七、第三方软件
 
 本软件采用[aria2](https://aria2.github.io/)、[youtube-dl](https://github.com/ytdl-org/youtube-dl/)、[annie](https://github.com/iawia002/annie)、[ffmpeg](https://ffmpeg.org/)等开源工具作为下载或合成工具,在此向以上开源软件开发者致谢!
 
-### 七、其它事项
+### 八、其它事项
 
 由于更新软件工程量巨大,所以源代码的更新速度远远先于release文件,如需使用最新版本可以自己下载[软件源码](https://github.com/HXHGTS/FreeDownloader/archive/master.zip)文件并解压缩,使用vistual studio2019打开.sln文件编译!
 
