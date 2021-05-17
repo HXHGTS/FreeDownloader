@@ -3,9 +3,9 @@
 #include<io.h>
 
 
-int AdvanceDownloader(),AutoShutdown(int mode),BroswerMark(),CheckSum(int mode),dir(),downloadengine(),WindowSkin();
+int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(int mode),dir(),downloadengine(),WindowSkin();
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
-int downloadmode, magnet_mode,ConnectionNum, ProcessNum, config_media, anti_shutdown, Task, IsCheckSum;
+int downloadmode, magnet_mode,ConnectionNum, ProcessNum, config_media, Task, IsCheckSum;
 int mark, redownload_result, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode,appid,Output_Choose;
 int scan_return;//接收返回值,暂时没用
@@ -107,17 +107,20 @@ int CreateConfig() {
 }
 
 int CreateFolder() {
-	if (_access("Downloads", 0)) {
+	if (_access("Downloads", 0)==-1) {
 		system("mkdir Downloads");
 	}
-	if (_access("config", 0)) {
+	if (_access("config", 0) == -1) {
 		system("mkdir config");
 	}
-	if (_access("cookies", 0)) {
+	if (_access("cookies", 0) == -1) {
 		system("mkdir cookies");
 	}
-	if (_access("temp", 0)) {
+	if (_access("temp", 0) == -1) {
 		system("mkdir temp");
+	}
+	if (_access("config\\power.ini", 0) == 0) {
+		system("del /F /S /Q config\\power.ini");
 	}
 	return 0;
 }
@@ -125,7 +128,7 @@ int CreateFolder() {
 int preload() {
 	redownload_result = 0;
 	filecheck = 0;
-	anti_shutdown = shutdown = 0;
+	shutdown = 0;
 	system("title FreeDownloader");
 	CreateFolder();
 	TokenGenerate();
@@ -153,13 +156,6 @@ MainMenu:system(smallcmd);
 	printf("------------------------------------------------------------------\n");
 	printf("请输入:");
 	scan_return=scanf("%d", &downloadmode);
-	if (system("type config\\power.ini | find \"power=1\"") == 0) {
-		shutdown = 1;
-		system("echo \"power=0\" config\\power.ini"); //设置后只生效一次,自动还原状态,避免每次都自动关机
-	}
-	else {
-		shutdown = 0;
-	}
 	system("cls");
 	if (downloadmode == 1) {
 		NormalDownloader();
@@ -213,7 +209,7 @@ Downloading:redownload_result = downloadengine();
 		printf("------------------------------------------------------------------\n");
 		printf("-----------------------------下载成功!----------------------------\n");
 		printf("------------------------------------------------------------------\n");
-		AutoShutdown(shutdown);
+		AutoShutdown();
 		printf("\n是否打开下载文件夹:\n\n1.是\n\n0.否\n\n请输入:");
 		scan_return=scanf("%d", &OpenDir);
 		if (OpenDir != 0) {
@@ -664,14 +660,17 @@ int CheckSum(int mode) {
 	return 0;
 }
 
-int AutoShutdown(int mode) {
-	if (mode == 1) {
-		system("shutdown -s -t 60");
-		printf("是否阻止系统关机(是=1):");
-		scan_return=scanf("%d", &anti_shutdown);
-		if (anti_shutdown == 1) {
-			system("shutdown -a");
-		}
+int AutoShutdown() {
+	if (fopen("config\\power.ini", "r") != NULL) {
+		shutdown = 1;//设置后只生效一次,自动还原状态,避免每次都自动关机
+	}
+	else {
+		shutdown = 0;
+	}
+	if (shutdown == 1) {
+	printf("正在执行关机操作. . .\n");
+	system("shutdown -s -t 30");
+	exit(0);
 	}
 	return 0;
 }
@@ -773,6 +772,13 @@ int MediaDownloader() {
 int downloadengine() {
 	FILE*Download,* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download;
 	int download_result;
+	printf("下载完成是否自动关机?(是=1,否=0):");
+	scanf("%d", &shutdown);
+	if (shutdown == 1) {
+		power_ini = fopen("config\\power.ini", "w");
+		fprintf(power_ini, "1\n");
+		fclose(power_ini);
+	}
 	if (downloadmode == 1) {
 		Download= fopen("temp\\Download.bat", "w");
 		fprintf(Download, "@echo off\n");
