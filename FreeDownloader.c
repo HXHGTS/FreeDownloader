@@ -62,13 +62,10 @@ int CreateConfig() {
 	system("cls");
 	printf("正在优化dht链路. . .\n\n");
 	if ((_access("config\\dht.dat__temp", 0))==0) {
-		system("copy /y config\\dht.dat__temp config\\dht.dat");
 		system("del /F /S /Q config\\dht.dat__temp");
 	}
-	if ((_access("config\\dht.dat", 0))==-1) {
-		system("curl https://hxhgts.ml/FreeDownloader/dht.dat -# > config\\dht.dat");
-		system("dht链路优化完成,重启软件生效!\n");
-		exit(0);
+	if ((_access("config\\dht6.dat__temp", 0)) == 0) {
+		system("del /F /S /Q config\\dht6.dat__temp");
 	}
 	printf("\n正在尝试连接到trackerslist.com服务器. . .\n\n");
 	conf = fopen("config\\bt.conf", "w");
@@ -88,9 +85,14 @@ int CreateConfig() {
 	BroswerMark();
 	conf = fopen("config\\bt.conf", "a");
 	fprintf(conf, "\ncontinue=true\n");
+	fprintf(conf, "file-allocation=falloc\n");
 	fprintf(conf, "max-concurrent-downloads=1\n");
 	fprintf(conf, "max-connection-per-server=16\n");
+	fprintf(conf, "dht-entry-point=router.bittorrent.com:6881\n");
+	fprintf(conf, "dht-entry-point6=router.bitcomet.net:6881\n");
 	fprintf(conf, "dht-file-path=config\\dht.dat\n");
+	fprintf(conf, "dht-file-path6=config\\dht6.dat\n");
+	fprintf(conf, "enable-dht6=true\n");
 	fprintf(conf, "bt-max-peers=999\n");
 	fprintf(conf, "min-split-size=1M\n");
 	fprintf(conf, "disk-cache=128M\n");
@@ -773,13 +775,13 @@ int downloadengine() {
 	if (downloadmode == 1) {
 		Download= fopen("temp\\Download.bat", "w");
 		fprintf(Download, "@echo off\n");
-		fprintf(Download, "%s -c -x%d -s%d -k%s --follow-torrent=false --content-disposition-default-utf8=true -j %d %s %s %s %s\n", Downloader_Use, ConnectionNum,ProcessNum, split, Task, config_dir, config_proxy, head, config_url);
+		fprintf(Download, "%s -c -x%d -s%d -k%s --follow-torrent=false --file-allocation=falloc --content-disposition-default-utf8=true -j %d %s %s %s %s\n", Downloader_Use, ConnectionNum,ProcessNum, split, Task, config_dir, config_proxy, head, config_url);
 		fclose(Download);
 	}
 	else if (downloadmode == 2) {
 		Download = fopen("temp\\Download.bat", "w");
 		fprintf(Download, "@echo off\n");
-		fprintf(Download, "%s -c -x%d -s%d --follow-torrent=false -k%s -j %d %s %s %s %s --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, reference, head, config_cookie, config_url);
+		fprintf(Download, "%s -c -x%d -s%d --follow-torrent=false --file-allocation=falloc -k%s -j %d %s %s %s %s --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, reference, head, config_cookie, config_url);
 		fclose(Download);
 	}
 	else if (downloadmode == 3) {
@@ -787,7 +789,7 @@ int downloadengine() {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
 			fprintf(ytb_Download, "@echo off\n");
 			fprintf(ytb_Download, "%s\n", config_proxy);
-			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s --merge-output-format %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, Output_Format,config_url);
+			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s --merge-output-format %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M --file-allocation=falloc\"\n", Downloader_Use, play_list, config_dir, Output_Format,config_url);
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
@@ -819,7 +821,7 @@ int downloadengine() {
 	else if (downloadmode == 4) {
 		Download = fopen("temp\\Download.bat", "w");
 		fprintf(Download, "@echo off\n");
-		fprintf(Download, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --max-tries=0 --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ConnectionNum, split, Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		fprintf(Download, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --max-tries=0 --content-disposition-default-utf8=true --file-allocation=falloc %s\n", Downloader_Use, ConnectionNum, ConnectionNum, split, Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 		fclose(Download);
 	}
 	else if (downloadmode == 5) {
