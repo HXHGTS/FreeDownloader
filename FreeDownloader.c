@@ -263,7 +263,7 @@ int ListenRPC() {
 	proxyswitcher();
 	conf = fopen("temp\\rpc.bat", "w");
 	fprintf(conf, "@echo off\n");
-	fprintf(conf, "start /min aria2c --conf-path=config\\rpc.conf\n");
+	fprintf(conf, "start /min bin\\aria2c --conf-path=config\\rpc.conf\n");
 	fclose(conf);
 	system("cls");
 	printf("------------------------------------------------------------------\n");
