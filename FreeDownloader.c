@@ -85,7 +85,7 @@ int CreateConfig() {
 	BroswerMark();
 	conf = fopen("config\\bt.conf", "a");
 	fprintf(conf, "\ncontinue=true\n");
-	fprintf(conf, "file-allocation=falloc\n");
+	fprintf(conf, "\n");
 	fprintf(conf, "max-concurrent-downloads=1\n");
 	fprintf(conf, "max-connection-per-server=16\n");
 	fprintf(conf, "dht-entry-point=router.bittorrent.com:6881\n");
@@ -775,13 +775,13 @@ int downloadengine() {
 	if (downloadmode == 1) {
 		Download= fopen("temp\\Download.bat", "w");
 		fprintf(Download, "@echo off\n");
-		fprintf(Download, "%s -c -x%d -s%d -k%s --follow-torrent=false --file-allocation=falloc --content-disposition-default-utf8=true -j %d %s %s %s %s\n", Downloader_Use, ConnectionNum,ProcessNum, split, Task, config_dir, config_proxy, head, config_url);
+		fprintf(Download, "%s -c -x%d -s%d -k%s --follow-torrent=false --content-disposition-default-utf8=true -j %d %s %s %s %s\n", Downloader_Use, ConnectionNum,ProcessNum, split, Task, config_dir, config_proxy, head, config_url);
 		fclose(Download);
 	}
 	else if (downloadmode == 2) {
 		Download = fopen("temp\\Download.bat", "w");
 		fprintf(Download, "@echo off\n");
-		fprintf(Download, "%s -c -x%d -s%d --follow-torrent=false --file-allocation=falloc -k%s -j %d %s %s %s %s --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, reference, head, config_cookie, config_url);
+		fprintf(Download, "%s -c -x%d -s%d --follow-torrent=false -k%s -j %d %s %s %s %s --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, reference, head, config_cookie, config_url);
 		fclose(Download);
 	}
 	else if (downloadmode == 3) {
@@ -789,7 +789,7 @@ int downloadengine() {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
 			fprintf(ytb_Download, "@echo off\n");
 			fprintf(ytb_Download, "%s\n", config_proxy);
-			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s --merge-output-format %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M --file-allocation=falloc\"\n", Downloader_Use, play_list, config_dir, Output_Format,config_url);
+			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s --merge-output-format %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, Output_Format,config_url);
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
@@ -821,7 +821,7 @@ int downloadengine() {
 	else if (downloadmode == 4) {
 		Download = fopen("temp\\Download.bat", "w");
 		fprintf(Download, "@echo off\n");
-		fprintf(Download, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --max-tries=0 --content-disposition-default-utf8=true --file-allocation=falloc %s\n", Downloader_Use, ConnectionNum, ConnectionNum, split, Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		fprintf(Download, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --max-tries=0 --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ConnectionNum, split, Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
 		fclose(Download);
 	}
 	else if (downloadmode == 5) {
