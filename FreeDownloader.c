@@ -89,7 +89,7 @@ int CreateConfig() {
 	fprintf(conf, "max-concurrent-downloads=1\n");
 	fprintf(conf, "max-connection-per-server=16\n");
 	fprintf(conf, "dht-entry-point=router.bittorrent.com:6881\n");
-	fprintf(conf, "dht-entry-point6=router.bitcomet.net:6881\n");
+	fprintf(conf, "dht-entry-point6=router.bittorrent.com:6881\n");
 	fprintf(conf, "dht-file-path=config\\dht.dat\n");
 	fprintf(conf, "dht-file-path6=config\\dht6.dat\n");
 	fprintf(conf, "enable-dht6=true\n");
