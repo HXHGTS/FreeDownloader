@@ -7,9 +7,9 @@ int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(int mode),dir(),do
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
 int downloadmode, magnet_mode,ConnectionNum, ProcessNum, config_media, Task, IsCheckSum;
 int mark, redownload_result, shutdown, filecheck, DownloadList, OpenDir;
-int cookie_import, cookie_mode,appid,Output_Choose;
+int cookie_import, cookie_mode,appid;
 int scan_return;//接收返回值,暂时没用
-char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[20],Output_Format[5];
+char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[20];
 char reference[216], head[300], head_show[35];
 char location[200],split[7],torrent_addr[250],play_list[40], color[4];
 char proxy[50];
@@ -188,7 +188,7 @@ MainMenu:system(smallcmd);
 	}
 	else if (downloadmode == 7) {
 		printf("正在打开帮助界面. . .\n");
-		system("explorer.exe \"https://hxhddns.asia/FreeDownloader/\"");
+		system("explorer.exe \"https://hxhgts.github.io/FreeDownloader/\"");
 		system("cls");
 		goto MainMenu;
 	}
@@ -512,7 +512,7 @@ int BroswerMark() {
 			sprintf(head_show, "Chrome");
 		}
 		else if (mark == 3) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 9; DUK-AL20) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 11; LE2110) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.115 Mobile Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome(Mobile)");
 		}
 		else {
@@ -707,14 +707,6 @@ int MediaDownloader() {
 			sprintf(play_list, "--playlist-items %s", chapter);
 		}
 		system("cls");
-		printf("请选择导出格式:\n\n1.mkv\n\n2.mp4\n\n请输入:");
-		scan_return = scanf("%d", &Output_Choose);
-		if (Output_Choose == 1) {
-			sprintf(Output_Format, "mkv");
-		}
-		else {
-			sprintf(Output_Format, "mp4");
-		}
 	}
 	else {
 		return 2;
@@ -789,7 +781,7 @@ int downloadengine() {
 			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
 			fprintf(ytb_Download, "@echo off\n");
 			fprintf(ytb_Download, "%s\n", config_proxy);
-			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s --merge-output-format %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, Output_Format,config_url);
+			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			fclose(ytb_Download);
 		}
 		else if (config_media == 2) {
@@ -844,9 +836,6 @@ int downloadengine() {
 	printf("下载线程数:%d\n", ConnectionNum);
 	printf("下载引擎:%s\n", Downloader_Use);
 	printf("浏览器标识:%s\n", head_show);
-	if (downloadmode == 3 && config_media == 1) {
-		printf("导出格式:*.%s\n", Output_Format);
-	}
 	printf("------------------------------------------------------------------\n");
 	printf("下载过程中出现的红色ERROR报错可忽略,对下载没有影响！\n");
 	printf("下载正在执行,希望中断下载建议按Ctrl+C以正常退出. . .\n");
