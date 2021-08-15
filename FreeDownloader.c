@@ -306,7 +306,7 @@ int url() {
 			}
 			system("cls");
 			printf("请在弹出页输入下载地址,多个地址可以用回车隔开. . .\n\n");
-			system("notepad.exe temp\\QQVideo.download.1");
+			system("notepad.exe temp\\QQVideo.download");
 			sprintf(config_url, "%s", "-F temp\\QQVideo.download");
 		}
 		else if (config_media == 4) {
