@@ -3,8 +3,8 @@
 #include<io.h>
 
 
-int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(int mode),dir(),downloadengine(),WindowSkin();
-int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
+int AdvanceDownloader(),AutoShutdown(),ChangeUA(),CheckSum(int mode),Dir(),DLEngine(),WindowSkin();
+int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),ProxySetting(),threader(),url();
 int downloadmode, magnet_mode,ConnectionNum, ProcessNum, config_media, Task, IsCheckSum;
 int mark, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode,appid;
@@ -58,7 +58,7 @@ int CreateConfig() {
 		system("del /F /S /Q config\\best_aria2.txt");
 	}
 	system("cls");
-	BroswerMark();
+	ChangeUA();
 	conf = fopen("config\\bt.conf", "a");
 	fprintf(conf, "\ncontinue=true\n");
 	fprintf(conf, "\n");
@@ -127,7 +127,7 @@ MainMenu:WindowSkin();
 	printf("------------------------------------------------------------------\n");
 	printf("--------------------------FreeDownloader--------------------------\n");
 	printf("------------------------------------------------------------------\n");
-	printf("请选择下载功能:\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.文件完整性测试\n7.Github上的软件帮助\n8.启动RPC被动监听\n9.打开下载文件夹\n0.退出\n");
+	printf("请选择下载功能:\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.继续上次下载\n7.文件完整性测试\n8.启动RPC被动监听\n9.打开下载文件夹\n0.退出\n");
 	printf("------------------------------------------------------------------\n");
 	printf("请输入:");
 	scan_return=scanf("%d", &downloadmode);
@@ -140,7 +140,6 @@ MainMenu:WindowSkin();
 	}
 	else if (downloadmode == 3) {
 		if (MediaDownloader() == 2) {
-			system("cls");
 			goto MainMenu;
 		}
 	}
@@ -149,19 +148,17 @@ MainMenu:WindowSkin();
 	}
 	else if (downloadmode == 5) {
 		if (MagnetDownloader() == 2) {
-			system("cls");
 			goto MainMenu;
 		}
 	}
 	else if (downloadmode == 6) {
-		IsCheckSum = 1;
-		CheckSum(IsCheckSum);
-		system("cls");
-		goto MainMenu;
+		if (fopen("temp\\Download.bat","r") == NULL) {
+			goto MainMenu;
+		}
 	}
 	else if (downloadmode == 7) {
-		printf("正在打开帮助界面. . .\n");
-		system("explorer.exe \"https://hxhgts.github.io/FreeDownloader/\"");
+		IsCheckSum = 1;
+		CheckSum(IsCheckSum);
 		system("cls");
 		goto MainMenu;
 	}
@@ -178,7 +175,7 @@ MainMenu:WindowSkin();
 	else {
 		exit(0);
 	}
-Downloading:downloadengine();
+Downloading:DLEngine();
 	system("cls");
 	printf("------------------------------------------------------------------\n");
 	printf("-----------------------------下载完成!----------------------------\n");
@@ -191,10 +188,10 @@ Downloading:downloadengine();
 
 int NormalDownloader() {
 	url();
-	dir();
+	Dir();
 	threader();
-	proxyswitcher();
-	BroswerMark();
+	ProxySetting();
+	ChangeUA();
 	return 0;
 }
 
@@ -219,7 +216,7 @@ int ListenRPC() {
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n",rpctoken);
 	fclose(conf);
-	proxyswitcher();
+	ProxySetting();
 	conf = fopen("temp\\rpc.bat", "w");
 	fprintf(conf, "@echo off\n");
 	fprintf(conf, "start /min aria2c --conf-path=config\\rpc.conf\n");
@@ -246,7 +243,7 @@ int MagnetDownloader() {
 	printf("请选择下载模式:\n\n1.*.torrent文件\n\n2.Magnet://链接\n\n0.返回\n\n请输入:");
 	scan_return=scanf("%d", &magnet_mode);
 	if (magnet_mode == 2) {
-		dir();
+		Dir();
 	}
 	else if (magnet_mode == 0) {
 		return 2;
@@ -402,7 +399,7 @@ int threader() {
 	return 0;
 }//线程数修改与引擎选择        
 
-int dir() {
+int Dir() {
 	if (downloadmode == 3) {
 		if (config_media == 1) {
 			sprintf(config_dir, "%s", "-o Downloads\\%%(title)s.%%(ext)s");
@@ -420,7 +417,7 @@ int dir() {
 	return 0;
 }
 
-int proxyswitcher() {
+int ProxySetting() {
 	if (system("type config\\proxy.ini | find \"proxy=0\"") == 0) {
 		sprintf(config_proxy, "%s", " ");
 	}
@@ -446,7 +443,7 @@ int proxyswitcher() {
 	return 0;// /config/proxy.ini中proxy=0或此文件不存在为无代理状态,否则使用代理(仅支持http/https代理)
 }
 
-int BroswerMark() {
+int ChangeUA() {
 	if (downloadmode == 1) {
 		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome");
@@ -512,7 +509,7 @@ int AdvanceDownloader() {
 	int cookie_import;
 	char reference_input[200];
 	FILE* cookie;
-	BroswerMark();
+	ChangeUA();
 	printf("\n请输入下载引用页地址:\n");
 	scan_return=scanf("%s", reference_input);
 	sprintf(reference, "--referer=\"%s\"", reference_input);
@@ -533,14 +530,14 @@ int AdvanceDownloader() {
 	}
 	sprintf(config_cookie, "--load-cookies=\"cookies\\Cookies.txt\"");
 	url();
-	dir();
-	proxyswitcher();
+	Dir();
+	ProxySetting();
 	threader();
 	return 0;
 }
 
 int Netdisk() {
-	BroswerMark();
+	ChangeUA();
 	sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home#/all?path=%2F&vmode=list\"");
 		printf("\n是否使用插件导入Cookie(1=插件手动导入 0=浏览器手动导入):");
 		scan_return=scanf("%d", &cookie_mode);
@@ -584,7 +581,7 @@ int Netdisk() {
 			sprintf(config_cookie, "--header=\"Cookie: BDUSS=%s\"", BDUSS);
 		}
 	url();
-	dir();
+	Dir();
 	threader();
 	return 0;
 }
@@ -639,7 +636,7 @@ int MediaDownloader() {
 	char chapter[10];
 	printf("下载音视频来源:\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n0.返回\n\n请输入:");
 	scan_return=scanf("%d", &config_media);
-	proxyswitcher();
+	ProxySetting();
 	if (config_media != 1 && config_media != 0) {//调用annie
 		printf("\n下载整个列表内所有音视频?\n\n1.是\n\n2.只下载当前视频\n\n请输入:");
 		scan_return = scanf("%d", &DownloadList);
@@ -714,61 +711,68 @@ int MediaDownloader() {
 	printf("请在弹出窗口中导入Cookies,同一账号可以反复使用\n\n");
 	url();
 	threader();
-	dir();
-	proxyswitcher();
-	BroswerMark();
+	Dir();
+	ProxySetting();
+	ChangeUA();
 	return 0;
 }
 
-int downloadengine() {
+int DLEngine() {
 	FILE* Download;
-	Download = fopen("temp\\Download.bat", "w");
-	fprintf(Download, "@echo off\n");
-	fprintf(Download, "%s\n", config_proxy);
-	if (downloadmode == 1) {
-		fprintf(Download, "%s -c -x%d -s%d -k%s --follow-torrent=false --content-disposition-default-utf8=true -j %d %s %s %s %s\n", Downloader_Use, ConnectionNum,ProcessNum, split, Task, config_dir, config_proxy, head, config_url);
+	if (downloadmode >= 1 && downloadmode <= 5) {
+		Download = fopen("temp\\Download.bat", "w");
+		fprintf(Download, "@echo off\n");
+		fprintf(Download, "%s\n", config_proxy);
+		if (downloadmode == 1) {
+			fprintf(Download, "%s -c -x%d -s%d -k%s --follow-torrent=false --content-disposition-default-utf8=true -j %d %s %s %s %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, config_proxy, head, config_url);
+			fclose(Download);
+		}
+		else if (downloadmode == 2) {
+			fprintf(Download, "%s -c -x%d -s%d --follow-torrent=false -k%s -j %d %s %s %s %s --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, reference, head, config_cookie, config_url);
+			fclose(Download);
+		}
+		else if (downloadmode == 3) {
+			if (config_media == 1) {
+				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
+			}
+			else if (config_media == 2) {
+				fprintf(Download, "%s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
+			}
+			else if (config_media == 3) {
+				fprintf(Download, "%s -c cookies\\QQVideo_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
+			}
+			else if (config_media == 4) {
+				fprintf(Download, "%s -c cookies\\iqiyi_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
+			}
+			else {
+				fprintf(Download, "%s -c cookies\\Youku_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
+			}
+		}
+		else if (downloadmode == 4) {
+			fprintf(Download, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --max-tries=0 --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ConnectionNum, split, Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
+		}
+		else if (downloadmode == 5) {
+			if (magnet_mode == 2) {
+				fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);
+			}
+			else {
+				fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);
+			}
+		}
+		fprintf(Download, "exit\n");
 		fclose(Download);
 	}
-	else if (downloadmode == 2) {
-		fprintf(Download, "%s -c -x%d -s%d --follow-torrent=false -k%s -j %d %s %s %s %s --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, reference, head, config_cookie, config_url);
-		fclose(Download);
-	}
-	else if (downloadmode == 3) {
-		if (config_media == 1) {
-			fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
-		}
-		else if (config_media == 2) {
-			fprintf(Download, "%s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
-		}
-		else if (config_media == 3) {
-			fprintf(Download, "%s -c cookies\\QQVideo_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
-		}
-		else if (config_media == 4) {
-			fprintf(Download, "%s -c cookies\\iqiyi_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
-		}
-		else {
-			fprintf(Download, "%s -c cookies\\Youku_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
-		}
-	}
-	else if (downloadmode == 4) {
-		fprintf(Download, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --max-tries=0 --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ConnectionNum, split, Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
-	}
-	else if (downloadmode == 5) {
-		if (magnet_mode == 2) {
-			fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);
-		}
-		else {
-			fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);
-		}
-	}
-	fprintf(Download, "exit\n");
-	fclose(Download);
 	system("cls");
 	printf("------------------------------------------------------------------\n");
-	printf("代理地址:%s(为空代表没有设置代理)\n", config_proxy);
-	printf("下载线程数:%d\n", ConnectionNum);
-	printf("下载引擎:%s\n", Downloader_Use);
-	printf("浏览器标识:%s\n", head_show);
+	if (downloadmode >= 1 && downloadmode <= 5) {
+		printf("代理地址:%s(为空代表没有设置代理)\n", config_proxy);
+		printf("下载线程数:%d\n", ConnectionNum);
+		printf("下载引擎:%s\n", Downloader_Use);
+		printf("浏览器标识:%s\n", head_show);
+	}
+	else {
+		printf("下载配置:依照上一次的设置\n");
+	}
 	printf("------------------------------------------------------------------\n");
 	printf("下载过程中出现的红色ERROR报错可忽略,对下载没有影响！\n");
 	printf("下载正在执行,希望中断下载建议按Ctrl+C以正常退出. . .\n");
