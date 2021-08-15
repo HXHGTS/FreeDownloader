@@ -6,12 +6,12 @@
 int AdvanceDownloader(),AutoShutdown(),BroswerMark(),CheckSum(int mode),dir(),downloadengine(),WindowSkin();
 int MagnetDownloader(),MediaDownloader(),Netdisk(),NormalDownloader(),proxyswitcher(),threader(),url();
 int downloadmode, magnet_mode,ConnectionNum, ProcessNum, config_media, Task, IsCheckSum;
-int mark, redownload_result, shutdown, filecheck, DownloadList, OpenDir;
+int mark, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode,appid;
 int scan_return;//接收返回值,暂时没用
-char config_proxy[65], config_url[260], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[20];
+char config_proxy[65], config_url[30], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[12];
 char reference[216], head[300], head_show[35];
-char location[200],split[7],torrent_addr[250],play_list[40], color[4];
+char location[200],split[7],torrent_addr[250],play_list[30], color[4];
 char proxy[50];
 char rpctoken[40];//定义rpc密钥
 char BDUSS[193];
@@ -30,31 +30,7 @@ int TokenGenerate() {
 }
 
 int WindowSkin() {
-	if ((_access("config\\skin.ini", 0))==-1) {
-		printf("重置窗体与字体颜色请直接删除config目录下skin.ini文件！\n");
-		printf("请按照\"窗口颜色+字体颜色\"的格式设置皮肤,对应关系如下:\n");
-		printf("------------------------------------------------------------------\n");
-		printf("0=黑色   8=灰色\n");
-		printf("1=蓝色   9=淡蓝色\n");
-		printf("2=绿色   A=淡绿色\n");
-		printf("3=浅绿色 B=淡浅绿色\n");
-		printf("4=红色   C=淡红色\n");
-		printf("5=紫色   D=淡紫色\n");
-		printf("6=黄色   E=淡黄色\n");
-		printf("7=白色   F=亮白色\n");
-		printf("------------------------------------------------------------------\n");
-		printf("请输入以配置界面与字体颜色,如0A:");
-		scan_return=scanf("%s", color);
-		skin = fopen("config\\skin.ini", "w");
-		fprintf(skin,"%s",color);
-		fclose(skin);
-	}
-	else {
-		skin = fopen("config\\skin.ini", "r");
-		fread(color, 1, 2, skin);
-		fclose(skin);
-	}
-	system("cls");
+	system("color 0B");
 	return 0;
 }
 
@@ -128,18 +104,15 @@ int CreateFolder() {
 }
 
 int preload() {
-	redownload_result = 0;
 	filecheck = 0;
 	shutdown = 0;
 	system("title FreeDownloader");
 	CreateFolder();
 	TokenGenerate();
 	WindowSkin();
-	sprintf(smallcmd, "color %s", color);
-	system(smallcmd);
 	printf("需要系统UAC权限读取代理服务器数据,若需要使用代理服务器请在打开本软件前打开代理. . .\n\n");
 	system("Timeout /T 2");
-	if (system("start /min bin\\GetProxyInfo.exe") != 0) {
+	if (system("start /min GetProxyInfo.exe") != 0) {
 		printf("UAC授权失败,无法检测计算机代理设置！\n\n");
 		conf = fopen("config\\proxy.ini", "w");
 		fprintf(conf, "proxy=0");
@@ -149,7 +122,7 @@ int preload() {
 }
 int main() {
 	preload();
-MainMenu:system(smallcmd);
+MainMenu:WindowSkin();
 	system("cls");
 	printf("------------------------------------------------------------------\n");
 	printf("--------------------------FreeDownloader--------------------------\n");
@@ -205,28 +178,14 @@ MainMenu:system(smallcmd);
 	else {
 		exit(0);
 	}
-Downloading:redownload_result = downloadengine();
+Downloading:downloadengine();
 	system("cls");
-	if (redownload_result == 0) {
-		printf("------------------------------------------------------------------\n");
-		printf("-----------------------------下载成功!----------------------------\n");
-		printf("------------------------------------------------------------------\n");
-		AutoShutdown();
-		printf("\n是否打开下载文件夹:\n\n1.是\n\n0.否\n\n请输入:");
-		scan_return=scanf("%d", &OpenDir);
-		if (OpenDir != 0) {
-			system("explorer Downloads");
-		}
-		system("cls");
-		goto MainMenu;
-	}
-	else {
-		printf("------------------------------------------------------------------\n");
-		printf("-----------------------------下载失败!----------------------------\n");
-		printf("------------------------------------------------------------------\n");
-		system("cls");
-		goto Downloading;
-	}
+	printf("------------------------------------------------------------------\n");
+	printf("-----------------------------下载完成!----------------------------\n");
+	printf("------------------------------------------------------------------\n");
+	AutoShutdown();
+	system("explorer Downloads");
+	goto MainMenu;
 	return 0;
 }//下载工具主程序
 
@@ -263,7 +222,7 @@ int ListenRPC() {
 	proxyswitcher();
 	conf = fopen("temp\\rpc.bat", "w");
 	fprintf(conf, "@echo off\n");
-	fprintf(conf, "start /min bin\\aria2c --conf-path=config\\rpc.conf\n");
+	fprintf(conf, "start /min aria2c --conf-path=config\\rpc.conf\n");
 	fclose(conf);
 	system("cls");
 	printf("------------------------------------------------------------------\n");
@@ -414,29 +373,29 @@ int threader() {
 		Task = 1;//同时下载任务数
 		ConnectionNum = 16;
 		ProcessNum = 4;
-		sprintf(Downloader_Use, "%s", "bin\\aria2c");
+		sprintf(Downloader_Use, "%s", "aria2c");
 		sprintf(split, "1M");
 	}
 	else if (downloadmode == 2) {
 		ConnectionNum = 16;
 		ProcessNum = 16;
 		sprintf(split, "1M");
-		sprintf(Downloader_Use, "%s", "bin\\aria2c");
+		sprintf(Downloader_Use, "%s", "aria2c");
 		Task = 1;//同时下载任务数
 	}
 	else if (downloadmode == 3) {
 		Task = 1;//同时下载任务数
 		if (config_media == 1) {
-			sprintf(Downloader_Use, "%s", "bin\\youtube-dl");
+			sprintf(Downloader_Use, "%s", "youtube-dl");
 		}
 		else {
-			sprintf(Downloader_Use, "%s", "bin\\annie");
+			sprintf(Downloader_Use, "%s", "annie");
 		}
 		ConnectionNum = 1;//4k视频状态下aria2调用出现bug
 	}
 	else if (downloadmode == 5) {
 		Task = 1;//同时下载任务数
-		sprintf(Downloader_Use, "%s", "bin\\aria2c");
+		sprintf(Downloader_Use, "%s", "aria2c");
 		ConnectionNum = 16;
 		if (magnet_mode == 2)sprintf(split, "1M");
 	}
@@ -463,7 +422,7 @@ int dir() {
 
 int proxyswitcher() {
 	if (system("type config\\proxy.ini | find \"proxy=0\"") == 0) {
-		sprintf(config_proxy, "%s", "");
+		sprintf(config_proxy, "%s", " ");
 	}
 	else {
 			proxy_ini = fopen("config\\proxy.ini", "r");
@@ -476,10 +435,10 @@ int proxyswitcher() {
 				sprintf(config_proxy, "set http_proxy=%s & set https_proxy=%s", proxy,proxy);
 			}
 			else if (downloadmode == 5) {
-				sprintf(config_proxy, "");
+				sprintf(config_proxy, " ");
 			}
 			else if (downloadmode == 8) {
-				sprintf(config_proxy, "");
+				sprintf(config_proxy, " ");
 			}
 			
 	}
@@ -677,18 +636,18 @@ int AutoShutdown() {
 
 int MediaDownloader() {
 	FILE* Bilibili_Cookies,*ytb_Cookies,* QQVideo_Cookies,*iqiyi_Cookies,*Youku_Cookies;
-	char chapter[14];
+	char chapter[10];
 	printf("下载音视频来源:\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n0.返回\n\n请输入:");
 	scan_return=scanf("%d", &config_media);
 	proxyswitcher();
-	if (config_media != 1&&config_media!=0) {//调用annie
+	if (config_media != 1 && config_media != 0) {//调用annie
 		printf("\n下载整个列表内所有音视频?\n\n1.是\n\n2.只下载当前视频\n\n请输入:");
 		scan_return = scanf("%d", &DownloadList);
 		if (DownloadList == 1) {
 			sprintf(play_list, "-p");
 		}
 		else if (DownloadList == 2) {
-			sprintf(play_list, "");
+			sprintf(play_list, " ");
 		}
 	}
 	else if(config_media!=0){//调用youtube-dl
@@ -762,74 +721,48 @@ int MediaDownloader() {
 }
 
 int downloadengine() {
-	FILE*Download,* Bilibili_Download,*ytb_Download,*QQVideo_Download,*iqiyi_Download,*Youku_Download;
-	int download_result;
+	FILE* Download;
+	Download = fopen("temp\\Download.bat", "w");
+	fprintf(Download, "@echo off\n");
+	fprintf(Download, "%s\n", config_proxy);
 	if (downloadmode == 1) {
-		Download= fopen("temp\\Download.bat", "w");
-		fprintf(Download, "@echo off\n");
 		fprintf(Download, "%s -c -x%d -s%d -k%s --follow-torrent=false --content-disposition-default-utf8=true -j %d %s %s %s %s\n", Downloader_Use, ConnectionNum,ProcessNum, split, Task, config_dir, config_proxy, head, config_url);
 		fclose(Download);
 	}
 	else if (downloadmode == 2) {
-		Download = fopen("temp\\Download.bat", "w");
-		fprintf(Download, "@echo off\n");
 		fprintf(Download, "%s -c -x%d -s%d --follow-torrent=false -k%s -j %d %s %s %s %s --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, reference, head, config_cookie, config_url);
 		fclose(Download);
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1) {
-			ytb_Download = fopen("temp\\ytb_Download.bat", "w");
-			fprintf(ytb_Download, "@echo off\n");
-			fprintf(ytb_Download, "%s\n", config_proxy);
-			fprintf(ytb_Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
-			fclose(ytb_Download);
+			fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
 		}
 		else if (config_media == 2) {
-			Bilibili_Download = fopen("temp\\Bilibili_Download.bat", "w");
-			fprintf(Bilibili_Download, "@echo off\n");
-			fprintf(Bilibili_Download, "%s\n", config_proxy);
-			fprintf(Bilibili_Download, "%s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
-			fclose(Bilibili_Download);
+			fprintf(Download, "%s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 		}
 		else if (config_media == 3) {
-			QQVideo_Download = fopen("temp\\QQVideo_Download.bat", "w");
-			fprintf(QQVideo_Download, "@echo off\n");
-			fprintf(QQVideo_Download, "%s -c cookies\\QQVideo_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
-			fclose(QQVideo_Download);
+			fprintf(Download, "%s -c cookies\\QQVideo_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 		}
 		else if (config_media == 4) {
-			iqiyi_Download = fopen("temp\\iqiyi_Download.bat", "w");
-			fprintf(iqiyi_Download, "@echo off\n");
-			fprintf(iqiyi_Download, "%s -c cookies\\iqiyi_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
-			fclose(iqiyi_Download);
+			fprintf(Download, "%s -c cookies\\iqiyi_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 		}
 		else {
-			Youku_Download = fopen("temp\\Youku_Download.bat", "w");
-			fprintf(Youku_Download, "@echo off\n");
-			fprintf(Youku_Download, "%s -c cookies\\Youku_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
-			fclose(Youku_Download);
+			fprintf(Download, "%s -c cookies\\Youku_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 		}
 	}
 	else if (downloadmode == 4) {
-		Download = fopen("temp\\Download.bat", "w");
-		fprintf(Download, "@echo off\n");
 		fprintf(Download, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --max-tries=0 --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ConnectionNum, split, Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
-		fclose(Download);
 	}
 	else if (downloadmode == 5) {
 		if (magnet_mode == 2) {
-			Download = fopen("temp\\Download.bat", "w");
-			fprintf(Download, "@echo off\n");
 			fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);
-			fclose(Download);
 		}
 		else {
-			Download = fopen("temp\\Download.bat", "w");
-			fprintf(Download, "@echo off\n");
 			fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);
-			fclose(Download);
 		}
 	}
+	fprintf(Download, "exit\n");
+	fclose(Download);
 	system("cls");
 	printf("------------------------------------------------------------------\n");
 	printf("代理地址:%s(为空代表没有设置代理)\n", config_proxy);
@@ -840,30 +773,6 @@ int downloadengine() {
 	printf("下载过程中出现的红色ERROR报错可忽略,对下载没有影响！\n");
 	printf("下载正在执行,希望中断下载建议按Ctrl+C以正常退出. . .\n");
 	printf("------------------------------------------------------------------\n");
-	if (downloadmode == 3) {
-		if (config_media == 1) {
-			download_result = system("temp\\ytb_Download.bat");
-		}
-		else if (config_media == 2) {
-			download_result = system("temp\\Bilibili_Download.bat");
-		}
-		else if (config_media == 3) {
-			download_result = system("temp\\QQVideo_Download.bat");
-		}
-		else if (config_media == 4) {
-			download_result = system("temp\\iqiyi_Download.bat");
-		}
-		else {
-			download_result = system("temp\\Youku_Download.bat");
-		}
-	}
-	else {
-		download_result = system("temp\\Download.bat");
-	}
-	if(download_result == 0) {
-		return 0;
-	}
-	else {
-		return 1;
-	}
+	system("temp\\Download.bat");
+	return 0;
 }
