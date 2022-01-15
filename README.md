@@ -8,7 +8,7 @@
 
 下载地址: [Windows64位(Github)](https://github.com/HXHGTS/FreeDownloader/releases/latest/download/FreeDownloader.X64.zip) [Windows64位(阿里云)](https://www.aliyundrive.com/s/mFmubskP5tv)
 
-2.在chrome浏览器[Chrome下载](https://chrome.google.com)中安装[EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN),[Aria2 for Chrome](https://chrome.google.com/webstore/detail/aria2-for-chrome/mpkodccbngfoacfalldjimigbofkhgjn),[网盘助手](https://chrome.google.com/webstore/detail/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/cfaglmggimoleoclaghmmboppofffdda) (注意:需要科学上网)
+2.在chrome浏览器[Chrome下载](https://chrome.google.com)中安装[EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN),[网盘助手](https://chrome.google.com/webstore/detail/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/cfaglmggimoleoclaghmmboppofffdda) (注意:需要科学上网)
 
 4.鼠标右击EditThisCookie插件(饼干🍪图标),单击"选项"-"选择Cookies的导出格式",将格式改为"Netscape HTTP Cookie File"
 
@@ -53,7 +53,7 @@
 
 ### 七、第三方软件
 
-本软件采用[aria2](https://aria2.github.io/)、[youtube-dl](https://github.com/ytdl-org/youtube-dl/)、[annie](https://github.com/iawia002/annie)、[ffmpeg](https://ffmpeg.org/)等开源工具作为下载或合成工具,在此向以上开源软件开发者致谢!
+本软件采用[aria2](https://aria2.github.io/)、[yt-dlp](https://github.com/yt-dlp/yt-dlp)、[annie](https://github.com/iawia002/annie)、[ffmpeg](https://ffmpeg.org/)等开源工具作为下载或合成工具,在此向以上开源软件开发者致谢!
 
 ### 八、其它事项
 
