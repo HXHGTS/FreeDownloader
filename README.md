@@ -53,10 +53,10 @@
 
 ### 七、第三方软件
 
-本软件采用[aria2](https://aria2.github.io/)、[yt-dlp](https://github.com/yt-dlp/yt-dlp)、[annie](https://github.com/iawia002/annie)、[ffmpeg](https://ffmpeg.org/)等开源工具作为下载或合成工具,在此向以上开源软件开发者致谢!
+本软件采用[aria2](https://aria2.github.io/)、[yt-dlp](https://github.com/yt-dlp/yt-dlp)、[lux](https://github.com/iawia002/lux)、[ffmpeg](https://ffmpeg.org/)等开源工具作为下载或合成工具,在此向以上开源软件开发者致谢!
 
 ### 八、其它事项
 
-由于更新软件工程量巨大,所以源代码的更新速度远远先于release文件,如需使用最新版本可以自己下载[软件源码](https://github.com/HXHGTS/FreeDownloader/archive/master.zip)文件并解压缩,使用vistual studio2019打开.sln文件编译!
+由于更新软件工程量巨大,所以源代码的更新速度远远先于release文件,如需使用最新版本可以自己下载[软件源码](https://github.com/HXHGTS/FreeDownloader/archive/master.zip)文件并解压缩,使用vistual studio2022打开.sln文件编译!
 
 
