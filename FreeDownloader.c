@@ -290,7 +290,6 @@ int url() {
 		else if (config_media == 2) {
 			if (fopen("temp\\Bilibili.download", "r") == NULL) {
 				url = fopen("temp\\Bilibili.download", "w");
-				fprintf(url, "---Input URL(Don't delete this line)---\n");
 				fclose(url);
 			}
 			system("cls");
@@ -301,7 +300,6 @@ int url() {
 		else if (config_media == 3) {
 			if (fopen("temp\\QQVideo.download", "r") == NULL) {
 				url = fopen("temp\\QQVideo.download", "w");
-				fprintf(url, "---Input URL(Don't delete this line)---\n");
 				fclose(url);
 			}
 			system("cls");
@@ -312,7 +310,6 @@ int url() {
 		else if (config_media == 4) {
 			if (fopen("temp\\iqiyi.download", "r") == NULL) {
 				url = fopen("temp\\iqiyi.download", "w");
-				fprintf(url, "---Input URL(Don't delete this line)---\n");
 				fclose(url);
 			}
 			system("cls");
@@ -323,7 +320,6 @@ int url() {
 		else {
 			if (fopen("temp\\Youku.download", "r") == NULL) {
 				url = fopen("temp\\Youku.download", "w");
-				fprintf(url, "---Input URL(Don't delete this line)---\n");
 				fclose(url);
 			}
 			system("cls");
