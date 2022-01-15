@@ -6,7 +6,7 @@
 
 1.下载压缩包并解压
 
-下载地址: [Windows64位(Github)](https://github.com/HXHGTS/FreeDownloader/releases/latest/download/FreeDownloader.X64.zip) [Windows64位(阿里云)](https://www.aliyundrive.com/s/mFmubskP5tv)
+下载地址: [Windows64位(Github)](https://github.com/HXHGTS/FreeDownloader/releases/latest/download/FreeDownloader.X64.zip)
 
 2.在chrome浏览器[Chrome下载](https://chrome.google.com)中安装[EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN),[网盘助手](https://chrome.google.com/webstore/detail/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/cfaglmggimoleoclaghmmboppofffdda) (注意:需要科学上网)
 
