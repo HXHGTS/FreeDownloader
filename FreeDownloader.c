@@ -9,13 +9,13 @@ int downloadmode, magnet_mode,ConnectionNum, ProcessNum, config_media, Task, IsC
 int mark, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode,appid;
 int scan_return;//接收返回值,暂时没用
-char config_proxy[65], config_url[30], config_dir[35], config_cookie[230], smallcmd[20], Downloader_Use[12];
-char reference[216], head[300], head_show[35];
+char config_proxy[65], config_url[30], config_dir[35], config_cookie[280], smallcmd[20], Downloader_Use[12];
+char reference[216], head[300], head_show[35];//定义请求头文件
 char location[200],split[7],torrent_addr[250],play_list[30], color[4];
-char proxy[50];
+char proxy[50];//定义代理设置
 char rpctoken[40];//定义rpc密钥
-char BDUSS[193];
-char cmd[300];
+char BDUSS[193],pcsett[45];//定义BDUSS与pcsett登录参数
+char cmd[300];//用于存储执行命令
 FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat,*dht;
 
@@ -558,11 +558,16 @@ int Netdisk() {
 			sprintf(config_cookie, "--load-cookies=\"cookies\\Netdisk_Cookies.txt\"");
 		}
 		else {
-			if (fopen("cookies\\BDUSS.txt", "r") == NULL) {
+			if (fopen("cookies\\BDUSS.txt", "r") == NULL || fopen("cookies\\pcsett.txt", "r") == NULL) {
 				p_5:printf("\n请输入BDUSS值:\n");
 				scan_return = scanf("%s", BDUSS);
+				printf("\n请输入pcsett值:\n");
+				scan_return = scanf("%s", pcsett);
 				cookie = fopen("cookies\\BDUSS.txt", "w");
 				fprintf(cookie, "%s", BDUSS);
+				fclose(cookie);
+				cookie = fopen("cookies\\pcsett.txt", "w");
+				fprintf(cookie, "%s", pcsett);
 				fclose(cookie);
 			}
 			else {
@@ -575,7 +580,10 @@ int Netdisk() {
 			cookie = fopen("cookies\\BDUSS.txt", "r");
 			scan_return = fscanf(cookie, "%s", BDUSS);
 			fclose(cookie);
-			sprintf(config_cookie, "--header=\"Cookie: BDUSS=%s\"", BDUSS);
+			cookie = fopen("cookies\\pcsett.txt", "r");
+			scan_return = fscanf(cookie, "%s", pcsett);
+			fclose(cookie);
+			sprintf(config_cookie, "--header=\"Cookie: BDUSS=%s;pcsett=%s\"", BDUSS,pcsett);
 		}
 	url();
 	Dir();
@@ -730,7 +738,7 @@ int DLEngine() {
 		}
 		else if (downloadmode == 3) {
 			if (config_media == 1) {
-				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --external-downloader aria2c --external-downloader-args \"-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --downloader aria2c --downloader-args \"aria2c:-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else if (config_media == 2) {
 				fprintf(Download, "%s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
