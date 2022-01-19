@@ -47,7 +47,8 @@ int CreateConfig() {
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	sprintf(cmd, "curl https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/best_aria2.txt -# > config\\best_aria2.txt");
+	sprintf(cmd, "curl https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best_aria2.txt -# > config\\best_aria2.txt");
+	//https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/best_aria2.txt(国内源替换)
 	if (system(cmd) != 0) {
 		printf("\n更新失败,正在本地建立BT配置文件. . .\n");
 		system("notepad config\\bt.conf");
@@ -61,7 +62,6 @@ int CreateConfig() {
 	ChangeUA();
 	conf = fopen("config\\bt.conf", "a");
 	fprintf(conf, "\ncontinue=true\n");
-	fprintf(conf, "\n");
 	fprintf(conf, "max-concurrent-downloads=1\n");
 	fprintf(conf, "max-connection-per-server=16\n");
 	fprintf(conf, "dht-entry-point=router.bittorrent.com:6881\n");
