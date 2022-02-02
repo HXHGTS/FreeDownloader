@@ -47,8 +47,8 @@ int CreateConfig() {
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	sprintf(cmd, "curl https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best_aria2.txt -# > config\\best_aria2.txt");
-	//https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/best_aria2.txt(国内源替换)
+	sprintf(cmd, "curl https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all_aria2.txt -# > config\\best_aria2.txt");
+	//https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/all_aria2.txt(国内源替换)
 	if (system(cmd) != 0) {
 		printf("\n更新失败,正在本地建立BT配置文件. . .\n");
 		system("notepad config\\bt.conf");
@@ -77,7 +77,7 @@ int CreateConfig() {
 	fprintf(conf, "max-tries=0\n");
 	fprintf(conf, "enable-peer-exchange=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
-	fprintf(conf, "disable-ipv6=false\n");
+	fprintf(conf, "disable-ipv6=true\n");
 	fprintf(conf, "%s\n",head);
 	fclose(conf);
 	system("cls");
@@ -211,7 +211,7 @@ int ListenRPC() {
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=true\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n",rpctoken);
@@ -441,7 +441,7 @@ int ProxySetting() {
 
 int ChangeUA() {
 	if (downloadmode == 1) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36");//Chrome浏览器
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 2) {
@@ -449,7 +449,7 @@ int ChangeUA() {
 		sprintf(head_show, "Netdisk");
 	}
 	else if (downloadmode == 3) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36");//Chrome浏览器
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 4) {
@@ -460,7 +460,7 @@ int ChangeUA() {
 			sprintf(head_show, "IE");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 		else if (mark == 3) {
@@ -469,7 +469,7 @@ int ChangeUA() {
 		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -477,25 +477,25 @@ int ChangeUA() {
 		printf("\n请选择BT下载工具标识:\n\n1.qBittorrent\n\n2.Transmission\n\n3.uTorrent\n\n4.BitComet\n\n请输入:");
 		scan_return = scanf("%d", &mark);
 		if (mark == 1) {
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.3.5.0", "qBittorrent/4.3.5.0", "-qB4350-");//qBittorrent
-			sprintf(head_show, "qBittorrent/4.3.5.0");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.4.0.0", "qBittorrent/4.4.0.0", "-qB4400-");//qBittorrent
+			sprintf(head_show, "qBittorrent/4.4.0.0");
 		}
 		else if (mark == 2) {
 			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/3.00", "Transmission/3.00", "-TR3000-");//Transmission
 			sprintf(head_show, "Transmission/3.00");
 		}
 		else if (mark == 3) {
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "uTorrent/3550(45988)", "uTorrent/3550(45988)", "-UT3550-");//uTorrent
-			sprintf(head_show, "uTorrent/3550(45988)");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "uTorrent/3550(46096)", "uTorrent/3550(46096)", "-UT3550-");//uTorrent
+			sprintf(head_show, "uTorrent/3550(46096)");
 		}
 		else if (mark == 4) {
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "BitComet/1.76.4.8", "BitComet/1.76.4.8", "-BC0176-");//BitComet
-			sprintf(head_show, "BitComet/1.76.4.8");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "BitComet/1.76.4.8", "BitComet/1.85.1.18", "-BC0185-");//BitComet
+			sprintf(head_show, "BitComet/1.85.1.18");
 		}
 		else {
 			mark = 1;
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.3.5.0", "qBittorrent/4.3.5.0", "-qB4350-");//qBittorrent
-			sprintf(head_show, "qBittorrent/4.3.5.0");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.4.0.0", "qBittorrent/4.4.0.0", "-qB4400-");//qBittorrent
+			sprintf(head_show, "qBittorrent/4.4.0.0");
 		}
 	}
 	return 0;
