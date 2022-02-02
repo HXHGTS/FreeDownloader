@@ -10,12 +10,15 @@ int mark, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode,appid;
 int scan_return;//接收返回值,暂时没用
 char config_proxy[65], config_url[30], config_dir[35], config_cookie[280], smallcmd[20], Downloader_Use[12];
+char config_bt_URL[142];//用于存储BT下载时proxy参数与对应traker地址
 char reference[216], head[300], head_show[35];//定义请求头文件
 char location[200],split[7],torrent_addr[250],play_list[30], color[4];
 char proxy[50];//定义代理设置
 char rpctoken[40];//定义rpc密钥
 char BDUSS[193],pcsett[45];//定义BDUSS与pcsett登录参数
 char cmd[300];//用于存储执行命令
+char tracker_URL_CN[70] = "https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/all_aria2.txt";//国内tracker list加速
+char tracker_URL_NotCN[83] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all_aria2.txt";//海外tracker list加速
 FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat,*dht;
 
@@ -47,8 +50,8 @@ int CreateConfig() {
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
-	sprintf(cmd, "curl https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all_aria2.txt -# > config\\best_aria2.txt");
-	//https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/all_aria2.txt(国内源替换)
+	ProxySetting();
+	sprintf(cmd, "curl %s -# > config\\best_aria2.txt",config_bt_URL);
 	if (system(cmd) != 0) {
 		printf("\n更新失败,正在本地建立BT配置文件. . .\n");
 		system("notepad config\\bt.conf");
@@ -379,10 +382,10 @@ int threader() {
 	else if (downloadmode == 3) {
 		Task = 1;//同时下载任务数
 		if (config_media == 1) {
-			sprintf(Downloader_Use, "%s", "youtube-dl");
+			sprintf(Downloader_Use, "%s", "yt-dlp");
 		}
 		else {
-			sprintf(Downloader_Use, "%s", "annie");
+			sprintf(Downloader_Use, "%s", "lux");
 		}
 		ConnectionNum = 1;//4k视频状态下aria2调用出现bug
 	}
@@ -415,7 +418,13 @@ int Dir() {
 
 int ProxySetting() {
 	if (system("type config\\proxy.ini | find \"proxy=0\"") == 0) {
-		sprintf(config_proxy, "%s", " ");
+		if (downloadmode == 5) {
+			sprintf(config_bt_URL, "%s", tracker_URL_CN);
+			sprintf(config_proxy, "");
+		}
+		else {
+			sprintf(config_proxy, "");
+		}
 	}
 	else {
 			proxy_ini = fopen("config\\proxy.ini", "r");
@@ -428,12 +437,12 @@ int ProxySetting() {
 				sprintf(config_proxy, "set http_proxy=%s & set https_proxy=%s", proxy,proxy);
 			}
 			else if (downloadmode == 5) {
-				sprintf(config_proxy, " ");
+				sprintf(config_bt_URL, "-x %s %s",proxy,tracker_URL_NotCN);
+				sprintf(config_proxy, "-x %s", proxy);
 			}
 			else if (downloadmode == 8) {
-				sprintf(config_proxy, " ");
+				sprintf(config_proxy, "");
 			}
-			
 	}
 	system("cls");
 	return 0;// /config/proxy.ini中proxy=0或此文件不存在为无代理状态,否则使用代理(仅支持http/https代理)
@@ -642,7 +651,7 @@ int MediaDownloader() {
 	printf("下载音视频来源:\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n0.返回\n\n请输入:");
 	scan_return=scanf("%d", &config_media);
 	ProxySetting();
-	if (config_media != 1 && config_media != 0) {//调用annie
+	if (config_media != 1 && config_media != 0) {//调用lux
 		printf("\n下载整个列表内所有音视频?\n\n1.是\n\n2.只下载当前视频\n\n请输入:");
 		scan_return = scanf("%d", &DownloadList);
 		if (DownloadList == 1) {
@@ -652,7 +661,7 @@ int MediaDownloader() {
 			sprintf(play_list, " ");
 		}
 	}
-	else if(config_media!=0){//调用youtube-dl
+	else if(config_media!=0){//调用yt-dlp
 		printf("\n下载整个列表内所有音视频?\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入:");
 		scan_return = scanf("%d", &DownloadList);
 		if (DownloadList == 1) {
