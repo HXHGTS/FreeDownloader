@@ -10,7 +10,7 @@ int mark, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode,appid;
 int scan_return;//接收返回值,暂时没用
 char config_proxy[65], config_url[30], config_dir[35], config_cookie[280], smallcmd[20], Downloader_Use[12];
-char config_bt_URL[142];//用于存储BT下载时proxy参数与对应traker地址
+char config_bt_URL[142];//用于存储BT下载时proxy参数与对应tracker地址
 char reference[216], head[300], head_show[35];//定义请求头文件
 char location[200],split[7],torrent_addr[250],play_list[30], color[4];
 char proxy[50];//定义代理设置
@@ -80,7 +80,7 @@ int CreateConfig() {
 	fprintf(conf, "max-tries=0\n");
 	fprintf(conf, "enable-peer-exchange=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
-	fprintf(conf, "disable-ipv6=true\n");
+	fprintf(conf, "disable-ipv6=false\n");//开启IPV6支持
 	fprintf(conf, "%s\n",head);
 	fclose(conf);
 	system("cls");
@@ -213,7 +213,7 @@ int ListenRPC() {
 	fprintf(conf, "enable-rpc=true\n");
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
-	fprintf(conf, "disable-ipv6=true\n");
+	fprintf(conf, "disable-ipv6=false\n");
 	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
@@ -736,7 +736,6 @@ int DLEngine() {
 	if (downloadmode >= 1 && downloadmode <= 5) {
 		Download = fopen("temp\\Download.bat", "w");
 		fprintf(Download, "@echo off\n");
-		fprintf(Download, "%s\n", config_proxy);
 		if (downloadmode == 1) {
 			fprintf(Download, "%s -c -x%d -s%d -k%s --follow-torrent=false --content-disposition-default-utf8=true -j %d %s %s %s %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, config_proxy, head, config_url);
 			fclose(Download);
@@ -746,6 +745,7 @@ int DLEngine() {
 			fclose(Download);
 		}
 		else if (downloadmode == 3) {
+			fprintf(Download, "%s\n", config_proxy);
 			if (config_media == 1) {
 				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --downloader aria2c --downloader-args \"aria2c:-x16 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			}
