@@ -9,7 +9,7 @@ int downloadmode, magnet_mode,ConnectionNum, ProcessNum, config_media, Task, IsC
 int mark, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode,appid;
 int scan_return;//接收返回值,暂时没用
-char config_proxy[65], config_url[30], config_dir[35], config_cookie[280], smallcmd[20], Downloader_Use[12];
+char config_proxy[65], config_url[30], config_dir[65], config_cookie[280], smallcmd[20], Downloader_Use[12];
 char config_bt_URL[142];//用于存储BT下载时proxy参数与对应tracker地址
 char reference[216], head[300], head_show[35];//定义请求头文件
 char location[200],split[7],torrent_addr[250],play_list[30], color[4];
@@ -401,7 +401,7 @@ int threader() {
 int Dir() {
 	if (downloadmode == 3) {
 		if (config_media == 1) {
-			sprintf(config_dir, "%s", "-o Downloads\\%%(title)s.%%(ext)s");
+			sprintf(config_dir, "%s", "-o Downloads\\%%(uploader)s-%%(title)s-%%(resolution)s.%%(ext)s");
 		}
 		else {
 			sprintf(config_dir, "%s", "-o Downloads");
@@ -753,7 +753,7 @@ int DLEngine() {
 		else if (downloadmode == 3) {
 			fprintf(Download, "%s\n", config_proxy);
 			if (config_media == 1) {
-				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt --write-sub --all-subs %s %s %s --downloader aria2c --downloader-args \"aria2c:-x2 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt --merge-output-format mkv --write-sub --all-subs %s %s %s --downloader aria2c --downloader-args \"aria2c:-x2 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else if (config_media == 2) {
 				fprintf(Download, "%s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
@@ -779,7 +779,7 @@ int DLEngine() {
 				fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);
 			}
 		}
-		fprintf(Download, "exit\n");
+		fprintf(Download, "exit 0\n");
 		fclose(Download);
 	}
 	system("cls");
