@@ -34,7 +34,7 @@
 
 ### 四、关于BT种子与磁力链下载
 
-1.本软件支持种子与磁力链下载功能,并在每次启用BT下载时自动更新tracker服务器列表帮助加速下载(基于[trackerslist.com](https://trackerslist.com/#/zh)公开tracker列表),若因网络问题更新失败需要自行导入
+1.本软件支持种子与磁力链下载功能,并在每次启用BT下载时自动更新tracker服务器列表帮助加速下载(基于[trackerslist.com](https://trackerslist.com/#/zh?id=aria2)公开tracker列表),若因网络问题更新失败需要自行导入
 
 2.如果需要加速BT下载,需要使用Tap/Tun模式接管全局流量,普通http(s)与socks5代理对BT下载加速无效!推荐使用:
 (1)Clash的Tap/Tun模式
