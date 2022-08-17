@@ -17,8 +17,8 @@ char proxy[50];//定义代理设置
 char rpctoken[40];//定义rpc密钥
 char BDUSS[193],pcsett[45];//定义BDUSS与pcsett登录参数
 char cmd[300];//用于存储执行命令
-char tracker_URL_CN[70] = "https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/all_aria2.txt";//国内tracker list加速
-char tracker_URL_NotCN[83] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all_aria2.txt";//海外tracker list加速
+char tracker_URL_CN[79] = "https://cdn.staticaly.com/gh/XIU2/TrackersListCollection/master/best_aria2.txt";//国内tracker list加速
+char tracker_URL_NotCN[84] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best_aria2.txt";//海外tracker list加速
 FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat,*dht;
 
