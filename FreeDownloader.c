@@ -459,19 +459,15 @@ int ChangeUA() {
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 2) {
-			printf("\n请选择浏览器标识:\n\n1.Bilibili Android App\n\n2.Bilibili PC Client\n\n3.Edge\n\n请输入:");
+			printf("\n请选择浏览器标识:\n\n1.Bilibili Android App\n\n2.Bilibili PC Client\n\n请输入:");
 			scan_return = scanf("%d", &mark);
 			if (mark == 1) {
 				sprintf(head, "--header=\"User-Agent:%s\"", "tv.danmaku.bili/6860300 (Linux; U; Android 12; zh_CN; LE2110; Build/RKQ1.211119.001; Cronet/88.0.4324.188)");//Bilibili Android App
 				sprintf(head_show, "Bilibili Android App");
 			}
-			else if (mark == 2) {
-				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) bilibili_pc/1.4.2 Chrome/98.0.4758.141 Electron/17.4.11 Safari/537.36");//Bilibili PC Client
-				sprintf(head_show, "Bilibili PC Client");
-			}
 			else {
-				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.81 Safari/537.36 Edg/104.0.1293.54");//Edge浏览器
-				sprintf(head_show, "Edge");
+				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) bilibili_pc/1.5.0 Chrome/98.0.4758.141 Electron/17.4.11 Safari/537.36");//Bilibili PC Client
+				sprintf(head_show, "Bilibili PC Client");
 			}
 		}
 		else {
