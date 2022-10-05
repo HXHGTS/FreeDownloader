@@ -16,6 +16,7 @@ char location[200],split[7],torrent_addr[250],play_list[30], color[4];
 char proxy[50];//定义代理设置
 char rpctoken[40];//定义rpc密钥
 char BDUSS[193],pcsett[45];//定义BDUSS与pcsett登录参数
+int youku_ccode = 0502;//定义优酷ccode参数
 char cmd[300];//用于存储执行命令
 char tracker_URL_CN[79] = "https://cdn.staticaly.com/gh/XIU2/TrackersListCollection/master/best_aria2.txt";//国内tracker list加速
 char tracker_URL_NotCN[84] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best_aria2.txt";//海外tracker list加速
@@ -773,7 +774,7 @@ int DLEngine() {
 				fprintf(Download, "%s -c cookies\\iqiyi_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else {
-				fprintf(Download, "%s -c cookies\\Youku_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
+				fprintf(Download, "%s -c cookies\\Youku_Cookies.txt %s %s -ccode %d %s\n", Downloader_Use, play_list, config_dir, youku_ccode,config_url);
 			}
 		}
 		else if (downloadmode == 4) {
