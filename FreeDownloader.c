@@ -16,7 +16,6 @@ char location[200],split[7],torrent_addr[250],play_list[30], color[4];
 char proxy[50];//定义代理设置
 char rpctoken[40];//定义rpc密钥
 char BDUSS[193],pcsett[45];//定义BDUSS与pcsett登录参数
-int youku_ccode = 0502;//定义优酷ccode参数
 char cmd[300];//用于存储执行命令
 char tracker_URL_CN[79] = "https://cdn.staticaly.com/gh/XIU2/TrackersListCollection/master/best_aria2.txt";//国内tracker list加速
 char tracker_URL_NotCN[84] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best_aria2.txt";//海外tracker list加速
@@ -215,7 +214,7 @@ int ListenRPC() {
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=false\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n",rpctoken);
@@ -451,7 +450,7 @@ int ProxySetting() {
 
 int ChangeUA() {
 	if (downloadmode == 1) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36 Edg/106.0.1370.34");//Edge浏览器
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.24");//Edge浏览器
 		sprintf(head_show, "Edge");
 	}
 	else if (downloadmode == 2) {
@@ -460,23 +459,19 @@ int ChangeUA() {
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 2) {
-			printf("\n请选择浏览器标识:\n\n1.Bilibili Android App\n\n2.Bilibili PC Client\n\n3.Edge\n\n请输入:");
+			printf("\n请选择浏览器标识:\n\n1.Bilibili Android App\n\n2.Bilibili PC Client\n\n请输入:");
 			scan_return = scanf("%d", &mark);
 			if (mark == 1) {
-				sprintf(head, "--header=\"User-Agent:%s\"", "tv.danmaku.bili/7000400 (Linux; U; Android 12; zh_CN; LE2110; Build/RKQ1.211119.001; Cronet/88.0.4324.188))");//Bilibili Android App
+				sprintf(head, "--header=\"User-Agent:%s\"", "tv.danmaku.bili/7030300 (Linux; U; Android 13; zh_CN; LE2110; Build/TP1A.220624.014; Cronet/88.0.4324.188)");//Bilibili Android App
 				sprintf(head_show, "Bilibili Android App");
 			}
-			else if (mark == 2) {
-				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) bilibili_pc/1.6.1 Chrome/98.0.4758.141 Electron/17.4.11 Safari/537.36");//Bilibili PC Client
-				sprintf(head_show, "Bilibili PC Client");
-			}
 			else {
-				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36 Edg/106.0.1370.34");//Edge浏览器
-				sprintf(head_show, "Edge");
+				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) bilibili_pc/1.5.0 Chrome/98.0.4758.141 Electron/17.4.11 Safari/537.36");//Bilibili PC Client
+				sprintf(head_show, "Bilibili PC Client");
 			}
 		}
 		else {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36 Edg/106.0.1370.34");//Edge浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.24");//Edge浏览器
 			sprintf(head_show, "Edge");
 		}
 	}
@@ -488,20 +483,20 @@ int ChangeUA() {
 			sprintf(head_show, "IE");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 		else if (mark == 3) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36 Edg/106.0.1370.34");//Edge浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.24");//Edge浏览器
 			sprintf(head_show, "Edge");
 		}
 		else if (mark == 4) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 12; LE2110) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Mobile Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 13; LE2110) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Mobile Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome(Mobile)");
 		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -774,7 +769,7 @@ int DLEngine() {
 				fprintf(Download, "%s -c cookies\\iqiyi_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else {
-				fprintf(Download, "%s -c cookies\\Youku_Cookies.txt %s %s -ccode %d %s\n", Downloader_Use, play_list, config_dir, youku_ccode,config_url);
+				fprintf(Download, "%s -c cookies\\Youku_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 		}
 		else if (downloadmode == 4) {
