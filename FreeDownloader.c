@@ -459,7 +459,7 @@ int ChangeUA() {
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 2) {
-			printf("\n请选择浏览器标识:\n\n1.Bilibili Android App\n\n2.Bilibili PC Client\n\n3.Chrome浏览器\n\n请输入:");
+			printf("\n请选择浏览器标识:\n\n1.Bilibili Android App\n\n2.Bilibili PC Client\n\n3.Chrome\n\n请输入:");
 			scan_return = scanf("%d", &mark);
 			if (mark == 1) {
 				sprintf(head, "--header=\"User-Agent:%s\"", "tv.danmaku.bili/7030300 (Linux; U; Android 13; zh_CN; LE2110; Build/TP1A.220624.014; Cronet/88.0.4324.188)");//Bilibili Android App
