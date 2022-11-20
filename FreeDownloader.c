@@ -373,8 +373,8 @@ int threader() {
 		sprintf(split, "1M");
 	}
 	else if (downloadmode == 2) {
-		ConnectionNum = 16;
-		ProcessNum = 16;
+		ConnectionNum = 4;
+		ProcessNum = 4;
 		sprintf(split, "1M");
 		sprintf(Downloader_Use, "%s", "aria2c");
 		Task = 1;//同时下载任务数
@@ -454,7 +454,7 @@ int ChangeUA() {
 		sprintf(head_show, "Edge");
 	}
 	else if (downloadmode == 2) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "LogStatistic");//百度网盘客户端
+		sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;PC");//百度网盘客户端
 		sprintf(head_show, "Netdisk");
 	}
 	else if (downloadmode == 3) {
