@@ -454,7 +454,7 @@ int ChangeUA() {
 		sprintf(head_show, "Edge");
 	}
 	else if (downloadmode == 2) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "netdisk;PC");//百度网盘客户端
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729);netdisk;7.22.0.8;PC;PC-Windows;10.0.22621;WindowsBaiduYunGuanJia");//百度网盘客户端
 		sprintf(head_show, "Netdisk");
 	}
 	else if (downloadmode == 3) {
@@ -788,8 +788,14 @@ int DLEngine() {
 	}
 	system("cls");
 	printf("------------------------------------------------------------------\n");
-	if (downloadmode >= 1 && downloadmode <= 5) {
+	if (downloadmode >= 1 && downloadmode < 5) {
 		printf("代理地址:%s(为空代表没有设置代理)\n", config_proxy);
+		printf("下载线程数:%d\n", ConnectionNum);
+		printf("下载引擎:%s\n", Downloader_Use);
+		printf("浏览器标识:%s\n", head_show);
+	}
+	else if (downloadmode = 5) {
+		printf("代理地址:(为空代表没有设置代理)\n");
 		printf("下载线程数:%d\n", ConnectionNum);
 		printf("下载引擎:%s\n", Downloader_Use);
 		printf("浏览器标识:%s\n", head_show);
