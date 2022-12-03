@@ -17,8 +17,8 @@ char proxy[50];//定义代理设置
 char rpctoken[40];//定义rpc密钥
 char BDUSS[193],pcsett[45];//定义BDUSS与pcsett登录参数
 char cmd[300];//用于存储执行命令
-char tracker_URL_CN[79] = "https://raw.iqiq.io/XIU2/TrackersListCollection/master/best_aria2.txt";//国内tracker list由iQZone加速获取
-char tracker_URL_NotCN[84] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best_aria2.txt";//海外tracker list源地址获取
+char tracker_URL_CN[79] = "https://cdn.staticaly.com/gh/XIU2/TrackersListCollection/master/http_aria2.txt";//国内tracker list由iQZone加速获取
+char tracker_URL_NotCN[84] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/http_aria2.txt";//海外tracker list源地址获取
 FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat,*dht;
 
@@ -51,15 +51,15 @@ int CreateConfig() {
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
 	ProxySetting();
-	sprintf(cmd, "curl %s -# > config\\best_aria2.txt",config_bt_URL);
+	sprintf(cmd, "curl %s -# > config\\http_aria2.txt",config_bt_URL);
 	if (system(cmd) != 0) {
 		printf("\n更新失败,正在本地建立BT配置文件. . .\n");
 		system("notepad config\\bt.conf");
 	}
 	else {
 		printf("\n更新成功,正在本地建立BT配置文件. . .\n");
-		system("type config\\best_aria2.txt >> config\\bt.conf");
-		system("del /F /S /Q config\\best_aria2.txt");
+		system("type config\\http_aria2.txt >> config\\bt.conf");
+		system("del /F /S /Q config\\http_aria2.txt");
 	}
 	system("cls");
 	ChangeUA();
@@ -67,11 +67,13 @@ int CreateConfig() {
 	fprintf(conf, "\ncontinue=true\n");
 	fprintf(conf, "max-concurrent-downloads=1\n");
 	fprintf(conf, "max-connection-per-server=16\n");
-	fprintf(conf, "dht-entry-point=router.bittorrent.com:6881\n");
-	fprintf(conf, "dht-entry-point6=router.bittorrent.com:6881\n");
+	fprintf(conf, "enable-dht=true\n");
+	fprintf(conf, "enable-dht6=true\n");
 	fprintf(conf, "dht-file-path=config\\dht.dat\n");
 	fprintf(conf, "dht-file-path6=config\\dht6.dat\n");
-	fprintf(conf, "enable-dht6=true\n");
+	fprintf(conf, "dht-listen-port=51413\n");
+	fprintf(conf, "dht-entry-point=dht.aelitis.com:6881\n");
+	fprintf(conf, "dht-entry-point6=router.silotis.us:6881\n");
 	fprintf(conf, "bt-max-peers=999\n");
 	fprintf(conf, "min-split-size=1M\n");
 	fprintf(conf, "disk-cache=128M\n");
@@ -214,7 +216,7 @@ int ListenRPC() {
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=false\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n",rpctoken);
@@ -450,7 +452,7 @@ int ProxySetting() {
 
 int ChangeUA() {
 	if (downloadmode == 1) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");//Chrome浏览器
+		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 2) {
@@ -462,20 +464,20 @@ int ChangeUA() {
 			printf("\n请选择浏览器标识:\n\n1.Bilibili Android App\n\n2.Bilibili PC Client\n\n3.Chrome\n\n请输入:");
 			scan_return = scanf("%d", &mark);
 			if (mark == 1) {
-				sprintf(head, "--header=\"User-Agent:%s\"", "tv.danmaku.bili/7030300 (Linux; U; Android 13; zh_CN; LE2110; Build/TP1A.220624.014; Cronet/88.0.4324.188)");//Bilibili Android App
+				sprintf(head, "--header=\"User-Agent:%s\"", "tv.danmaku.bili/7082100 (Linux; U; Android 13; zh_CN; LE2110; Build/TP1A.220624.014; Cronet/88.0.4324.188)");//Bilibili Android App
 				sprintf(head_show, "Bilibili Android App");
 			}
 			else if (mark == 2) {
-				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) bilibili_pc/1.5.0 Chrome/98.0.4758.141 Electron/17.4.11 Safari/537.36");//Bilibili PC Client
+				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) bilibili_pc/1.8.1 Chrome/106.0.5249.51 Electron/21.0.0 Safari/537.36");//Bilibili PC Client
 				sprintf(head_show, "Bilibili PC Client");
 			}
 			else {
-				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");//Chrome浏览器
+				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");//Chrome浏览器
 				sprintf(head_show, "Chrome");
 			}
 		}
 		else {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -487,7 +489,7 @@ int ChangeUA() {
 			sprintf(head_show, "IE");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 		else if (mark == 3) {
@@ -496,7 +498,7 @@ int ChangeUA() {
 		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -504,8 +506,8 @@ int ChangeUA() {
 		printf("\n请选择BT下载工具标识:\n\n1.qBittorrent\n\n2.Transmission\n\n请输入:");
 		scan_return = scanf("%d", &mark);
 		if (mark == 1) {
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.4.3.1", "qBittorrent/4.4.3.1", "-qB4431-");//qBittorrent
-			sprintf(head_show, "qBittorrent/4.4.3.1");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.5.0.0", "qBittorrent/4.5.0.0", "-qB4500-");//qBittorrent
+			sprintf(head_show, "qBittorrent/4.5.0.0");
 		}
 		else if (mark == 2) {
 			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/3.00", "Transmission/3.00", "-TR3000-");//Transmission
@@ -513,8 +515,8 @@ int ChangeUA() {
 		}
 		else {
 			mark = 1;
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.4.3.1", "qBittorrent/4.4.3.1", "-qB4431-");//qBittorrent
-			sprintf(head_show, "qBittorrent/4.4.3.1");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.5.0.0", "qBittorrent/4.5.0.0", "-qB4500-");//qBittorrent
+			sprintf(head_show, "qBittorrent/4.5.0.0");
 		}
 	}
 	return 0;
@@ -553,7 +555,7 @@ int AdvanceDownloader() {
 
 int Netdisk() {
 	ChangeUA();
-	sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home#/all?path=%2F&vmode=list\"");
+	sprintf(reference, "%s", "--referer=\"https://pan.baidu.com/disk/home?from=newversion&stayAtHome=true#/all?path=%2F&vmode=list\"");
 		printf("\n是否使用插件导入Cookie(1=插件手动导入 0=浏览器手动导入):");
 		scan_return=scanf("%d", &cookie_mode);
 		if (cookie_mode != 0) {
