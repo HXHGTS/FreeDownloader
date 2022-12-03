@@ -71,7 +71,6 @@ int CreateConfig() {
 	fprintf(conf, "enable-dht6=true\n");
 	fprintf(conf, "dht-file-path=config\\dht.dat\n");
 	fprintf(conf, "dht-file-path6=config\\dht6.dat\n");
-	fprintf(conf, "dht-listen-port=51413\n");
 	fprintf(conf, "dht-entry-point=dht.aelitis.com:6881\n");
 	fprintf(conf, "dht-entry-point6=router.silotis.us:6881\n");
 	fprintf(conf, "bt-max-peers=999\n");
