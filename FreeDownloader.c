@@ -477,8 +477,8 @@ int ChangeUA() {
 			}
 		}
 		else {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");//Chrome浏览器
-			sprintf(head_show, "Chrome");
+			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head_show, "Chrome(Linux)");
 		}
 	}
 	else if (downloadmode == 4) {
@@ -731,7 +731,7 @@ int MediaDownloader() {
 				fprintf(Youku_Cookies, "# Input Cookie below#\n");
 				fclose(Youku_Cookies);
 			}
-			system("notepad temp\\Youku_Cookies.txt");
+			system("notepad cookies\\Youku_Cookies.txt");
 	}
 	system("cls");
 	printf("请在弹出窗口中导入Cookies,同一账号可以反复使用\n\n");
