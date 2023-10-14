@@ -28,7 +28,7 @@ go version
 
 echo '正在编译Windows版lux核心. . .'
 
-lux_Version=$(curl https://api.github.com/repos/iawia002/lux/releases  | grep "tag_name" | head -n 1 | gawk -F\" '{print $4}')
+lux_Version=$(curl https://api.github.com/repos/iawia002/lux/releases/latest  | grep "tag_name" | gawk -F\" '{print $4}')
 
 env GOOS=windows GOARCH=amd64 GOAMD64=v3 CGO_ENABLED=0 go install -ldflags "-X github.com/iawia002/lux/app.version=${lux_Version}" github.com/iawia002/lux@latest
 
