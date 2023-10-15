@@ -57,7 +57,7 @@
 
 ### 七、第三方软件
 
-本软件采用[aria2](https://aria2.github.io/)、[yt-dlp](https://github.com/yt-dlp/yt-dlp)、[lux](https://github.com/iawia002/lux)、[ffmpeg](https://ffmpeg.org/)等开源工具作为下载或合成工具,在此向以上开源软件开发者致谢!
+本软件采用[aria2](https://aria2.github.io/)、[yt-dlp](https://github.com/yt-dlp/yt-dlp)、[lux](https://github.com/iawia002/lux)、[ffmpeg](https://github.com/yt-dlp/FFmpeg-Builds)等开源工具作为下载或合成工具,在此向以上开源软件开发者致谢!
 
 ### 八、其它事项
 
