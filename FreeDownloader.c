@@ -43,7 +43,7 @@ int About() {
 	printf("--------------------------FreeDownloader--------------------------\n");
 	printf("------------------------------------------------------------------\n");
 	printf("FreeDownloader版本:");
-	printf("3.0.0");
+	printf("6.0.0");
 	printf("\n\n");
 	printf("aria2c版本:");
 	system("aria2c -v | findstr version | findstr /v either | findstr /v later");
