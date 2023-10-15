@@ -10,7 +10,7 @@ int downloadmode, magnet_mode,ConnectionNum, ProcessNum, config_media, Task, IsC
 int mark, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode,appid;
 int scan_return;//接收返回值,暂时没用
-char config_proxy[65], config_url[30], config_dir[65], config_cookie[280], smallcmd[20], Downloader_Use[12];
+char config_proxy[137], config_url[30], config_dir[65], config_cookie[280], smallcmd[20], Downloader_Use[12];
 char config_bt_URL[142];//用于存储BT下载时proxy参数与对应tracker地址
 char reference[216], head[300], head_show[35];//定义请求头文件
 char location[200],split[7],torrent_addr[250],play_list[30], color[4];
@@ -484,7 +484,7 @@ int ProxySetting() {
 				sprintf(config_proxy, "--all-proxy=%s", proxy);
 			}
 			else if(downloadmode==3){
-				sprintf(config_proxy, "set http_proxy=%s & set https_proxy=%s", proxy,proxy);
+				sprintf_s(config_proxy,137, "set http_proxy=%s\nset https_proxy=%s", proxy,proxy);
 			}
 			else if (downloadmode == 5) {
 				sprintf(config_bt_URL, "-x %s %s",proxy,tracker_URL_NotCN);
@@ -500,20 +500,24 @@ int ProxySetting() {
 
 int ChangeUA() {
 	if (downloadmode == 1) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
+		sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 2) {
-		sprintf(head, "--header=\"User-Agent:%s\"", "LogStatistic");//百度网盘客户端
+		sprintf(head, "-U \"%s\"", "LogStatistic");//百度网盘客户端
 		sprintf(head_show, "Netdisk");
 	}
 	else if (downloadmode == 3) {
-		if (config_media == 3) {
-				sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko)  QQLive/11629128/50231110 Chrome/43.0.2357.134 Safari/537.36 QBCore/3.43.21.400 QQBrowser/9.0.2524.400");//Tencent Client
+		if (config_media == 1 || config_media == 6) {
+			sprintf_s(head,34, "--user-agent=%s", "Chrome/118.0.0.0");//Chrome浏览器
+			sprintf(head_show, "Chrome");
+		}
+		else if (config_media == 3) {
+				sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko)  QQLive/11629128/50231110 Chrome/43.0.2357.134 Safari/537.36 QBCore/3.43.21.400 QQBrowser/9.0.2524.400");//Tencent Client
 				sprintf(head_show, "Tencent Client");
 		}
 		else {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -521,24 +525,24 @@ int ChangeUA() {
 		printf("\n请选择浏览器标识:\n\n1.IE\n\n2.Chrome\n\n3.Chrome(Mobile)\n\n4.Chrome(Linux)\n\n请输入:");
 		scan_return=scanf("%d", &mark);
 		if (mark == 1) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");//IE浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");//IE浏览器
 			sprintf(head_show, "IE");
 		}
 		else if (mark == 2) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 		else if (mark == 3) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36");//Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome(Mobile)");
 		}
 		else if (mark == 4) {
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome(Linux)");
 		}
 		else {
 			mark = 2;
-			sprintf(head, "--header=\"User-Agent:%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -809,7 +813,7 @@ int DLEngine() {
 		else if (downloadmode == 3) {
 			fprintf(Download, "%s\n", config_proxy);
 			if (config_media == 1) {
-				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --all-subs --sub-langs \"cn.*,en.*\" %s %s %s --downloader aria2c --downloader-args \"aria2c:-x2 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-x2 -k2M %s\"\n", Downloader_Use, play_list, config_dir, config_url,head);
 			}
 			else if (config_media == 2) {
 				fprintf(Download, "%s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
@@ -824,7 +828,7 @@ int DLEngine() {
 				fprintf(Download, "%s -c cookies\\Youku_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else if (config_media == 6) {
-				fprintf(Download, "%s --cookies cookies\\Other_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --all-subs --sub-langs \"cn.*,en.*\" %s %s %s --downloader aria2c --downloader-args \"aria2c:-x2 -k2M\"\n", Downloader_Use, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\Other_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-x2 -k2M %s\"\n", Downloader_Use, play_list, config_dir, config_url, head);
 			}
 			else {
 				fprintf(Download, "%s -c cookies\\Other_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
