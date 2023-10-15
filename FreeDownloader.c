@@ -814,7 +814,7 @@ int DLEngine() {
 		else if (downloadmode == 3) {
 			fprintf(Download, "%s\n", config_proxy);
 			if (config_media == 1) {
-				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-x2 -k2M %s\"\n", Downloader_Use, play_list, config_dir, config_url,head);
+				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M %s\"\n", Downloader_Use, play_list, config_dir, config_url,head);
 			}
 			else if (config_media == 2) {
 				fprintf(Download, "%s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
@@ -829,7 +829,7 @@ int DLEngine() {
 				fprintf(Download, "%s -c cookies\\Youku_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else if (config_media == 6) {
-				fprintf(Download, "%s --cookies cookies\\Other_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-x2 -k2M %s\"\n", Downloader_Use, play_list, config_dir, config_url, head);
+				fprintf(Download, "%s --cookies cookies\\Other_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M %s\"\n", Downloader_Use, play_list, config_dir, config_url, head);
 			}
 			else {
 				fprintf(Download, "%s -c cookies\\Other_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
