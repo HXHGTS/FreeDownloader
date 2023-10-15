@@ -160,7 +160,8 @@ MainMenu:WindowSkin();
 	printf("------------------------------------------------------------------\n");
 	printf("--------------------------FreeDownloader--------------------------\n");
 	printf("------------------------------------------------------------------\n");
-	printf("请选择下载功能:\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n6.继续上次下载\n7.文件完整性测试\n8.启动RPC被动监听\n9.打开下载文件夹\n10.关于\n0.退出\n");
+	printf("请选择下载功能:\n1.普通下载模式\n2.百度网盘模式\n3.视频下载模式\n4.高级下载模式\n5.磁力下载模式\n");
+	printf("6.继续上次下载\n7.文件完整性测试\n8.启动RPC被动监听\n9.打开下载文件夹\n10.关于\n0.退出\n");
 	printf("------------------------------------------------------------------\n");
 	printf("请输入:");
 	scan_return=scanf("%d", &downloadmode);
@@ -252,7 +253,7 @@ int ListenRPC() {
 	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
-	fprintf(conf, "rpc-secret=%s\n",rpctoken);
+	fprintf(conf, "rpc-secret=%s\n", rpctoken);
 	fclose(conf);
 	ProxySetting();
 	conf = fopen("temp\\rpc.bat", "w");
@@ -263,7 +264,7 @@ int ListenRPC() {
 	printf("------------------------------------------------------------------\n");
 	printf("----------------------------RPC监听模式---------------------------\n");
 	printf("------------------------------------------------------------------\n");
-	printf("RPC监听:允许远程接入\nRPC监听端口:6800\nRPC密码:%s\n",rpctoken);
+	printf("RPC监听:允许远程接入\nRPC监听端口:6800\nRPC密码:%s\n", rpctoken);
 	printf("------------------------------------------------------------------\n\n");
 	printf("RPC监听已启动!\n\n");
 	system("temp\\rpc.bat");
