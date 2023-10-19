@@ -18,7 +18,8 @@ char proxy[50];//定义代理设置
 char rpctoken[40];//定义rpc密钥
 char BDUSS[193],pcsett[45];//定义BDUSS与pcsett登录参数
 char cmd[300];//用于存储执行命令
-char tracker_URL_CN[79] = "https://gcore.jsdelivr.net/gh/XIU2/TrackersListCollection/best_aria2.txt";//国内tracker list由Gcorelabs CDN加速获取
+char tracker_URL_CN[71] = "https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/best_aria2.txt";//国内tracker list由CDN加速获取
+char tracker_IP_CN[16] = "192.169.120.162";//国内tracker ip,测试data.jsdelivr.com获得
 char tracker_URL_NotCN[84] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best_aria2.txt";//海外tracker list源地址获取
 FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat,*dht;
@@ -470,7 +471,7 @@ int Dir() {
 int ProxySetting() {
 	if (system("type config\\proxy.ini | find \"proxy=0\"") == 0) {
 		if (downloadmode == 5) {
-			sprintf(config_bt_URL, "%s", tracker_URL_CN);
+			sprintf(config_bt_URL, "--resolve cdn.jsdelivr.net:443:%s %s",tracker_IP_CN, tracker_URL_CN);
 			sprintf(config_proxy, "");
 		}
 		else {
