@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#第一次使用请先运行 curl -sSL https://raw.githubusercontent.com/HXHGTS/Singbox-Install/main/sh/go_install.sh | bash 安装Go环境!
+
 echo '正在打开Go环境. . .'
 
 source /root/.bashrc
