@@ -5,12 +5,13 @@
 
 
 int AdvanceDownloader(),AutoShutdown(),ChangeUA(),CheckSum(int mode),Dir(),DLEngine(),WindowSkin();
-int MagnetDownloader(), MediaDownloader(), Netdisk(), NormalDownloader(), ProxySetting(), threader(), url(), ListenRPC(); About();
+int MagnetDownloader(), MediaDownloader(), Netdisk(), NormalDownloader(), ProxySetting(), threader(), url(), ListenRPC(), About();
+int DHT_Fix();
 int downloadmode, magnet_mode,ConnectionNum, ProcessNum, config_media, Task, IsCheckSum;
 int mark, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode,appid;
 int scan_return;//接收返回值,暂时没用
-char config_proxy[137], config_url[30], config_dir[65], config_cookie[280], smallcmd[20], Downloader_Use[12];
+char config_proxy[137], config_url[31], config_dir[65], config_cookie[280], smallcmd[20], Downloader_Use[12];
 char config_bt_URL[142];//用于存储BT下载时proxy参数与对应tracker地址
 char reference[216], head[300], head_show[35];//定义请求头文件
 char location[200],split[7],torrent_addr[250],play_list[30], color[4];
@@ -18,9 +19,9 @@ char proxy[50];//定义代理设置
 char rpctoken[40];//定义rpc密钥
 char BDUSS[193],pcsett[45];//定义BDUSS与pcsett登录参数
 char cmd[300];//用于存储执行命令
-char tracker_URL_CN[71] = "https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/best_aria2.txt";//国内tracker list由CDN加速获取
-char tracker_IP_CN[16] = "192.169.120.162";//国内tracker ip,测试data.jsdelivr.com获得
-char tracker_URL_NotCN[84] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best_aria2.txt";//海外tracker list源地址获取
+char tracker_URL_CN[78] = "https://gitea.com/XIU2/TrackersListCollection/raw/branch/master/all_aria2.txt";//国内tracker list由CDN加速获取
+char tracker_IP_CN[16] = "18.166.250.135";//国内tracker ip,测试gitea.com获得
+char tracker_URL_NotCN[84] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all_aria2.txt";//海外tracker list源地址获取
 FILE* conf,*power_ini,*proxy_ini,*dir_mark, *skin;//定义配置文件
 FILE* cookie,*bat,*dht;
 
@@ -73,20 +74,20 @@ int CreateConfig() {
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
 	ProxySetting();
-	sprintf_s(cmd, 300, "curl %s -# > config\\best_aria2.txt", config_bt_URL);
+	sprintf_s(cmd, 300, "curl %s -# > config\\all_aria2.txt", config_bt_URL);
 	if (system(cmd) != 0) {
 		printf("\n更新失败,正在本地建立BT配置文件. . .\n");
 		system("notepad config\\bt.conf");
 	}
 	else {
 		printf("\n更新成功,正在本地建立BT配置文件. . .\n");
-		system("type config\\best_aria2.txt >> config\\bt.conf");
-		system("del /F /S /Q config\\best_aria2.txt");
+		system("type config\\all_aria2.txt >> config\\bt.conf");
+		system("del /F /S /Q config\\all_aria2.txt");
 	}
 	system("cls");
 	ChangeUA();
 	conf = fopen("config\\bt.conf", "a");
-	fprintf(conf, "\n\n#BT-Config\n");
+	fprintf(conf, "\n");
 	fprintf(conf, "continue=true\n");
 	fprintf(conf, "max-concurrent-downloads=1\n");
 	fprintf(conf, "max-connection-per-server=16\n");
@@ -109,6 +110,26 @@ int CreateConfig() {
 	fclose(conf);
 	system("cls");
 	return 0;
+}
+
+int DHT_Fix() {
+	int dht_download_fallback, dht6_download_fallback;
+	dht_download_fallback = 0;
+	dht6_download_fallback = 0;
+	if (_access("config\\dht.dat", 0) == -1) {
+		printf("DHT数据缺失,正在下载. . .\n");
+		dht_download_fallback = system("aria2c -s16 -x16 -k1M --connect-timeout=10 --allow-overwrite=true --dir=config --out=dht.dat \"https://kunsing.ikunattackerz.uk:10011/FreeDownloader/config/dht.dat\"");
+	}
+	if (_access("config\\dht6.dat", 0) == -1) {
+		printf("DHT6数据缺失,正在下载. . .\n");
+		dht6_download_fallback = system("aria2c -s16 -x16 -k1M --connect-timeout=10 --allow-overwrite=true --dir=config --out=dht6.dat \"https://kunsing.ikunattackerz.uk:10011/FreeDownloader/config/dht6.dat\"");
+	}
+	if (dht_download_fallback != 0 || dht6_download_fallback != 0) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 int CreateFolder() {
@@ -251,7 +272,7 @@ int ListenRPC() {
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=false\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n", rpctoken);
@@ -283,6 +304,18 @@ int MagnetDownloader() {
 	printf("请选择下载模式:\n\n1.*.torrent文件\n\n2.Magnet://链接\n\n0.返回\n\n请输入:");
 	scan_return=scanf("%d", &magnet_mode);
 	if (magnet_mode == 2) {
+		if (_access("config\\dht.dat", 0) == -1 || _access("config\\dht6.dat", 0) == -1) {
+			system("cls");
+			if (DHT_Fix() == 1) {
+				printf("DHT数据下载失败,请在使用磁力链下载前前往以下网址下载种子文件后导入下载!\n");
+				printf("------------------------------------------------------------------------------------------------\n");
+				printf("https://cdimage.debian.org/debian-cd/12.2.0/amd64/bt-cd/debian-12.2.0-amd64-netinst.iso.torrent\n");
+				printf("------------------------------------------------------------------------------------------------\n");
+				printf("务必导入并下载此种子!否则磁力链下载无速度!\n");
+				system("pause > nul");
+				exit(0);
+			}
+		}
 		Dir();
 	}
 	else if (magnet_mode == 0) {
@@ -410,7 +443,6 @@ int url() {
 			printf("若种子文件名过长建议重命名成简单字母或数字再拖入窗口,否则可能报错！\n\n");
 			printf("请将种子文件以拖拽至本窗口中:");
 			scan_return=scanf("%s", torrent_addr);
-			sprintf_s(config_url, 30, "\"%s\"", torrent_addr);
 		}
 	}
 	return 0;
@@ -420,13 +452,13 @@ int threader() {
 	if (downloadmode == 1 || downloadmode == 4) {
 		Task = 1;//同时下载任务数
 		ConnectionNum = 16;
-		ProcessNum = 4;
+		ProcessNum = 16;
 		sprintf_s(Downloader_Use,12, "%s", "aria2c");
 		sprintf_s(split,3, "1M");
 	}
 	else if (downloadmode == 2) {
-		ConnectionNum = 4;
-		ProcessNum = 4;
+		ConnectionNum = 8;
+		ProcessNum = 8;
 		sprintf_s(split, 3, "1M");
 		sprintf_s(Downloader_Use,12, "%s", "aria2c");
 		Task = 1;//同时下载任务数
@@ -445,7 +477,7 @@ int threader() {
 		Task = 1;//同时下载任务数
 		sprintf_s(Downloader_Use,12, "%s", "aria2c");
 		ConnectionNum = 16;
-		if (magnet_mode == 2)sprintf(split, "1M");
+		if (magnet_mode == 2)sprintf_s(split,3, "1M");
 	}
 	return 0;
 }//线程数修改与引擎选择        
@@ -453,17 +485,17 @@ int threader() {
 int Dir() {
 	if (downloadmode == 3) {
 		if (config_media == 1 || config_media == 6) {
-			sprintf(config_dir, "%s", "-o Downloads\\%%(uploader)s-%%(title)s-%%(resolution)s.%%(ext)s");
+			sprintf_s(config_dir,65, "%s", "-o Downloads\\%%(uploader)s-%%(title)s-%%(resolution)s.%%(ext)s");
 		}
 		else {
-			sprintf(config_dir, "%s", "-o Downloads");
+			sprintf_s(config_dir,16, "%s", "-o Downloads");
 		}
 	}
 	else {
 		if (downloadmode == 5 && magnet_mode == 1) {
 
 		}
-		else sprintf(config_dir, "%s", "--dir=\"Downloads\"");
+		else sprintf_s(config_dir,21, "%s", "--dir=\"Downloads\"");
 	}
 	return 0;
 }
@@ -471,11 +503,11 @@ int Dir() {
 int ProxySetting() {
 	if (system("type config\\proxy.ini | find \"proxy=0\"") == 0) {
 		if (downloadmode == 5) {
-			sprintf(config_bt_URL, "--resolve cdn.jsdelivr.net:443:%s %s",tracker_IP_CN, tracker_URL_CN);
-			sprintf(config_proxy, "");
+			sprintf_s(config_bt_URL,142, "--resolve cdn.jsdelivr.net:443:%s %s",tracker_IP_CN, tracker_URL_CN);
+			sprintf_s(config_proxy,1, "");
 		}
 		else {
-			sprintf(config_proxy, "");
+			sprintf_s(config_proxy, 1, "");
 		}
 	}
 	else {
@@ -483,7 +515,7 @@ int ProxySetting() {
 			scan_return=fscanf(proxy_ini, "proxy=%s", proxy);
 			fclose(proxy_ini);
 			if (downloadmode == 1 || downloadmode == 2 || downloadmode == 4) {
-				sprintf(config_proxy, "--all-proxy=%s", proxy);
+				sprintf_s(config_proxy,65, "--all-proxy=%s", proxy);
 			}
 			else if(downloadmode==3){
 				sprintf_s(config_proxy,137, "set http_proxy=%s\nset https_proxy=%s", proxy,proxy);
@@ -493,7 +525,7 @@ int ProxySetting() {
 				sprintf(config_proxy, "-x %s", proxy);
 			}
 			else if (downloadmode == 8) {
-				sprintf(config_proxy, "");
+				sprintf_s(config_proxy, 1,"");
 			}
 	}
 	system("cls");
@@ -502,7 +534,7 @@ int ProxySetting() {
 
 int ChangeUA() {
 	if (downloadmode == 1) {
-		sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
+		sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");//Chrome浏览器
 		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 2) {
@@ -511,7 +543,7 @@ int ChangeUA() {
 	}
 	else if (downloadmode == 3) {
 		if (config_media == 1 || config_media == 6) {
-			sprintf_s(head,34, "--user-agent=%s", "Chrome/118.0.0.0");//Chrome浏览器
+			sprintf_s(head,34, "--user-agent=%s", "Chrome/123.0.0.0");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 		else if (config_media == 3) {
@@ -519,7 +551,7 @@ int ChangeUA() {
 				sprintf(head_show, "Tencent Client");
 		}
 		else {
-			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -527,24 +559,24 @@ int ChangeUA() {
 		printf("\n请选择浏览器标识:\n\n1.IE\n\n2.Chrome\n\n3.Chrome(Mobile)\n\n4.Chrome(Linux)\n\n请输入:");
 		scan_return=scanf("%d", &mark);
 		if (mark == 1) {
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");//IE浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E)");//IE浏览器
 			sprintf(head_show, "IE");
 		}
 		else if (mark == 2) {
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 		else if (mark == 3) {
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Mobile Safari/537.36");//Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Mobile Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome(Mobile)");
 		}
 		else if (mark == 4) {
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome(Linux)");
 		}
 		else {
 			mark = 2;
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");//Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");//Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -552,17 +584,17 @@ int ChangeUA() {
 		printf("\n请选择BT下载工具标识:\n\n1.qBittorrent\n\n2.Transmission\n\n请输入:");
 		scan_return = scanf("%d", &mark);
 		if (mark == 1) {
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.5.0.0", "qBittorrent/4.5.0.0", "-qB4500-");//qBittorrent
-			sprintf(head_show, "qBittorrent/4.5.0.0");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.6.1.0", "qBittorrent/4.6.1.0", "-qB4610-");//qBittorrent
+			sprintf(head_show, "qBittorrent/4.6.1.0");
 		}
 		else if (mark == 2) {
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/3.00", "Transmission/3.00", "-TR3000-");//Transmission
-			sprintf(head_show, "Transmission/3.00");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.0.4", "Transmission/4.0.4", "-TR4040-");//Transmission
+			sprintf(head_show, "Transmission/4.0.4");
 		}
 		else {
 			mark = 1;
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.5.0.0", "qBittorrent/4.5.0.0", "-qB4500-");//qBittorrent
-			sprintf(head_show, "qBittorrent/4.5.0.0");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.6.1.0", "qBittorrent/4.6.1.0", "-qB4610-");//qBittorrent
+			sprintf(head_show, "qBittorrent/4.6.1.0");
 		}
 	}
 	return 0;
@@ -841,10 +873,10 @@ int DLEngine() {
 		}
 		else if (downloadmode == 5) {
 			if (magnet_mode == 2) {
-				fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);
+				fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);//Magnet磁力链
 			}
 			else {
-				fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, config_url);
+				fprintf(Download, "%s --conf-path=config\\bt.conf %s\n", Downloader_Use, torrent_addr);//种子文件
 			}
 		}
 		fprintf(Download, "exit 0\n");
