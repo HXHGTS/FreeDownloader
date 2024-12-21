@@ -11,15 +11,16 @@ int mark, shutdown, filecheck, DownloadList, OpenDir;
 int cookie_import, cookie_mode, appid;
 int scan_return; // 接收返回值,暂时没用
 char config_proxy[137], config_url[31], config_dir[65], config_cookie[280], smallcmd[20], Downloader_Use[12];
-char config_bt_URL[142];					   // 用于存储BT下载时proxy参数与对应tracker地址
+char config_bt_URL[147];					   // 用于存储BT下载时proxy参数与对应tracker地址
 char reference[216], head[300], head_show[35]; // 定义请求头文件
 char location[200], split[7], torrent_addr[250], play_list[30], color[4];
-char proxy[50];																										// 定义代理设置
-char rpctoken[40];																									// 定义rpc密钥
-char BDUSS[193];																									// 定义BDUSS登录参数
-char cmd[300];																										// 用于存储执行命令
-char tracker_URL_CN[78] = "https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection@master/best_aria2.txt";			// 国内tracker list由CDN加速获取
-char tracker_IP_CN[16] = "104.18.187.31";																			// 国内tracker ip,测试gitea.com获得
+char proxy[50];																								  // 定义代理设置
+char rpctoken[40];																							  // 定义rpc密钥
+char BDUSS[193];																							  // 定义BDUSS登录参数
+char cmd[300];																								  // 用于存储执行命令
+char tracker_URL_CN[82] = "https://fastly.jsdelivr.net/gh/XIU2/TrackersListCollection@master/best_aria2.txt"; // 国内tracker list由CDN加速获取
+char tracker_IP_CN[16] = "151.101.109.229";																	  // 国内tracker ip,测试gitea.com获得
+// 可用值: fastly.jsdelivr.net testingcf.jsdelivr.net jsdelivr.b-cdn.net
 char tracker_URL_NotCN[84] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best_aria2.txt"; // 海外tracker list源地址获取
 FILE *conf, *power_ini, *proxy_ini, *dir_mark, *skin;																// 定义配置文件
 FILE *cookie, *bat, *dht;
@@ -128,12 +129,12 @@ int DHT_Fix()
 	if (_access("config\\dht.dat", 0) == -1)
 	{
 		printf("DHT数据缺失,正在下载. . .\n");
-		dht_download_fallback = system("aria2c -s16 -x16 -k1M --connect-timeout=10 --allow-overwrite=true --dir=config --out=dht.dat \"https://kunsing.ikunattackerz.uk:10011/FreeDownloader/config/dht.dat\"");
+		dht_download_fallback = system("aria2c -s16 -x16 -k1M --connect-timeout=10 --allow-overwrite=true --dir=config --out=dht.dat \"https://fastly.jsdelivr.net/gh/HXHGTS/FreeDownloader@refs/heads/master/dht.dat\"");
 	}
 	if (_access("config\\dht6.dat", 0) == -1)
 	{
 		printf("DHT6数据缺失,正在下载. . .\n");
-		dht6_download_fallback = system("aria2c -s16 -x16 -k1M --connect-timeout=10 --allow-overwrite=true --dir=config --out=dht6.dat \"https://kunsing.ikunattackerz.uk:10011/FreeDownloader/config/dht6.dat\"");
+		dht6_download_fallback = system("aria2c -s16 -x16 -k1M --connect-timeout=10 --allow-overwrite=true --dir=config --out=dht6.dat \"https://fastly.jsdelivr.net/gh/HXHGTS/FreeDownloader@refs/heads/master/dht6.dat\"");
 	}
 	if (dht_download_fallback != 0 || dht6_download_fallback != 0)
 	{
@@ -593,7 +594,7 @@ int ProxySetting()
 	{
 		if (downloadmode == 5)
 		{
-			sprintf_s(config_bt_URL, 142, "--resolve cdn.jsdelivr.net:443:%s %s", tracker_IP_CN, tracker_URL_CN);
+			sprintf_s(config_bt_URL, 146, "--resolve fastly.jsdelivr.net:443:%s %s", tracker_IP_CN, tracker_URL_CN);
 			sprintf_s(config_proxy, 1, "");
 		}
 		else
@@ -633,7 +634,7 @@ int ProxySetting()
 		{
 			if (downloadmode == 5)
 			{
-				sprintf_s(config_bt_URL, 142, "--resolve cdn.jsdelivr.net:443:%s %s", tracker_IP_CN, tracker_URL_CN);
+				sprintf_s(config_bt_URL, 146, "--resolve fastly.jsdelivr.net:443:%s %s", tracker_IP_CN, tracker_URL_CN);
 				sprintf_s(config_proxy, 1, "");
 			}
 			else
@@ -692,12 +693,12 @@ int ChangeUA()
 		}
 		else if (mark == 3)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36"); // Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome(Mobile)");
 		}
 		else if (mark == 4)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"); // Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome(Linux)");
 		}
 		else
@@ -713,19 +714,19 @@ int ChangeUA()
 		scan_return = scanf("%d", &mark);
 		if (mark == 1)
 		{
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.6.1.0", "qBittorrent/4.6.1.0", "-qB4610-"); // qBittorrent
-			sprintf(head_show, "qBittorrent/4.6.1.0");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/5.0.3", "qBittorrent/5.0.3", "-qB5030-"); // qBittorrent
+			sprintf(head_show, "qBittorrent/5.0.3");
 		}
 		else if (mark == 2)
 		{
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.0.4", "Transmission/4.0.4", "-TR4040-"); // Transmission
-			sprintf(head_show, "Transmission/4.0.4");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.0.6", "Transmission/4.0.6", "-TR4060-"); // Transmission
+			sprintf(head_show, "Transmission/4.0.6");
 		}
 		else
 		{
-			mark = 1;
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/4.6.1.0", "qBittorrent/4.6.1.0", "-qB4610-"); // qBittorrent
-			sprintf(head_show, "qBittorrent/4.6.1.0");
+			mark = 2;
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.0.6", "Transmission/4.0.6", "-TR4060-"); // Transmission
+			sprintf(head_show, "Transmission/4.0.6");
 		}
 	}
 	return 0;
