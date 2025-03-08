@@ -14,15 +14,15 @@ char config_proxy[137], config_url[31], config_dir[65], config_cookie[280], smal
 char config_bt_URL[147];					   // 用于存储BT下载时proxy参数与对应tracker地址
 char reference[216], head[300], head_show[35]; // 定义请求头文件
 char location[200], split[7], torrent_addr[250], play_list[30], color[4];
-char proxy[50];																								  // 定义代理设置
-char rpctoken[40];																							  // 定义rpc密钥
-char BDUSS[193];																							  // 定义BDUSS登录参数
-char cmd[300];																								  // 用于存储执行命令
-char tracker_URL_CN[82] = "https://fastly.jsdelivr.net/gh/XIU2/TrackersListCollection@master/best_aria2.txt"; // 国内tracker list由CDN加速获取
-char tracker_IP_CN[16] = "151.101.109.229";																	  // 国内tracker ip,测试gitea.com获得
+char proxy[50];																								 // 定义代理设置
+char rpctoken[40];																							 // 定义rpc密钥
+char BDUSS[193];																							 // 定义BDUSS登录参数
+char cmd[300];																								 // 用于存储执行命令
+char tracker_URL_CN[82] = "https://fastly.jsdelivr.net/gh/XIU2/TrackersListCollection@master/all_aria2.txt"; // 国内tracker list由CDN加速获取
+char tracker_IP_CN[16] = "151.101.109.229";																	 // 国内tracker ip,测试gitea.com获得
 // 可用值: fastly.jsdelivr.net testingcf.jsdelivr.net jsdelivr.b-cdn.net
-char tracker_URL_NotCN[84] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best_aria2.txt"; // 海外tracker list源地址获取
-FILE *conf, *power_ini, *proxy_ini, *dir_mark, *skin;																// 定义配置文件
+char tracker_URL_NotCN[84] = "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all_aria2.txt"; // 海外tracker list源地址获取
+FILE *conf, *power_ini, *proxy_ini, *dir_mark, *skin;															   // 定义配置文件
 FILE *cookie, *bat, *dht;
 
 int TokenGenerate()
@@ -57,8 +57,8 @@ int About()
 	printf("yt-dlp版本:");
 	system("yt-dlp --version");
 	printf("\n");
-	printf("lux版本:");
-	system("lux --version | findstr version");
+	printf("ffmpeg版本:");
+	system("ffmpeg -version | findstr \"Copyright\"");
 	printf("------------------------------------------------------------------\n");
 	system("pause");
 	return 0;
@@ -81,7 +81,7 @@ int CreateConfig()
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
 	ProxySetting();
-	sprintf_s(cmd, 300, "curl %s -# > config\\best_aria2.txt", config_bt_URL);
+	sprintf_s(cmd, 300, "curl %s -# > config\\all_aria2.txt", config_bt_URL);
 	if (system(cmd) != 0)
 	{
 		printf("\n更新失败,正在本地建立BT配置文件. . .\n");
@@ -90,8 +90,8 @@ int CreateConfig()
 	else
 	{
 		printf("\n更新成功,正在本地建立BT配置文件. . .\n");
-		system("type config\\best_aria2.txt >> config\\bt.conf");
-		system("del /F /S /Q config\\best_aria2.txt");
+		system("type config\\all_aria2.txt >> config\\bt.conf");
+		system("del /F /S /Q config\\all_aria2.txt");
 	}
 	system("cls");
 	ChangeUA();
@@ -313,7 +313,7 @@ int ListenRPC()
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=false\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n", rpctoken);
@@ -651,7 +651,7 @@ int ChangeUA()
 {
 	if (downloadmode == 1)
 	{
-		sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"); // Chrome浏览器
+		sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器
 		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 2)
@@ -663,17 +663,16 @@ int ChangeUA()
 	{
 		if (config_media == 1 || config_media == 6)
 		{
-			sprintf_s(head, 34, "--user-agent=%s", "Chrome/131.0.0.0"); // Chrome浏览器
-			sprintf(head_show, "Chrome");
+			sprintf(head_show, "Default"); // yt-dlp,默认UserAgent
 		}
 		else if (config_media == 3)
 		{
-			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"); // Chrome浏览器
+			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 		else
 		{
-			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"); // Chrome浏览器
+			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -688,23 +687,23 @@ int ChangeUA()
 		}
 		else if (mark == 2)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"); // Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 		else if (mark == 3)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"); // Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Mobile Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome(Mobile)");
 		}
 		else if (mark == 4)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"); // Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器(Linux)
 			sprintf(head_show, "Chrome(Linux)");
 		}
 		else
 		{
 			mark = 2;
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"); // Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -714,19 +713,19 @@ int ChangeUA()
 		scan_return = scanf("%d", &mark);
 		if (mark == 1)
 		{
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/5.0.3", "qBittorrent/5.0.3", "-qB5030-"); // qBittorrent
-			sprintf(head_show, "qBittorrent/5.0.3");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "qBittorrent/5.0.4", "qBittorrent/5.0.4", "-qB5040-"); // qBittorrent
+			sprintf(head_show, "qBittorrent/5.0.4");
 		}
 		else if (mark == 2)
 		{
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.0.6", "Transmission/4.0.6", "-TR4060-"); // Transmission
-			sprintf(head_show, "Transmission/4.0.6");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.1.0-beta.1", "Transmission/4.1.0-beta.1", "-TR410B-"); // Transmission
+			sprintf(head_show, "Transmission/4.1.0-beta.1");
 		}
 		else
 		{
 			mark = 2;
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.0.6", "Transmission/4.0.6", "-TR4060-"); // Transmission
-			sprintf(head_show, "Transmission/4.0.6");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.1.0-beta.1", "Transmission/4.1.0-beta.1", "-TR410B-"); // Transmission
+			sprintf(head_show, "Transmission/4.1.0-beta.1");
 		}
 	}
 	return 0;
@@ -1022,7 +1021,7 @@ int DLEngine()
 			fprintf(Download, "%s\n", config_proxy);
 			if (config_media == 1)
 			{
-				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M %s\"\n", Downloader_Use, play_list, config_dir, config_url, head);
+				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else if (config_media == 2)
 			{
@@ -1042,7 +1041,7 @@ int DLEngine()
 			}
 			else if (config_media == 6)
 			{
-				fprintf(Download, "%s --cookies cookies\\Other_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M %s\"\n", Downloader_Use, play_list, config_dir, config_url, head);
+				fprintf(Download, "%s --cookies cookies\\Other_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else
 			{
