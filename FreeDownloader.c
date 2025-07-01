@@ -313,7 +313,7 @@ int ListenRPC()
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=false\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n", rpctoken);
@@ -424,7 +424,7 @@ int url()
 			system("cls");
 			printf("请在弹出页输入下载地址,多个地址可以用回车隔开. . .\n\n");
 			system("notepad temp\\Bilibili.download");
-			sprintf_s(config_url, 30, "%s", "-F temp\\Bilibili.download");
+			sprintf_s(config_url, 30, "%s", "-a temp\\Bilibili.download");
 		}
 		else if (config_media == 3)
 		{
@@ -541,7 +541,7 @@ int threader()
 	else if (downloadmode == 3)
 	{
 		Task = 1; // 同时下载任务数
-		if (config_media == 1 || config_media == 6)
+		if (config_media == 1 || config_media == 2 || config_media == 6)
 		{
 			sprintf_s(Downloader_Use, 12, "%s", "yt-dlp");
 		}
@@ -566,7 +566,7 @@ int Dir()
 {
 	if (downloadmode == 3)
 	{
-		if (config_media == 1 || config_media == 6)
+		if (config_media == 1 || config_media == 2 || config_media == 6)
 		{
 			sprintf_s(config_dir, 65, "%s", "-o Downloads\\%%(uploader)s-%%(title)s-%%(resolution)s.%%(ext)s");
 		}
@@ -651,7 +651,7 @@ int ChangeUA()
 {
 	if (downloadmode == 1)
 	{
-		sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器
+		sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"); // Chrome浏览器
 		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 2)
@@ -661,18 +661,18 @@ int ChangeUA()
 	}
 	else if (downloadmode == 3)
 	{
-		if (config_media == 1 || config_media == 6)
+		if (config_media == 1 || config_media == 2 || config_media == 6)
 		{
 			sprintf(head_show, "Default"); // yt-dlp,默认UserAgent
 		}
 		else if (config_media == 3)
 		{
-			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器
+			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 		else
 		{
-			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器
+			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -687,23 +687,23 @@ int ChangeUA()
 		}
 		else if (mark == 2)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 		else if (mark == 3)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Mobile Safari/537.36"); // Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome(Mobile)");
 		}
 		else if (mark == 4)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器(Linux)
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"); // Chrome浏览器(Linux)
 			sprintf(head_show, "Chrome(Linux)");
 		}
 		else
 		{
 			mark = 2;
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"); // Chrome浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"); // Chrome浏览器
 			sprintf(head_show, "Chrome");
 		}
 	}
@@ -889,7 +889,7 @@ int MediaDownloader()
 	printf("下载来源:\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n6.其它(调用yt-dlp)\n\n7.其它(调用lux)\n\n0.返回\n\n请输入:");
 	scan_return = scanf("%d", &config_media);
 	system("cls");
-	if (config_media == 1 || config_media == 6)
+	if (config_media == 1 || config_media == 2 || config_media == 6)
 	{ // 调用yt-dlp
 		printf("\n下载整个列表内所有音视频?\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入:");
 		scan_return = scanf("%d", &DownloadList);
@@ -1025,7 +1025,7 @@ int DLEngine()
 			}
 			else if (config_media == 2)
 			{
-				fprintf(Download, "%s -c cookies\\Bilibili_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\Bilibili_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else if (config_media == 3)
 			{
