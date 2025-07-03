@@ -49,16 +49,19 @@ int About()
 	printf("--------------------------FreeDownloader--------------------------\n");
 	printf("------------------------------------------------------------------\n");
 	printf("FreeDownloader版本:");
-	printf("6.0.0");
-	printf("\n\n");
-	printf("aria2c版本:");
-	system("aria2c -v | findstr version | findstr /v either | findstr /v later");
-	printf("\n");
-	printf("yt-dlp版本:");
+	printf("6.1.0\n");
+	printf("------------------------------------------------------------------\n");
+	printf("----------------------------aria2c版本----------------------------\n");
+	printf("------------------------------------------------------------------\n");
+	system("aria2c -v");
+	printf("------------------------------------------------------------------\n");
+	printf("----------------------------yt-dlp版本----------------------------\n");
+	printf("------------------------------------------------------------------\n");
 	system("yt-dlp --version");
-	printf("\n");
-	printf("ffmpeg版本:");
-	system("ffmpeg -version | findstr \"Copyright\"");
+	printf("------------------------------------------------------------------\n");
+	printf("----------------------------ffmpeg版本----------------------------\n");
+	printf("------------------------------------------------------------------\n");
+	system("ffmpeg -version");
 	printf("------------------------------------------------------------------\n");
 	system("pause");
 	return 0;
@@ -436,7 +439,7 @@ int url()
 			system("cls");
 			printf("请在弹出页输入下载地址,多个地址可以用回车隔开. . .\n\n");
 			system("notepad temp\\QQVideo.download");
-			sprintf_s(config_url, 30, "%s", "-F temp\\QQVideo.download");
+			sprintf_s(config_url, 30, "%s", "-a temp\\QQVideo.download");
 		}
 		else if (config_media == 4)
 		{
@@ -448,7 +451,7 @@ int url()
 			system("cls");
 			printf("请在弹出页输入下载地址,多个地址可以用回车隔开. . .\n\n");
 			system("notepad temp\\iqiyi.download");
-			sprintf_s(config_url, 30, "%s", "-F temp\\iqiyi.download");
+			sprintf_s(config_url, 30, "%s", "-a temp\\iqiyi.download");
 		}
 		else if (config_media == 5)
 		{
@@ -460,7 +463,7 @@ int url()
 			system("cls");
 			printf("请在弹出页输入下载地址,多个地址可以用回车隔开. . .\n\n");
 			system("notepad temp\\Youku.download");
-			sprintf_s(config_url, 30, "%s", "-F temp\\Youku.download");
+			sprintf_s(config_url, 30, "%s", "-a temp\\Youku.download");
 		}
 		else
 		{
@@ -472,14 +475,7 @@ int url()
 			system("cls");
 			printf("请在弹出页输入下载地址,多个地址可以用回车隔开. . .\n\n");
 			system("notepad temp\\Other.download");
-			if (config_media == 6)
-			{
-				sprintf_s(config_url, 30, "%s", "-a temp\\Other.download");
-			}
-			else
-			{
-				sprintf_s(config_url, 30, "%s", "-F temp\\Other.download");
-			}
+			sprintf_s(config_url, 30, "%s", "-a temp\\Other.download");
 		}
 	}
 	else if (downloadmode == 4)
@@ -541,14 +537,9 @@ int threader()
 	else if (downloadmode == 3)
 	{
 		Task = 1; // 同时下载任务数
-		if (config_media == 1 || config_media == 2 || config_media == 6)
-		{
-			sprintf_s(Downloader_Use, 12, "%s", "yt-dlp");
-		}
-		else
-		{
-			sprintf_s(Downloader_Use, 12, "%s", "lux");
-		}
+
+		sprintf_s(Downloader_Use, 12, "%s", "yt-dlp");
+
 		ConnectionNum = 1; // 4k视频状态下aria2调用出现bug
 	}
 	else if (downloadmode == 5)
@@ -566,14 +557,8 @@ int Dir()
 {
 	if (downloadmode == 3)
 	{
-		if (config_media == 1 || config_media == 2 || config_media == 6)
-		{
-			sprintf_s(config_dir, 65, "%s", "-o Downloads\\%%(uploader)s-%%(title)s-%%(resolution)s.%%(ext)s");
-		}
-		else
-		{
-			sprintf_s(config_dir, 16, "%s", "-o Downloads");
-		}
+
+		sprintf_s(config_dir, 65, "%s", "-o Downloads\\%%(uploader)s-%%(title)s-%%(resolution)s.%%(ext)s");
 	}
 	else
 	{
@@ -661,20 +646,7 @@ int ChangeUA()
 	}
 	else if (downloadmode == 3)
 	{
-		if (config_media == 1 || config_media == 2 || config_media == 6)
-		{
-			sprintf(head_show, "Default"); // yt-dlp,默认UserAgent
-		}
-		else if (config_media == 3)
-		{
-			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"); // Chrome浏览器
-			sprintf(head_show, "Chrome");
-		}
-		else
-		{
-			sprintf(head, "--user-agent=%s", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"); // Chrome浏览器
-			sprintf(head_show, "Chrome");
-		}
+		sprintf(head_show, "Default"); // yt-dlp,默认UserAgent
 	}
 	else if (downloadmode == 4)
 	{
@@ -886,10 +858,10 @@ int MediaDownloader()
 	FILE *Bilibili_Cookies, *ytb_Cookies, *QQVideo_Cookies, *iqiyi_Cookies, *Youku_Cookies, *Other_Cookies;
 	char chapter[10];
 	ProxySetting();
-	printf("下载来源:\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n6.其它(调用yt-dlp)\n\n7.其它(调用lux)\n\n0.返回\n\n请输入:");
+	printf("下载来源:\n\n1.油管\n\n2.哔哩哔哩\n\n3.腾讯视频\n\n4.爱奇艺\n\n5.优酷\n\n6.其它\n\n0.返回\n\n请输入:");
 	scan_return = scanf("%d", &config_media);
 	system("cls");
-	if (config_media == 1 || config_media == 2 || config_media == 6)
+	if (config_media != 0)
 	{ // 调用yt-dlp
 		printf("\n下载整个列表内所有音视频?\n\n1.是\n\n2.只下载当前视频\n\n0.选择集数\n\n请输入:");
 		scan_return = scanf("%d", &DownloadList);
@@ -909,19 +881,6 @@ int MediaDownloader()
 			sprintf(play_list, "--playlist-items %s", chapter);
 		}
 		system("cls");
-	}
-	else if (config_media != 0)
-	{ // 调用yt-dlp
-		printf("\n下载整个列表内所有音视频?\n\n1.是\n\n2.只下载当前视频\n\n请输入:");
-		scan_return = scanf("%d", &DownloadList);
-		if (DownloadList == 1)
-		{
-			sprintf(play_list, "-p");
-		}
-		else if (DownloadList == 2)
-		{
-			sprintf(play_list, " ");
-		}
 	}
 	else
 	{
@@ -1029,25 +988,21 @@ int DLEngine()
 			}
 			else if (config_media == 3)
 			{
-				fprintf(Download, "%s -c cookies\\QQVideo_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\QQVideo_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else if (config_media == 4)
 			{
-				fprintf(Download, "%s -c cookies\\iqiyi_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\iqiyi_Cookies.txt  -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else if (config_media == 5)
 			{
-				fprintf(Download, "%s -c cookies\\Youku_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
-			}
-			else if (config_media == 6)
-			{
-				fprintf(Download, "%s --cookies cookies\\Other_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\Youku_Cookies.txt  -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			}
 			else
 			{
-				fprintf(Download, "%s -c cookies\\Other_Cookies.txt %s %s %s\n", Downloader_Use, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\Other_Cookies.txt -f \"bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]\" --merge-output-format mp4 --embed-thumbnail --embed-metadata --write-sub --write-auto-subs --sub-langs \"en,zh-Hans,zh-Hant\" --convert-subs srt %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, play_list, config_dir, config_url);
 			}
-		}
+				}
 		else if (downloadmode == 4)
 		{
 			fprintf(Download, "%s -c -x%d -s%d -k%s -j %d %s %s %s %s %s --max-tries=0 --content-disposition-default-utf8=true %s\n", Downloader_Use, ConnectionNum, ConnectionNum, split, Task, config_dir, config_proxy, reference, head, config_cookie, config_url);
