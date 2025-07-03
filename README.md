@@ -8,7 +8,7 @@
 
 下载地址: [Windows64位(Github)](https://github.com/HXHGTS/FreeDownloader/releases/latest/download/FreeDownloader.X64.zip)
 
-2.在Chrome浏览器[Chrome下载](https://chrome.google.com)中安装[EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN),[网盘助手](https://chrome.google.com/webstore/detail/%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B/cfaglmggimoleoclaghmmboppofffdda) (注意:需要科学上网)
+2.在Chrome浏览器[Chrome下载](https://chrome.google.com)中安装[EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN),[网盘助手(破解版)](https://raw.githubusercontent.com/HXHGTS/FreeDownloader/refs/heads/master/baidupanmod.js) (注意:需要科学上网)
 
 2.5.在Firefox浏览器[Firefox下载](https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=zh-CN)中安装[EditThisCookie](https://addons.mozilla.org/en-US/firefox/addon/edithiscookie)(注意:需要科学上网)
 
