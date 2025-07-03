@@ -8,9 +8,9 @@
 
 下载地址: [Windows64位(Github)](https://github.com/HXHGTS/FreeDownloader/releases/latest/download/FreeDownloader.X64.zip)
 
-2.在Chrome浏览器[Chrome下载](https://chrome.google.com)中安装[EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN),[网盘助手(破解版)](https://raw.githubusercontent.com/HXHGTS/FreeDownloader/refs/heads/master/baidupanmod.js) (注意:需要科学上网)
+2.在Chrome浏览器[Chrome下载](https://chrome.google.com)中安装[EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=zh-CN),[篡改猴](https://chromewebstore.google.com/detail/%E7%AF%A1%E6%94%B9%E7%8C%B4%E6%B5%8B%E8%AF%95%E7%89%88/gcalenpjmijncebpfijmoaglllgpjagf),[网盘助手(破解版)](https://raw.githubusercontent.com/HXHGTS/FreeDownloader/refs/heads/master/baidupanmod.js) (注意:需要科学上网)
 
-2.5.在Firefox浏览器[Firefox下载](https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=zh-CN)中安装[EditThisCookie](https://addons.mozilla.org/en-US/firefox/addon/edithiscookie)(注意:需要科学上网)
+2.5.在Firefox浏览器[Firefox下载](https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=zh-CN)中安装[EditThisCookie](https://addons.mozilla.org/en-US/firefox/addon/edithiscookie),[篡改猴](https://www.tampermonkey.net/xpi/firefox-current-beta.xpi),[网盘助手(破解版)](https://raw.githubusercontent.com/HXHGTS/FreeDownloader/refs/heads/master/baidupanmod.js) (注意:需要科学上网)
 
 3.鼠标右击EditThisCookie插件(饼干🍪图标),单击"选项"-"选择Cookies的导出格式",将格式改为"Netscape HTTP Cookie File"
 
@@ -18,7 +18,7 @@
 
 1.打开FreeDownloader,不用代理,按提示操作,当程序弹窗要求导入Cookies信息时,开始第2步操作
 
-2.在chrome浏览器中登录[百度网盘](https://pan.baidu.com/disk/home?#/all?path=%2F&vmode=list),点击右上角饼干图标(EditThisCookie插件),点击"导出Cookies",复制粘贴填入FreeDownloader弹出的文本文件中(只用导入1次,之后如果不再切换百度账号或修改密码可直接使用第一次导入的数据)
+2.在chrome浏览器中登录[百度网盘](https://pan.baidu.com/disk/home?from=newversion&stayAtHome=true#/all?vmode=list),点击右上角饼干图标(EditThisCookie插件),点击"导出Cookies",复制粘贴填入FreeDownloader弹出的文本文件中(只用导入1次,之后如果不再切换百度账号或修改密码可直接使用第一次导入的数据)
 
 2.5.或者直接点击网址输入框旁边的锁🔒,找到"Cookie",打开,找到BDUSS的值,粘贴到软件输入框中;然后用浏览器访问[pcs.baidu.com](https://pcs.baidu.com),找到pcsett的值,粘贴到软件输入框中(只用导入1次,之后如果不再切换百度账号或修改密码可直接使用第一次导入的数据)
 
@@ -57,7 +57,7 @@
 
 ### 七、第三方软件
 
-本软件采用[aria2](https://aria2.github.io/)、[yt-dlp](https://github.com/yt-dlp/yt-dlp)、[lux](https://github.com/iawia002/lux)、[ffmpeg](https://github.com/yt-dlp/FFmpeg-Builds)等开源工具作为下载或合成工具,在此向以上开源软件开发者致谢!
+本软件采用[aria2](https://aria2.github.io/)、[yt-dlp](https://github.com/yt-dlp/yt-dlp)、[ffmpeg](https://github.com/yt-dlp/FFmpeg-Builds)等开源工具作为下载或合成工具,在此向以上开源软件开发者致谢!
 
 ### 八、其它事项
 
