@@ -316,7 +316,7 @@ int ListenRPC()
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=false\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n", rpctoken);
@@ -650,7 +650,7 @@ int ChangeUA()
 	}
 	else if (downloadmode == 4)
 	{
-		printf("\n请选择浏览器标识:\n\n1.IE\n\n2.Chrome\n\n3.Chrome(Mobile)\n\n4.Chrome(Linux)\n\n请输入:");
+		printf("\n请选择浏览器标识:\n\n1.IE\n\n2.Firefox\n\n3.Firefox(Mobile)\n\n4.Firefox(Linux)\n\n请输入:");
 		scan_return = scanf("%d", &mark);
 		if (mark == 1)
 		{
@@ -659,18 +659,18 @@ int ChangeUA()
 		}
 		else if (mark == 2)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"); // Chrome浏览器
-			sprintf(head_show, "Chrome");
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"); // Firefox浏览器
+			sprintf(head_show, "Firefox");
 		}
 		else if (mark == 3)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36"); // Chrome浏览器
-			sprintf(head_show, "Chrome(Mobile)");
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Android 14; Mobile; rv:143.0) Gecko/143.0 Firefox/143.0"); // Firefox浏览器
+			sprintf(head_show, "Firefox(Mobile)");
 		}
 		else if (mark == 4)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"); // Chrome浏览器(Linux)
-			sprintf(head_show, "Chrome(Linux)");
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0"); // Firefox浏览器(Linux)
+			sprintf(head_show, "Firefox(Linux)");
 		}
 		else
 		{
