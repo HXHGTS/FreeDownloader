@@ -316,7 +316,7 @@ int ListenRPC()
 	fprintf(conf, "rpc-allow-origin-all=true\n");
 	fprintf(conf, "content-disposition-default-utf8=true\n");
 	fprintf(conf, "disable-ipv6=false\n");
-	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0\n");
+	fprintf(conf, "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0\n");
 	fprintf(conf, "rpc-listen-all=true\n");
 	fprintf(conf, "rpc-listen-port=6800\n");
 	fprintf(conf, "rpc-secret=%s\n", rpctoken);
@@ -636,8 +636,8 @@ int ChangeUA()
 {
 	if (downloadmode == 1)
 	{
-		sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"); // Firefox浏览器
-		sprintf(head_show, "Firefox");
+		sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"); // Chrome浏览器
+		sprintf(head_show, "Chrome");
 	}
 	else if (downloadmode == 2)
 	{
@@ -659,24 +659,24 @@ int ChangeUA()
 		}
 		else if (mark == 2)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"); // Firefox浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0"); // Firefox浏览器
 			sprintf(head_show, "Firefox");
 		}
 		else if (mark == 3)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Android 14; Mobile; rv:143.0) Gecko/143.0 Firefox/143.0"); // Firefox浏览器
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Android 16; Mobile; rv:147.0) Gecko/147.0 Firefox/147.0"); // Firefox浏览器
 			sprintf(head_show, "Firefox(Mobile)");
 		}
 		else if (mark == 4)
 		{
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0"); // Firefox浏览器(Linux)
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0"); // Firefox浏览器(Linux)
 			sprintf(head_show, "Firefox(Linux)");
 		}
 		else
 		{
 			mark = 5;
-			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"); // Firefox浏览器
-			sprintf(head_show, "Firefox");
+			sprintf(head, "-U \"%s\"", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"); // Chrome浏览器
+			sprintf(head_show, "Chrome");
 		}
 	}
 	else if (downloadmode == 5)
@@ -690,14 +690,14 @@ int ChangeUA()
 		}
 		else if (mark == 2)
 		{
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.1.0-beta.2", "Transmission/4.1.0-beta.2", "-TR410B-"); // Transmission
-			sprintf(head_show, "Transmission/4.1.0-beta.2");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.1.0", "Transmission/4.1.0", "-TR4100-"); // Transmission
+			sprintf(head_show, "Transmission/4.1.0");
 		}
 		else
 		{
 			mark = 2;
-			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.1.0-beta.2", "Transmission/4.1.0-beta.2", "-TR410B-"); // Transmission
-			sprintf(head_show, "Transmission/4.1.0-beta.2");
+			sprintf(head, "user-agent=%s\npeer-agent=%s\npeer-id-prefix=%s", "Transmission/4.1.0", "Transmission/4.1.0", "-TR4100-"); // Transmission
+			sprintf(head_show, "Transmission/4.1.0");
 		}
 	}
 	return 0;
