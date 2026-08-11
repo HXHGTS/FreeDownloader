@@ -980,7 +980,8 @@ int Subtitle()
 
 int AvSelect()
 {
-	printf("是否下载字幕:\n\n1.音频\n\n0.视频\n\n请输入:");
+	printf("\n");
+	printf("视频/音频选择:\n\n1.音频\n\n0.视频\n\n请输入:");
 	scan_return = scanf("%d", &av_mode);
 	if (av_mode != 1)
 	{
@@ -1015,7 +1016,7 @@ int DLEngine()
 			fprintf(Download, "%s\n", config_proxy);
 			if (av_mode == 0)
 			{
-				sprintf(av, "bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]");
+				sprintf(av, "bv*+ba/b");
 			}
 			else
 			{
@@ -1023,7 +1024,7 @@ int DLEngine()
 			}
 			if (config_media == 1)
 			{
-				fprintf(Download, "%s --cookies cookies\\ytb_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s --downloader aria2c --downloader-args \"aria2c:-s16 -x16 -k1M\"\n", Downloader_Use, config_subtitle, play_list, config_dir, config_url);
+				fprintf(Download, "%s --js-runtimes quickjs:%%PATH%%/qjs-windows-x86_64.exe --remote-components ejs:github --cookies cookies\\ytb_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s --downloader aria2c --downloader-args \"aria2c:-s16 -x16 -k1M\"\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
 			}
 			else if (config_media == 2)
 			{
