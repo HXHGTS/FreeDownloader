@@ -1024,27 +1024,27 @@ int DLEngine()
 			}
 			if (config_media == 1)
 			{
-				fprintf(Download, "%s --js-runtimes quickjs:%%PATH%%/qjs-windows-x86_64.exe --remote-components ejs:github --cookies cookies\\ytb_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s --downloader aria2c --downloader-args \"aria2c:-s16 -x16 -k1M\"\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
+				fprintf(Download, "%s --js-runtimes quickjs:%%PATH%%/qjs-windows-x86_64.exe --remote-components ejs:github --cookies cookies\\ytb_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
 			}
 			else if (config_media == 2)
 			{
-				fprintf(Download, "%s --cookies cookies\\Bilibili_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s --downloader aria2c --downloader-args \"aria2c:-s8 -x8 -k1M\"\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\Bilibili_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
 			}
 			else if (config_media == 3)
 			{
-				fprintf(Download, "%s --cookies cookies\\QQVideo_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\QQVideo_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
 			}
 			else if (config_media == 4)
 			{
-				fprintf(Download, "%s --cookies cookies\\iqiyi_Cookies.txt  -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\iqiyi_Cookies.txt  -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
 			}
 			else if (config_media == 5)
 			{
-				fprintf(Download, "%s --cookies cookies\\Youku_Cookies.txt  -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\Youku_Cookies.txt  -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
 			}
 			else
 			{
-				fprintf(Download, "%s --cookies cookies\\Other_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s --downloader aria2c --downloader-args \"aria2c:-s4 -x4 -k1M\"\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
+				fprintf(Download, "%s --cookies cookies\\Other_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
 			}
 		}
 		else if (downloadmode == 4)
