@@ -9,6 +9,9 @@
 #include "version.h"
 #include "getproxyinfo.h"
 
+// 第三方二进制统一放在程序目录的 bin\ 下, 只留 FreeDownloader.exe 与批处理在根目录
+#define BIN_DIR "bin\\"
+
 int AdvanceDownloader(), AutoShutdown(), ChangeUA(), CheckSum(int mode), Dir(), DLEngine(), WindowSkin();
 int MagnetDownloader(), MediaDownloader(), Netdisk(), NormalDownloader(), ProxySetting(), threader(), url(), ListenRPC(), About();
 int DHT_Fix();
@@ -77,7 +80,7 @@ int GenerateVersionFile()
 	fprintf(vf, "----------------------------aria2c版本----------------------------\n");
 	fprintf(vf, "------------------------------------------------------------------\n");
 	fclose(vf);
-	if (system(".\\aria2c.exe -v >> .version.tmp 2>&1") != 0)
+	if (system(BIN_DIR "aria2c.exe -v >> .version.tmp 2>&1") != 0)
 	{
 		vf = fopen(".version.tmp", "a");
 		if (vf != NULL)
@@ -95,7 +98,7 @@ int GenerateVersionFile()
 	fprintf(vf, "----------------------------yt-dlp版本----------------------------\n");
 	fprintf(vf, "------------------------------------------------------------------\n");
 	fclose(vf);
-	if (system(".\\yt-dlp.exe --version >> .version.tmp 2>&1") != 0)
+	if (system(BIN_DIR "yt-dlp.exe --version >> .version.tmp 2>&1") != 0)
 	{
 		vf = fopen(".version.tmp", "a");
 		if (vf != NULL)
@@ -113,7 +116,7 @@ int GenerateVersionFile()
 	fprintf(vf, "----------------------------ffmpeg版本----------------------------\n");
 	fprintf(vf, "------------------------------------------------------------------\n");
 	fclose(vf);
-	if (system(".\\ffmpeg.exe -version >> .version.tmp 2>&1") != 0)
+	if (system(BIN_DIR "ffmpeg.exe -version >> .version.tmp 2>&1") != 0)
 	{
 		vf = fopen(".version.tmp", "a");
 		if (vf != NULL)
@@ -177,24 +180,136 @@ int About()
 	return 0;
 }
 
+/* ------------------------------------------------------------------ */
+/* DHT 残留临时文件清理                                                 */
+/* ------------------------------------------------------------------ */
+
+/*
+ * aria2 保存 DHT 路由表的流程是: 先写 "<目标文件>__temp", 再把它重命名覆盖到
+ * 目标文件 (上游 DHTRoutingTableSerializer::serialize() 里
+ * filenameTemp = filename + "__temp", 随后 File::renameTo() 在 Windows 上走
+ * MoveFileExW(MOVEFILE_REPLACE_EXISTING)).
+ *
+ * 这一步在 Windows 上很容易失败: 上一轮被强杀的 aria2 残留进程还占着 dht.dat,
+ * 或者杀软实时扫描 (Windows 11 的 Defender 对刚落盘的文件会短暂持有句柄),
+ * 都会让 MoveFileEx 返回共享冲突, 于是 config\dht.dat__temp /
+ * config\dht6.dat__temp 就长期躺在目录里; 而且下一轮 aria2 再写同名临时文件
+ * 之前, 这个残留还会给清理/覆盖添乱.
+ *
+ * 旧实现是 _access() 判存在后调 system("del /F /S /Q <名字>"), 三个毛病:
+ *   1. 只认死 dht.dat__temp / dht6.dat__temp 两个名字, 名字有一点出入就漏;
+ *   2. 删除失败被静默吞掉, 用户下次打开还是看到残留, 也不知道为什么;
+ *   3. 每清理一次都要拉起一个 cmd.exe, 而删除本身在进程内就能做完.
+ *
+ * 现在改成 Win32 直接删: 先删两个已知名字, 再把 config 目录里所有
+ * "*.dat__temp*" 一并扫掉 (顺带覆盖 aria2 其它临时后缀); 遇到占用/只读属性
+ * 就先清属性再短暂重试, 等杀软的扫描窗口过去.
+ */
+#define DHT_TEMP_ATTEMPTS 5
+#define DHT_TEMP_RETRY_MS 120
+
+// 返回值: 1=删掉了, 0=本来不存在, -1=重试用尽仍删不掉
+static int RemoveDHTTempFile(const char *path)
+{
+	int attempt;
+	DWORD attr, err;
+
+	for (attempt = 0; attempt < DHT_TEMP_ATTEMPTS; attempt++)
+	{
+		if (DeleteFileA(path))
+		{
+			return 1;
+		}
+		err = GetLastError();
+		if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND)
+		{
+			return 0;
+		}
+		if (err == ERROR_ACCESS_DENIED)
+		{
+			// 只读/隐藏/系统属性会让 DeleteFileA 直接吃 ACCESS_DENIED
+			attr = GetFileAttributesA(path);
+			if (attr != INVALID_FILE_ATTRIBUTES &&
+				(attr & (FILE_ATTRIBUTE_READONLY | FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM)) != 0)
+			{
+				SetFileAttributesA(path, FILE_ATTRIBUTE_NORMAL);
+			}
+		}
+		Sleep(DHT_TEMP_RETRY_MS);
+	}
+	return -1;
+}
+
+// 返回删掉的个数; 删不掉的个数写进 *failed
+static int CleanupDHTTempFiles(int *failed)
+{
+	WIN32_FIND_DATAA find_data;
+	HANDLE find_handle;
+	char path[MAX_PATH];
+	int cleaned = 0, stuck = 0, ret;
+
+	if (failed != NULL)
+	{
+		*failed = 0;
+	}
+
+	// 已知的两个名字先直接删, 不依赖目录枚举
+	ret = RemoveDHTTempFile("config\\dht.dat__temp");
+	cleaned += (ret == 1);
+	stuck += (ret == -1);
+	ret = RemoveDHTTempFile("config\\dht6.dat__temp");
+	cleaned += (ret == 1);
+	stuck += (ret == -1);
+
+	// 再扫一遍目录, 兜住名字不同的其它残留
+	find_handle = FindFirstFileA("config\\*.dat__temp*", &find_data);
+	if (find_handle != INVALID_HANDLE_VALUE)
+	{
+		do
+		{
+			if ((find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+			{
+				continue;
+			}
+			if (sprintf_s(path, sizeof(path), "config\\%s", find_data.cFileName) <= 0)
+			{
+				continue;
+			}
+			ret = RemoveDHTTempFile(path);
+			cleaned += (ret == 1);
+			stuck += (ret == -1);
+		} while (FindNextFileA(find_handle, &find_data));
+		FindClose(find_handle);
+	}
+
+	if (failed != NULL)
+	{
+		*failed = stuck;
+	}
+	return cleaned;
+}
+
 int CreateConfig()
 {
+	int dht_temp_cleaned, dht_temp_failed;
+
 	system("cls");
 	printf("正在优化dht链路. . .\n\n");
-	if ((_access("config\\dht.dat__temp", 0)) == 0)
+	dht_temp_cleaned = CleanupDHTTempFiles(&dht_temp_failed);
+	if (dht_temp_cleaned > 0)
 	{
-		system("del /F /S /Q config\\dht.dat__temp");
+		printf("已清理 %d 个DHT残留临时文件(config\\*__temp)\n", dht_temp_cleaned);
 	}
-	if ((_access("config\\dht6.dat__temp", 0)) == 0)
+	if (dht_temp_failed > 0)
 	{
-		system("del /F /S /Q config\\dht6.dat__temp");
+		printf("有 %d 个DHT临时文件正被占用, 暂时删不掉, 稍后可重试\n", dht_temp_failed);
 	}
 	printf("\n正在尝试连接到trackerslist.com服务器. . .\n\n");
 	conf = fopen("config\\bt.conf", "w");
 	fprintf(conf, "bt-tracker=");
 	fclose(conf);
 	ProxySetting();
-	sprintf_s(cmd, 300, "curl %s -# > config\\all_aria2.txt", config_bt_URL);
+	sprintf_s(cmd, 300, BIN_DIR "curl.exe %s -# > config\\all_aria2.txt", config_bt_URL);
 	if (system(cmd) != 0)
 	{
 		printf("\n更新失败,正在本地建立BT配置文件. . .\n");
@@ -242,12 +357,12 @@ int DHT_Fix()
 	if (_access("config\\dht.dat", 0) == -1)
 	{
 		printf("DHT数据缺失,正在下载. . .\n");
-		dht_download_fallback = system("aria2c -s16 -x16 -k1M --connect-timeout=10 --allow-overwrite=true --dir=config --out=dht.dat \"https://fastly.jsdelivr.net/gh/HXHGTS/FreeDownloader@refs/heads/master/dht.dat\"");
+		dht_download_fallback = system(BIN_DIR "aria2c.exe -s16 -x16 -k1M --connect-timeout=10 --allow-overwrite=true --dir=config --out=dht.dat \"https://fastly.jsdelivr.net/gh/HXHGTS/FreeDownloader@refs/heads/master/dht.dat\"");
 	}
 	if (_access("config\\dht6.dat", 0) == -1)
 	{
 		printf("DHT6数据缺失,正在下载. . .\n");
-		dht6_download_fallback = system("aria2c -s16 -x16 -k1M --connect-timeout=10 --allow-overwrite=true --dir=config --out=dht6.dat \"https://fastly.jsdelivr.net/gh/HXHGTS/FreeDownloader@refs/heads/master/dht6.dat\"");
+		dht6_download_fallback = system(BIN_DIR "aria2c.exe -s16 -x16 -k1M --connect-timeout=10 --allow-overwrite=true --dir=config --out=dht6.dat \"https://fastly.jsdelivr.net/gh/HXHGTS/FreeDownloader@refs/heads/master/dht6.dat\"");
 	}
 	if (dht_download_fallback != 0 || dht6_download_fallback != 0)
 	{
@@ -388,6 +503,11 @@ MainMenu:
 		exit(0);
 	}
 	DLEngine();
+	if (downloadmode == 5)
+	{
+		// aria2 退出时若没能把 <文件>__temp 改名回 dht.dat, 这里替它收尾
+		CleanupDHTTempFiles(NULL);
+	}
 	system("rd /s /q %%USERPROFILE%%\\.cache\\yt-dlp");
 	system("cls");
 	printf("------------------------------------------------------------------\n");
@@ -434,7 +554,7 @@ int ListenRPC()
 	ProxySetting();
 	conf = fopen("temp\\rpc.bat", "w");
 	fprintf(conf, "@echo off\n");
-	fprintf(conf, "start /min aria2c --conf-path=config\\rpc.conf\n");
+	fprintf(conf, "start /min " BIN_DIR "aria2c.exe --conf-path=config\\rpc.conf\n");
 	fclose(conf);
 	system("cls");
 	printf("------------------------------------------------------------------\n");
@@ -1212,7 +1332,8 @@ int DLEngine()
 	{
 		Download = fopen("temp\\Download.bat", "w");
 		fprintf(Download, "@echo off\n");
-		fprintf(Download, "set PATH=%s\n", CoreDir);
+		// 下载引擎与依赖都在 bin\ 下, 顶到 PATH 最前面, 保证调用的是自带的版本
+		fprintf(Download, "set \"PATH=%s\\bin;%%PATH%%\"\n", CoreDir);
 		if (downloadmode == 1)
 		{
 			fprintf(Download, "%s -c -x%d -s%d -k%s --follow-torrent=false --content-disposition-default-utf8=true -j %d %s %s %s %s\n", Downloader_Use, ConnectionNum, ProcessNum, split, Task, config_dir, config_proxy, head, config_url);
@@ -1237,7 +1358,7 @@ int DLEngine()
 			}
 			if (config_media == 1)
 			{
-				fprintf(Download, "%s --js-runtimes quickjs:%%PATH%%/qjs-windows-x86_64.exe --remote-components ejs:github --cookies cookies\\ytb_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s\n", Downloader_Use, av, config_subtitle, play_list, config_dir, config_url);
+				fprintf(Download, "%s --js-runtimes \"quickjs:%s\\bin\\qjs-windows-x86_64.exe\" --remote-components ejs:github --cookies cookies\\ytb_Cookies.txt -f %s --merge-output-format mp4 %s --embed-thumbnail --embed-metadata %s %s %s\n", Downloader_Use, CoreDir, av, config_subtitle, play_list, config_dir, config_url);
 			}
 			else if (config_media == 2)
 			{

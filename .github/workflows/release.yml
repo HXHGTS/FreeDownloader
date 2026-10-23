@@ -24,7 +24,6 @@ env:
   SEVENZIP_URL: https://www.7-zip.org/a/7z2501-extra.7z
   ARIA2NEXT_REPO: AnInsomniacy/aria2-next
   QJS_URL: https://github.com/quickjs-ng/quickjs/releases/latest/download/qjs-windows-x86_64.exe
-  GETPROXYINFO_URL: https://github.com/HXHGTS/GetProxyInfo/releases/latest/download/GetProxyInfo.exe
   DENO_URL: https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip
   INVIDIOUS_URL: https://github.com/iv-org/invidious-companion/releases/latest/download/invidious_companion-x86_64-pc-windows-msvc.zip
 
@@ -57,7 +56,9 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $stage = Join-Path $PWD 'stage\FreeDownloader'
-          New-Item -ItemType Directory -Force "$stage\config", "$stage\cookies", "$stage\Downloads", "$stage\temp" | Out-Null
+          # 除 FreeDownloader.exe 外的二进制、依赖库、证书统一放 bin\，根目录只留程序本体与批处理
+          $bin = Join-Path $stage 'bin'
+          New-Item -ItemType Directory -Force "$stage\config", "$stage\cookies", "$stage\Downloads", "$stage\temp", $bin | Out-Null
 
           # 程序本体、批处理工具、配置模板
           Copy-Item 'x64\Release\FreeDownloader.exe' $stage -Force
@@ -88,75 +89,76 @@ jobs:
           }
 
           # 单文件依赖
-          Get-File $env:YTDLP_URL "$stage\yt-dlp.exe"
-          Get-File $env:QJS_URL "$stage\qjs-windows-x86_64.exe"
+          Get-File $env:YTDLP_URL "$bin\yt-dlp.exe"
+          Get-File $env:QJS_URL "$bin\qjs-windows-x86_64.exe"
           # aria2-next 上游资产名带版本号，先从 latest release 解析 Windows 资产地址
           $aria2Rel = gh api "repos/$env:ARIA2NEXT_REPO/releases/latest" | ConvertFrom-Json
           $aria2Asset = $aria2Rel.assets | Where-Object { $_.name -like '*windows-x86_64.exe' } | Select-Object -First 1
           if (-not $aria2Asset) { throw "无法从 $env:ARIA2NEXT_REPO 解析 Windows 资产" }
-          Get-File $aria2Asset.browser_download_url "$stage\aria2-next.exe"
-          Get-File $env:GETPROXYINFO_URL "$stage\GetProxyInfo.exe"
+          Get-File $aria2Asset.browser_download_url "$bin\aria2-next.exe"
           # curl 的 CA 包单独取 Mozilla cacert.pem
-          Get-File $env:CA_URL "$stage\curl-ca-bundle.crt"
+          Get-File $env:CA_URL "$bin\curl-ca-bundle.crt"
 
           # ffmpeg / ffprobe / ffplay
           Get-File $env:FFMPEG_URL "$tmp\ffmpeg.zip"
           Expand-Pkg "$tmp\ffmpeg.zip" "$tmp\ffmpeg"
-          Copy-First "$tmp\ffmpeg" 'ffmpeg.exe' $stage
-          Copy-First "$tmp\ffmpeg" 'ffprobe.exe' $stage
-          Copy-First "$tmp\ffmpeg" 'ffplay.exe' $stage
+          Copy-First "$tmp\ffmpeg" 'ffmpeg.exe' $bin
+          Copy-First "$tmp\ffmpeg" 'ffprobe.exe' $bin
+          Copy-First "$tmp\ffmpeg" 'ffplay.exe' $bin
 
           # curl + libcurl
           Get-File $env:CURL_URL "$tmp\curl.zip"
           Expand-Pkg "$tmp\curl.zip" "$tmp\curl"
-          Copy-First "$tmp\curl" 'curl.exe' $stage
-          Copy-First "$tmp\curl" 'libcurl-x64.dll' $stage
-          Copy-First "$tmp\curl" 'libcurl-x64.def' $stage
+          Copy-First "$tmp\curl" 'curl.exe' $bin
+          Copy-First "$tmp\curl" 'libcurl-x64.dll' $bin
+          Copy-First "$tmp\curl" 'libcurl-x64.def' $bin
 
           # 7-Zip Extra（7za.exe / 7za.dll / 7zxa.dll）
           Get-File $env:SEVENZIP_URL "$tmp\7zextra.7z"
           Expand-Pkg "$tmp\7zextra.7z" "$tmp\7zextra"
           foreach ($n in '7za.exe', '7za.dll', '7zxa.dll') {
-            Copy-First "$tmp\7zextra" $n $stage
+            Copy-First "$tmp\7zextra" $n $bin
           }
 
           # deno / invidious companion
           Get-File $env:DENO_URL "$tmp\deno.zip"
           Expand-Pkg "$tmp\deno.zip" "$tmp\deno"
-          Copy-First "$tmp\deno" 'deno.exe' $stage
+          Copy-First "$tmp\deno" 'deno.exe' $bin
 
           Get-File $env:INVIDIOUS_URL "$tmp\invidious.zip"
           Expand-Pkg "$tmp\invidious.zip" "$tmp\invidious"
-          Copy-First "$tmp\invidious" 'invidious_companion.exe' $stage
+          Copy-First "$tmp\invidious" 'invidious_companion.exe' $bin
 
           # aria2c 兼容壳：源码里的 aria2c 调用转发到 aria2-next.exe
           powershell -NoProfile -ExecutionPolicy Bypass -File build-aria2c-shim.ps1
           if (-not (Test-Path 'aria2c.exe')) { throw 'aria2c 壳编译失败' }
-          Copy-Item 'aria2c.exe' $stage -Force
+          Copy-Item 'aria2c.exe' $bin -Force
 
-          # 完整性检查
+          # 完整性检查：程序本体在根目录，其余二进制全部在 bin\
+          if (-not (Test-Path (Join-Path $stage 'FreeDownloader.exe'))) { throw '缺少文件: FreeDownloader.exe' }
           $required = @(
-            'FreeDownloader.exe', 'yt-dlp.exe', 'ffmpeg.exe', 'ffprobe.exe', 'ffplay.exe',
+            'yt-dlp.exe', 'ffmpeg.exe', 'ffprobe.exe', 'ffplay.exe',
             'curl.exe', 'libcurl-x64.dll', 'curl-ca-bundle.crt',
             '7za.exe', '7za.dll', '7zxa.dll',
             'aria2c.exe', 'aria2-next.exe', 'qjs-windows-x86_64.exe',
-            'GetProxyInfo.exe', 'deno.exe', 'invidious_companion.exe'
+            'deno.exe', 'invidious_companion.exe'
           )
           foreach ($n in $required) {
-            $p = Join-Path $stage $n
-            if (-not (Test-Path $p)) { throw "缺少文件: $n" }
-            if ((Get-Item $p).Length -le 0) { throw "空文件: $n" }
+            $p = Join-Path $bin $n
+            if (-not (Test-Path $p)) { throw "缺少文件: bin\$n" }
+            if ((Get-Item $p).Length -le 0) { throw "空文件: bin\$n" }
           }
           Get-ChildItem $stage | Select-Object Name, Length | Sort-Object Name | Format-Table -AutoSize
+          Get-ChildItem $bin | Select-Object Name, Length | Sort-Object Name | Format-Table -AutoSize
 
       - name: 记录依赖版本
         shell: pwsh
         run: |
-          $stage = Join-Path $PWD 'stage\FreeDownloader'
-          "yt-dlp: " + (& "$stage\yt-dlp.exe" --version)
-          "ffmpeg: " + (& "$stage\ffmpeg.exe" -version | Select-Object -First 1)
-          "curl:   " + (& "$stage\curl.exe" --version | Select-Object -First 1)
-          "aria2:  " + (& "$stage\aria2-next.exe" --version | Select-Object -First 1)
+          $bin = Join-Path $PWD 'stage\FreeDownloader\bin'
+          "yt-dlp: " + (& "$bin\yt-dlp.exe" --version)
+          "ffmpeg: " + (& "$bin\ffmpeg.exe" -version | Select-Object -First 1)
+          "curl:   " + (& "$bin\curl.exe" --version | Select-Object -First 1)
+          "aria2:  " + (& "$bin\aria2-next.exe" --version | Select-Object -First 1)
 
       - name: 打包 zip
         shell: pwsh
