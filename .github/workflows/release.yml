@@ -40,7 +40,7 @@ jobs:
 
       - name: 按 tag 写入版本号
         if: startsWith(github.ref, 'refs/tags/')
-        shell: powershell
+        shell: pwsh
         run: |
           $v = '${{ github.ref_name }}' -replace '^v', ''
           "#define FD_VERSION `"$v`"" | Set-Content -Path version.h -Encoding ascii
@@ -51,7 +51,7 @@ jobs:
         run: msbuild FreeDownloader.vcxproj /p:Configuration=Release /p:Platform=x64 /m /v:minimal
 
       - name: 组装发布目录并拉取依赖
-        shell: powershell
+        shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           $stage = Join-Path $PWD 'stage\FreeDownloader'
@@ -144,7 +144,7 @@ jobs:
           Get-ChildItem $stage | Select-Object Name, Length | Sort-Object Name | Format-Table -AutoSize
 
       - name: 记录依赖版本
-        shell: powershell
+        shell: pwsh
         run: |
           $stage = Join-Path $PWD 'stage\FreeDownloader'
           "yt-dlp: " + (& "$stage\yt-dlp.exe" --version)
@@ -153,7 +153,7 @@ jobs:
           "aria2:  " + (& "$stage\aria2-next.exe" --version | Select-Object -First 1)
 
       - name: 打包 zip
-        shell: powershell
+        shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           $sevenZip = Join-Path ${env:ProgramFiles} '7-Zip\7z.exe'
