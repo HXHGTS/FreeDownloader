@@ -136,8 +136,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FreeDownloader.c" />
+    <ClCompile Include="getproxyinfo.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="getproxyinfo.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

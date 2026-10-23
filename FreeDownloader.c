@@ -5,6 +5,7 @@
 #include <io.h>
 #include <direct.h>
 #include "version.h"
+#include "getproxyinfo.h"
 
 int AdvanceDownloader(), AutoShutdown(), ChangeUA(), CheckSum(int mode), Dir(), DLEngine(), WindowSkin();
 int MagnetDownloader(), MediaDownloader(), Netdisk(), NormalDownloader(), ProxySetting(), threader(), url(), ListenRPC(), About();
@@ -187,22 +188,19 @@ int preload()
 	CreateFolder();
 	TokenGenerate();
 	WindowSkin();
-	if (_access("GetProxyInfo.exe", 0) == -1)
+	printf("------------------------------------------------------------------\n");
+	printf("正在检测计算机代理设置. . .\n");
+	printf("------------------------------------------------------------------\n");
+	if (GetProxyInfoWriteIni("config\\proxy.ini") != 0)
 	{
-		printf("------------------------------------------------------------------\n");
 		printf("无法检测计算机代理设置,以无代理配置运行!\n");
 		printf("------------------------------------------------------------------\n");
-		system("TIMEOUT /T 2 > nul");
 		conf = fopen("config\\proxy.ini", "w");
-		fprintf(conf, "proxy=0");
-		fclose(conf);
-	}
-	else
-	{
-		printf("------------------------------------------------------------------\n");
-		printf("正在检测计算机代理设置. . .\n");
-		printf("------------------------------------------------------------------\n");
-		system("GetProxyInfo");
+		if (conf != NULL)
+		{
+			fprintf(conf, "proxy=0");
+			fclose(conf);
+		}
 	}
 	return 0;
 }
