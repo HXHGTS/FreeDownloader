@@ -77,7 +77,7 @@ int GenerateVersionFile()
 	fprintf(vf, "----------------------------aria2c版本----------------------------\n");
 	fprintf(vf, "------------------------------------------------------------------\n");
 	fclose(vf);
-	if (system("aria2c -v >> .version.tmp 2>&1") != 0)
+	if (system(".\\aria2c.exe -v >> .version.tmp 2>&1") != 0)
 	{
 		vf = fopen(".version.tmp", "a");
 		if (vf != NULL)
@@ -95,7 +95,7 @@ int GenerateVersionFile()
 	fprintf(vf, "----------------------------yt-dlp版本----------------------------\n");
 	fprintf(vf, "------------------------------------------------------------------\n");
 	fclose(vf);
-	if (system("yt-dlp --version >> .version.tmp 2>&1") != 0)
+	if (system(".\\yt-dlp.exe --version >> .version.tmp 2>&1") != 0)
 	{
 		vf = fopen(".version.tmp", "a");
 		if (vf != NULL)
@@ -113,7 +113,7 @@ int GenerateVersionFile()
 	fprintf(vf, "----------------------------ffmpeg版本----------------------------\n");
 	fprintf(vf, "------------------------------------------------------------------\n");
 	fclose(vf);
-	if (system("ffmpeg -version >> .version.tmp 2>&1") != 0)
+	if (system(".\\ffmpeg.exe -version >> .version.tmp 2>&1") != 0)
 	{
 		vf = fopen(".version.tmp", "a");
 		if (vf != NULL)
