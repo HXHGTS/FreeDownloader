@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <io.h>
 #include <direct.h>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #include "version.h"
 #include "getproxyinfo.h"
 
@@ -48,27 +50,130 @@ int WindowSkin()
 	return 0;
 }
 
+int WaitAnyKey()
+{
+	printf("请按任意键继续. . .");
+	fflush(stdout);
+	system("pause >nul");
+	printf("\n");
+	return 0;
+}
+
+int GenerateVersionFile()
+{
+	FILE *vf;
+
+	vf = fopen(".version.tmp", "w");
+	if (vf == NULL)
+	{
+		return 1;
+	}
+	fprintf(vf, "------------------------------------------------------------------\n");
+	fprintf(vf, "--------------------------FreeDownloader--------------------------\n");
+	fprintf(vf, "------------------------------------------------------------------\n");
+	fprintf(vf, "FreeDownloader版本:");
+	fprintf(vf, FD_VERSION "\n");
+	fprintf(vf, "------------------------------------------------------------------\n");
+	fprintf(vf, "----------------------------aria2c版本----------------------------\n");
+	fprintf(vf, "------------------------------------------------------------------\n");
+	fclose(vf);
+	if (system("aria2c -v >> .version.tmp 2>&1") != 0)
+	{
+		vf = fopen(".version.tmp", "a");
+		if (vf != NULL)
+		{
+			fprintf(vf, "aria2c 未找到或执行失败\n");
+			fclose(vf);
+		}
+	}
+	vf = fopen(".version.tmp", "a");
+	if (vf == NULL)
+	{
+		return 1;
+	}
+	fprintf(vf, "------------------------------------------------------------------\n");
+	fprintf(vf, "----------------------------yt-dlp版本----------------------------\n");
+	fprintf(vf, "------------------------------------------------------------------\n");
+	fclose(vf);
+	if (system("yt-dlp --version >> .version.tmp 2>&1") != 0)
+	{
+		vf = fopen(".version.tmp", "a");
+		if (vf != NULL)
+		{
+			fprintf(vf, "yt-dlp 未找到或执行失败\n");
+			fclose(vf);
+		}
+	}
+	vf = fopen(".version.tmp", "a");
+	if (vf == NULL)
+	{
+		return 1;
+	}
+	fprintf(vf, "------------------------------------------------------------------\n");
+	fprintf(vf, "----------------------------ffmpeg版本----------------------------\n");
+	fprintf(vf, "------------------------------------------------------------------\n");
+	fclose(vf);
+	if (system("ffmpeg -version >> .version.tmp 2>&1") != 0)
+	{
+		vf = fopen(".version.tmp", "a");
+		if (vf != NULL)
+		{
+			fprintf(vf, "ffmpeg 未找到或执行失败\n");
+			fclose(vf);
+		}
+	}
+	vf = fopen(".version.tmp", "a");
+	if (vf == NULL)
+	{
+		return 1;
+	}
+	fprintf(vf, "------------------------------------------------------------------\n");
+	fclose(vf);
+	remove(".version");
+	if (rename(".version.tmp", ".version") != 0)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+int PrintVersionFile()
+{
+	FILE *vf;
+	char buffer[1024];
+	size_t length;
+
+	vf = fopen(".version", "rb");
+	if (vf == NULL)
+	{
+		return 1;
+	}
+	while ((length = fread(buffer, 1, sizeof(buffer), vf)) > 0)
+	{
+		fwrite(buffer, 1, length, stdout);
+	}
+	fclose(vf);
+	return 0;
+}
+
 int About()
 {
-	printf("------------------------------------------------------------------\n");
-	printf("--------------------------FreeDownloader--------------------------\n");
-	printf("------------------------------------------------------------------\n");
-	printf("FreeDownloader版本:");
-	printf(FD_VERSION "\n");
-	printf("------------------------------------------------------------------\n");
-	printf("----------------------------aria2c版本----------------------------\n");
-	printf("------------------------------------------------------------------\n");
-	system("aria2c -v");
-	printf("------------------------------------------------------------------\n");
-	printf("----------------------------yt-dlp版本----------------------------\n");
-	printf("------------------------------------------------------------------\n");
-	system("yt-dlp --version");
-	printf("------------------------------------------------------------------\n");
-	printf("----------------------------ffmpeg版本----------------------------\n");
-	printf("------------------------------------------------------------------\n");
-	system("ffmpeg -version");
-	printf("------------------------------------------------------------------\n");
-	system("pause");
+	if (_access(".version", 0) != 0)
+	{
+		printf("首次打开关于页,正在收集版本信息. . .\n\n");
+		if (GenerateVersionFile() != 0)
+		{
+			printf("版本信息缓存生成失败,请检查当前目录写入权限。\n");
+			WaitAnyKey();
+			return 1;
+		}
+	}
+	if (PrintVersionFile() != 0)
+	{
+		printf("无法读取 .version 文件。\n");
+	}
+	printf("\n");
+	WaitAnyKey();
 	return 0;
 }
 
@@ -181,6 +286,8 @@ int CreateFolder()
 
 int preload()
 {
+	SetConsoleOutputCP(CP_UTF8);
+	SetConsoleCP(CP_UTF8);
 	filecheck = 0;
 	shutdown = 0;
 	av_mode = 0;
@@ -338,7 +445,7 @@ int ListenRPC()
 	printf("RPC监听已启动!\n\n");
 	system("temp\\rpc.bat");
 	printf("退出");
-	system("pause");
+	WaitAnyKey();
 	system("taskkill /f /im aria2c*");
 	return 0;
 }
@@ -723,7 +830,7 @@ int AdvanceDownloader()
 		fclose(cookie);
 		printf("\n请在弹出窗口中导入Cookies信息,");
 		system("notepad cookies\\Cookies.txt");
-		system("pause");
+		WaitAnyKey();
 	}
 	else
 	{
@@ -832,7 +939,7 @@ int CheckSum(int mode)
 		printf("---------------------------------------------\n");
 		system(cmd);
 		printf("\n\n");
-		system("pause");
+		WaitAnyKey();
 	}
 	return 0;
 }

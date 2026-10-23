@@ -165,7 +165,7 @@ jobs:
           $sevenZip = Join-Path ${env:ProgramFiles} '7-Zip\7z.exe'
           if (-not (Test-Path $sevenZip)) { $sevenZip = '7z' }
           Push-Location stage
-          & $sevenZip a -tzip -mx=5 -bso0 -bsp0 ..\FreeDownloader.zip FreeDownloader
+          & $sevenZip a -tzip -mx=5 -mcu=on -bso0 -bsp0 ..\FreeDownloader.zip FreeDownloader
           $code = $LASTEXITCODE
           Pop-Location
           if ($code -ne 0) { throw "打包失败: $code" }
