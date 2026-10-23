@@ -1,7 +1,10 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include <io.h>
 #include <direct.h>
+#include "version.h"
 
 int AdvanceDownloader(), AutoShutdown(), ChangeUA(), CheckSum(int mode), Dir(), DLEngine(), WindowSkin();
 int MagnetDownloader(), MediaDownloader(), Netdisk(), NormalDownloader(), ProxySetting(), threader(), url(), ListenRPC(), About();
@@ -50,7 +53,7 @@ int About()
 	printf("--------------------------FreeDownloader--------------------------\n");
 	printf("------------------------------------------------------------------\n");
 	printf("FreeDownloader版本:");
-	printf("6.1.0\n");
+	printf(FD_VERSION "\n");
 	printf("------------------------------------------------------------------\n");
 	printf("----------------------------aria2c版本----------------------------\n");
 	printf("------------------------------------------------------------------\n");
@@ -965,7 +968,7 @@ char config_subtitle[60];
 int Subtitle()
 {
 	int subtitle;
-	printf("是否下载字幕:\n\n1.下载\n\n2.不下载\n\n请输入:");
+	printf("\n是否下载字幕:\n\n1.下载\n\n2.不下载\n\n请输入:");
 	scan_return = scanf("%d", &subtitle);
 	if (subtitle == 1)
 	{
@@ -990,11 +993,116 @@ int AvSelect()
 	return 0;
 }
 
+/* 去掉 B 站链接里的语言前缀段, 例如:
+     https://www.bilibili.com/zh-Hans/video/BV1xx411c7mD
+   变为:
+     https://www.bilibili.com/video/BV1xx411c7mD
+   原因: yt-dlp 的 BiliBili 提取器只匹配 /video/BVxxx 这类路径, 带 /zh-Hans/
+   之类的前缀就匹配不上, 会回落 generic 通用提取器; generic 在页面里只能找到
+   一个 .html 伪格式, 触发 "The extracted extension ('html') is unusual and
+   will be skipped for safety reasons", 最终视频下不下来, 只剩封面图片.
+   下载列表文件原地改写, 其余行与编码原样保留. */
+static int NormalizeBilibiliUrls(const char *list_file, char *fixed_file, int fixed_size)
+{
+	FILE *src, *dst;
+	char line[4096];
+	char *p, *sep;
+	int changed = 0;
+
+	src = fopen(list_file, "rb");
+	if (src == NULL)
+	{
+		return 0;
+	}
+	// 修正后的副本写到列表同目录, 文件名固定且短 (config_url 只有 31 字节).
+	// 不原地改写原文件: 记事本可能还占用着它, 删除/重命名会失败.
+	sep = strrchr(list_file, '\\');
+	if (sep == NULL)
+	{
+		sep = strrchr(list_file, '/');
+	}
+	if (sep != NULL)
+	{
+		sprintf_s(fixed_file, fixed_size, "%.*surlfix.tmp", (int)(sep - list_file + 1), list_file);
+	}
+	else
+	{
+		sprintf_s(fixed_file, fixed_size, "%s", "urlfix.tmp");
+	}
+	dst = fopen(fixed_file, "wb");
+	if (dst == NULL)
+	{
+		fclose(src);
+		return 0;
+	}
+	while (fgets(line, sizeof(line), src) != NULL)
+	{
+		p = line;
+		while ((p = strstr(p, "bilibili.com/")) != NULL)
+		{
+			char *seg = p + strlen("bilibili.com/");
+			char *slash = strchr(seg, '/');
+			int len, has_dash = 0, valid = 1, i;
+
+			if (slash == NULL)
+			{
+				break; // 没有后续路径段, 不需要处理
+			}
+			len = (int)(slash - seg);
+			if (len < 3 || len > 11)
+			{
+				p = slash;
+				continue;
+			}
+			for (i = 0; i < len; i++)
+			{
+				if (seg[i] == '-')
+				{
+					has_dash = 1;
+				}
+				else if (!isalpha((unsigned char)seg[i]))
+				{
+					valid = 0;
+					break;
+				}
+			}
+			// 形如 zh-Hans / zh-CN / en-US 的语言段: 全部为字母或连字符且含连字符
+			if (!valid || !has_dash)
+			{
+				p = slash;
+				continue;
+			}
+			memmove(seg, slash + 1, strlen(slash + 1) + 1);
+			changed = 1;
+			p = seg;
+		}
+		fputs(line, dst);
+	}
+	fclose(src);
+	fclose(dst);
+	if (changed == 0)
+	{
+		remove(fixed_file); // 没有需要修正的链接, 不留临时文件
+		return 0;
+	}
+	return 1;
+}
+
 int DLEngine()
 {
 	FILE *Download;
 	char av[64];
+	char list_file[64];
+	char fixed_file[64];
 	char *CoreDir = _getcwd(NULL, 0);
+
+	// yt-dlp 模式下先修正下载列表里的 B 站语言前缀, 否则会落到 generic 提取器;
+	// 有修正时改指向修正后的副本, 原列表保持不动
+	if (downloadmode == 3 && sscanf(config_url, "-a %63s", list_file) == 1 &&
+		NormalizeBilibiliUrls(list_file, fixed_file, sizeof(fixed_file)))
+	{
+		sprintf_s(config_url, 31, "-a %s", fixed_file);
+	}
 	if (downloadmode >= 1 && downloadmode <= 5)
 	{
 		Download = fopen("temp\\Download.bat", "w");

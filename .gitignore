@@ -1,0 +1,17 @@
+# Visual Studio 构建产物
+x64/
+Debug/
+Release/
+FreeDownloader/
+stage/
+*.user
+*.aps
+*.obj
+*.pdb
+*.ilk
+*.tlog
+*.iobj
+*.ipdb
+
+# CI 打包产物
+FreeDownloader.zip
