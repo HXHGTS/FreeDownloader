@@ -22,7 +22,7 @@ env:
   CURL_URL: https://curl.se/windows/latest.cgi?p=win64-mingw.zip
   CA_URL: https://curl.se/ca/cacert.pem
   SEVENZIP_URL: https://www.7-zip.org/a/7z2501-extra.7z
-  ARIA2NEXT_URL: https://github.com/HXHGTS/Update-MainLine/releases/latest/download/aria2-next-windows-x86_64.exe
+  ARIA2NEXT_REPO: AnInsomniacy/aria2-next
   QJS_URL: https://github.com/quickjs-ng/quickjs/releases/latest/download/qjs-windows-x86_64.exe
   GETPROXYINFO_URL: https://github.com/HXHGTS/GetProxyInfo/releases/latest/download/GetProxyInfo.exe
   DENO_URL: https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip
@@ -52,6 +52,8 @@ jobs:
 
       - name: 组装发布目录并拉取依赖
         shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           $ErrorActionPreference = 'Stop'
           $stage = Join-Path $PWD 'stage\FreeDownloader'
@@ -88,7 +90,11 @@ jobs:
           # 单文件依赖
           Get-File $env:YTDLP_URL "$stage\yt-dlp.exe"
           Get-File $env:QJS_URL "$stage\qjs-windows-x86_64.exe"
-          Get-File $env:ARIA2NEXT_URL "$stage\aria2-next.exe"
+          # aria2-next 上游资产名带版本号，先从 latest release 解析 Windows 资产地址
+          $aria2Rel = gh api "repos/$env:ARIA2NEXT_REPO/releases/latest" | ConvertFrom-Json
+          $aria2Asset = $aria2Rel.assets | Where-Object { $_.name -like '*windows-x86_64.exe' } | Select-Object -First 1
+          if (-not $aria2Asset) { throw "无法从 $env:ARIA2NEXT_REPO 解析 Windows 资产" }
+          Get-File $aria2Asset.browser_download_url "$stage\aria2-next.exe"
           Get-File $env:GETPROXYINFO_URL "$stage\GetProxyInfo.exe"
           # curl 的 CA 包单独取 Mozilla cacert.pem
           Get-File $env:CA_URL "$stage\curl-ca-bundle.crt"
