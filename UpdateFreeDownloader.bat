@@ -110,6 +110,11 @@ if errorlevel 1 (
     goto :fail
 )
 
+echo 正在清理旧版依赖更新脚本...
+for %%F in ("7z更新工具.bat" "curl更新工具.bat" "ffmpeg更新工具.bat" "aria2更新工具.bat" "yt-dlp更新工具.bat") do (
+    if exist "%ROOT%\%%~F" del /f /q "%ROOT%\%%~F" >nul 2>nul
+)
+
 echo.
 echo 更新完成。
 goto :cleanup
