@@ -159,11 +159,62 @@ int PrintVersionFile()
 	return 0;
 }
 
+/*
+ * 判断 .version 缓存是否还对应当前程序版本.
+ * 缓存第 4 行是 "FreeDownloader版本:<ver>"; 换包升级后这一行仍是旧版本号,
+ * 而旧逻辑只在缓存缺失时才重建, 于是"关于"页永远显示升级前的版本, 看起来
+ * 就像升级没生效. 这里按版本串比对, 不一致就重建.
+ * 返回 1 = 缓存有效, 0 = 需要重建 (缺失 / 无标记 / 版本不符).
+ */
+static int VersionCacheIsCurrent()
+{
+	FILE *vf;
+	char buffer[1024];
+	char *p;
+	const char *marker = "FreeDownloader版本:";
+	size_t length, value_len;
+
+	vf = fopen(".version", "rb");
+	if (vf == NULL)
+	{
+		return 0;
+	}
+	length = fread(buffer, 1, sizeof(buffer) - 1, vf);
+	fclose(vf);
+	buffer[length] = '\0';
+
+	p = strstr(buffer, marker);
+	if (p == NULL)
+	{
+		return 0; // 旧格式或文件损坏, 重建一次即可
+	}
+	p += strlen(marker);
+	for (value_len = 0; p[value_len] != '\0' && p[value_len] != '\r' && p[value_len] != '\n'; value_len++)
+	{
+	}
+	if (value_len != strlen(FD_VERSION))
+	{
+		return 0;
+	}
+	return strncmp(p, FD_VERSION, value_len) == 0;
+}
+
 int About()
 {
+	int need_refresh = 0;
+
 	if (_access(".version", 0) != 0)
 	{
 		printf("首次打开关于页,正在收集版本信息. . .\n\n");
+		need_refresh = 1;
+	}
+	else if (!VersionCacheIsCurrent())
+	{
+		printf("版本信息缓存与当前程序版本不一致,正在重新收集. . .\n\n");
+		need_refresh = 1;
+	}
+	if (need_refresh)
+	{
 		if (GenerateVersionFile() != 0)
 		{
 			printf("版本信息缓存生成失败,请检查当前目录写入权限。\n");
